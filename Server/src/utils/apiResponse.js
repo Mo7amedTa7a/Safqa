@@ -9,7 +9,7 @@ const sendSuccess = (res, statusCode, message, data) => {
     return res.status(statusCode).json({
         status: "success",
         message,
-        ...data(data != undefined && { data })
+        ...(data != undefined && { data })
     })
 }
 

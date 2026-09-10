@@ -9,6 +9,8 @@ import cors from 'cors'
 import helmet from 'helmet'
 import express from 'express'
 import errorHandler from './middlewares/errorHandler.js'
+import apiLimit from './middlewares/rateLimiter.js'
+import authRoutes from "./modules/auth/auth.routes.js"
 const app = express()
 
 
@@ -16,6 +18,11 @@ const app = express()
 app.use(cors())
 app.use(helmet())
 app.use(express.json())
+
+
+app.use("/api" , apiLimit)
+app.use("/api/auth" , authRoutes)
+
 
 
 // Test Route
