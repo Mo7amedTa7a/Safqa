@@ -15,7 +15,7 @@ const sendSuccess = (res, statusCode, message, data) => {
 
 const sendError = (res, statusCode, message) => {
     return res.status(statusCode).json({
-        status: "fail",
+        status: statusCode >= 400 && statusCode < 500 ? "fail" : "error",
         message
     })
 
