@@ -5,11 +5,16 @@
 // - Mount global error handler middleware (must be last)
 // - Export app for server.js
 
+import cors from 'cors'
+import helmet from 'helmet'
 import express from 'express'
 import errorHandler from './middlewares/errorHandler.js'
 const app = express()
 
+
 //Global Middlewares
+app.use(cors())
+app.use(helmet())
 app.use(express.json())
 
 
