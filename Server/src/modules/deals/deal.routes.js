@@ -1,5 +1,17 @@
-﻿// Deal Routes
-// - Belongs to: Member 4
-// - All routes: auth middleware required
-// - ADMIN: full access
-// - SUPPLIER: own deals only
+﻿const express = require('express');
+
+const {
+    getDealsController,
+    getDealByIdController,
+    updateDealStatusController
+} = require('./deal.controller');
+
+const router = express.Router();
+
+router.get('/', getDealsController);
+
+router.get('/:id', getDealByIdController);
+
+router.patch('/:id/status', updateDealStatusController);
+
+module.exports = router;
