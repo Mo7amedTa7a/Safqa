@@ -7,11 +7,24 @@
 import express from 'express'
 import validate from '../../middlewares/validation.middleware.js'
 import { loginSchema, registerSchema } from './auth.validation.js'
-import { login, register } from './auth.controller.js'
+import { login, logout, register } from './auth.controller.js'
 const router = express.Router()
 
-router.post("/register", validate(registerSchema), register)
+router.post(
+    "/register",
+    validate(registerSchema),
+    register
+);
 
-router.post("/login" , validate(loginSchema), login)
+router.post(
+    "/login",
+    validate(loginSchema),
+    login
+);
+
+router.post(
+    "/logout",
+    logout
+);
 
 export default router

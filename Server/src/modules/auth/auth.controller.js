@@ -25,3 +25,13 @@ export const login = asyncHandler(async (req, res) => {
     user.password = undefined
     return sendSuccess(res, 200, "Login successful", { token, user })
 })
+
+export const logout = asyncHandler(async (req, res) => {
+    await authService.logout();
+
+    return sendSuccess(
+        res,
+        200,
+        "Logout successful"
+    );
+});

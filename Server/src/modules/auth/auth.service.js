@@ -51,6 +51,9 @@ const login = async (email, password) => {
     if (!user) {
         throw new AppError("Invalid email or password", 401);
     }
+    if (!user.isActive) {
+        throw new AppError("User account is inactive", 403);
+    }
     const isPasswordCorrect = await user.comparePassword(password)
     //password is matching ?
     if (!isPasswordCorrect) {
@@ -60,7 +63,7 @@ const login = async (email, password) => {
     const token = jwt.sign(
         {
             id: user._id,
-            role: user.rore
+            role: user.role
         },
         process.env.JWT_SECRET,
         {
@@ -71,8 +74,14 @@ const login = async (email, password) => {
 
 }
 
+const logout = async () => {
+    return {
+        message: "Logout successful"
+    };
+};
 
 export default {
     register,
-    login
+    login,
+    logout
 }
