@@ -84,6 +84,7 @@ async function createDealFromPool(poolId) {
     {
       pool: poolId,
       _id: { $ne: winningOffer._id },
+      status: 'PENDING',
     },
     { status: 'INELIGIBLE' }
   );

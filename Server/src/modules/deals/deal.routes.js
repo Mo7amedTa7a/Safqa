@@ -6,12 +6,30 @@ const {
     updateDealStatusController
 } = require('./deal.controller');
 
+const authMiddleware = require('../../middlewares/auth.middleware');
+const { restrictTo } = require('../../middlewares/role.middleware');
+
 const router = express.Router();
 
-router.get('/', getDealsController);
+router.get(
+    '/',
+    authMiddleware,
+    restrictTo('ADMIN'),
+    getDealsController
+);
 
-router.get('/:id', getDealByIdController);
+router.get(
+    '/:id',
+    authMiddleware,
+    restrictTo('ADMIN', 'SUPPLIER'),
+    getDealByIdController
+);
 
-router.patch('/:id/status', updateDealStatusController);
+router.patch(
+    '/:id/status',
+    authMiddleware,
+    restrictTo('ADMIN', 'SUPPLIER'),
+    updateDealStatusController
+);
 
 module.exports = router;
