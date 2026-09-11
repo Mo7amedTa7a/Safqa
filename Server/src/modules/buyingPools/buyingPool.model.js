@@ -11,29 +11,62 @@ const BuyingPoolSchema = new mongoose.Schema(
   {
     product: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product"
+      ref: "Product",
+      required: true
     },
 
     variant: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Variant"
+      ref: "User",
+      required: true
     },
 
-    totalQuantity: Number,
+    totalQuantity: {
+      type: Number,
+      required: true
+    },
 
-    buyerCount: Number,
+    memberCount: {
+      type: Number,
+      required: true
+    },
+
+    startAt: {
+      type: Date,
+      required: true
+    },
+
+    closeAt: {
+      type: Date,
+      required: true
+    },
 
     status: {
       type: String,
-      enum: ["OPEN", "CLOSED", "EXPIRED"]
+      enum: ["OPEN", "CLOSED"],
+      required: true,
+      default: "OPEN"
     },
 
-    closesAt: Date
+    selectedOffer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SupplierOffer"
+    }
   },
   {
     timestamps: true
   }
 );
+
+BuyingPoolSchema.index({
+  product: 1,
+  variantSku: 1,
+  status: 1
+});
 
 const BuyingPool = mongoose.model("BuyingPool", BuyingPoolSchema);
 

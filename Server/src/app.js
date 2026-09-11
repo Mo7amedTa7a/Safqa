@@ -15,6 +15,7 @@ import authorize from './middlewares/role.middleware.js'
 import protect from './middlewares/auth.middleware.js'
 const app = express()
 
+const buyingPoolRoutes= require("./modules/buyingPools/buyingPool.routes.js")
 
 //Global Middlewares
 app.use(cors())
@@ -24,6 +25,9 @@ app.use(express.json())
 
 app.use("/api" , apiLimit)
 app.use("/api/auth" , authRoutes)
+
+
+app.use("/api/buying-pools",buyingPoolRoutes)
 
 
 

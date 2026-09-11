@@ -4,14 +4,15 @@
 
 
 
-const joi = require("joi");
+const Joi = require("joi");
 
-const PoolMemberValidation = joi.object({
-  poolId: joi.required(),
-
-  buyingRequestId: joi.required(),
-
-  quantity: joi.number().min(1).required()
+const updateQuantityValidation = Joi.object({
+  quantity: Joi.number()
+    .integer()
+    .min(1)
+    .required()
 });
 
-module.exports = PoolMemberValidation;
+module.exports = {
+  updateQuantityValidation
+};
