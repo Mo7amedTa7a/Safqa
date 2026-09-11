@@ -34,15 +34,13 @@ async function getOrderById(orderId, user) {
   if (
     user.role === 'BUYER' &&
     order.buyer._id.toString() !== user._id.toString()
-    // order.buyer._id.equals(user._id) => هي هي نفس اللي فوقها بس دي ب ميثود جاهزة علشان تقارن objects
-) {
+  ) {
     throw new Error('Not authorized to access this order');
-}
+  }
 
-if (
+  if (
     user.role === 'SUPPLIER' &&
     order.supplier._id.toString() !== user._id.toString()
-    // order.buyer._id.equals(user._id) => هي هي نفس اللي فوقها بس دي ب ميثود جاهزة علشان تقارن objects
   ) {
     throw new Error('Not authorized to access this order');
   }
@@ -58,14 +56,68 @@ async function updateOrderStatus(orderId, status) {
   }
 
   order.status = status;
+  await order.save();
 
+  return order;
+}
+
+async function markOrderReadyForPickup(orderId, supplierId) {
+  const order = await Order.findById(orderId);
+
+  if (!order) {
+    throw new Error('Order not found');
+  }
+
+  if (order.supplier.toString() !== supplierId.toString()) {
+    throw new Error('Not authorized to update this order');
+  }
+
+  if (order.status !== 'CONFIRMED') {
+    throw new Error(
+      `Cannot mark as ready for pickup from status: ${order.status}`
+    );
+  }
+
+  order.status = 'READY_FOR_PICKUP';
+  await order.save();
+
+  return order;
+}
+
+const CANCELLABLE_STATUSES = ['PENDING', 'CONFIRMED'];
+
+async function cancelOrder(orderId, user) {
+  const order = await Order.findById(orderId);
+
+  if (!order) {
+    throw new Error('Order not found');
+  }
+
+  const isBuyer =
+    user.role === 'BUYER' && order.buyer.toString() === user._id.toString();
+  const isSupplier =
+    user.role === 'SUPPLIER' &&
+    order.supplier.toString() === user._id.toString();
+  const isAdmin = user.role === 'ADMIN';
+
+  if (!isBuyer && !isSupplier && !isAdmin) {
+    throw new Error('Not authorized to cancel this order');
+  }
+
+  if (!CANCELLABLE_STATUSES.includes(order.status)) {
+    throw new Error(`Cannot cancel order with status: ${order.status}`);
+  }
+
+  order.status = 'CANCELLED';
   await order.save();
 
   return order;
 }
 
 module.exports = {
-    getOrders,
-    getOrderById,
-    updateOrderStatus
+  getOrders,
+  getOrderById,
+  updateOrderStatus,
+  markOrderReadyForPickup,
+  cancelOrder,
 };
