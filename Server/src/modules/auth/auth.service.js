@@ -4,3 +4,75 @@
 // - login(email, password): find user, compare password, generate JWT
 // - logout(): client-side token removal (stateless JWT)
 // - generateToken(userId): sign and return JWT using JWT_SECRET
+
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import AppError from "../../utils/AppError.js";
+import User from "../users/user.model.js"
+
+const register = async (userData) => {
+    const {
+        name,
+        email,
+        password,
+        role = "BUYER",
+        phone,
+        address,
+        profileImage
+    } = userData
+
+    //Check if email already exists ?
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        throw new AppError("Email already exists", 409)
+    }
+
+    //hash pass
+    // const hashedPassword = await bcrypt.hash(password, 12)
+
+    //create user 
+    const user = await User.create({
+        name,
+        email,
+        password,
+        role,
+        phone,
+        address,
+        profileImage
+    })
+    return user
+}
+
+const login = async (email, password) => {
+    const user = await User.findOne({ email }).select("+password")
+
+    //check user
+    if (!user) {
+        throw new AppError("Invalid email or password", 401);
+    }
+    const isPasswordCorrect = await user.comparePassword(password)
+    //password is matching ?
+    if (!isPasswordCorrect) {
+        throw new AppError("Invalid email or password", 401)
+    }
+
+    const token = jwt.sign(
+        {
+            id: user._id,
+            role: user.rore
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: process.env.JWT_EXPIRES_IN || "7d"
+        }
+    );
+    return { user, token }
+
+}
+
+
+export default {
+    register,
+    login
+}
