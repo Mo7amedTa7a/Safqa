@@ -1,4 +1,5 @@
 ﻿const SupplierOffer = require('../supplierOffers/supplierOffer.model');
+const BuyingRequest = require('../buyingRequests/buyingRequest.model');
 const BuyingPool = require('../buyingPools/buyingPool.model');
 const PoolMember = require('../poolMembers/poolMember.model');
 const Deal = require('./deal.model');
@@ -166,6 +167,72 @@ async function updateDealStatus(dealId, status) {
   return deal;
 }
 
+async function createDealFromRequest(requestId) {
+  const request = await BuyingRequest.findById(requestId);
+
+  if (!request) {
+    throw new Error('BuyingRequest not found');
+  }
+
+  const finalQuantity = request.quantity;
+
+  const offers = await SupplierOffer.find({
+    buyingRequest: requestId,
+    status: 'PENDING',
+  }).populate('supplier');
+
+  const ranked = rankEligibleOffers(offers, finalQuantity);
+
+  if (ranked.length === 0) {
+    throw new Error('No eligible offer found for this request');
+  }
+
+  const bestOfferResult = ranked[0];
+  const winningOffer = bestOfferResult.offer;
+  const effectivePrice = bestOfferResult.effectivePrice;
+
+  winningOffer.status = 'SELECTED';
+  await winningOffer.save();
+
+  await SupplierOffer.updateMany(
+    {
+      buyingRequest: requestId,
+      _id: { $ne: winningOffer._id },
+    },
+    { status: 'INELIGIBLE' }
+  );
+
+  const deal = await Deal.create({
+    selectedOffer: winningOffer._id,
+    supplier: winningOffer.supplier._id,
+    finalQuantity: finalQuantity,
+    effectiveUnitPrice: effectivePrice,
+    deliveryDays: winningOffer.deliveryDays,
+    status: 'ACTIVE',
+  });
+
+  const order = await Order.create({
+    deal: deal._id,
+    buyer: request.buyer,
+    poolMember: null,
+    buyingRequest: requestId,
+    supplier: winningOffer.supplier._id,
+    quantity: finalQuantity,
+    unitPrice: effectivePrice,
+    deliveryFee: 0,
+    totalAmount: finalQuantity * effectivePrice,
+    shippingAddress: {
+      street: 'TBD',
+      city: 'TBD',
+      country: 'TBD',
+    },
+    phone: 'TBD',
+    status: 'PENDING',
+  });
+
+  return { deal, order };
+}
+
 module.exports = { 
   selectBestOffer, 
   getEffectivePrice, 
@@ -173,5 +240,6 @@ module.exports = {
   createDealFromPool,
   getDeals,
   getDealById,
-  updateDealStatus
+  updateDealStatus,
+  createDealFromRequest
 };

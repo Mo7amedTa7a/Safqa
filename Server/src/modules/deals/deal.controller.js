@@ -3,6 +3,7 @@
   getDealById,
   updateDealStatus,
   createDealFromPool,
+  createDealFromRequest
 } = require('./deal.service');
 
 const getDealsController = async (req, res) => {
@@ -67,9 +68,27 @@ const selectOfferController = async (req, res) => {
   }
 };
 
+const selectDirectOfferController = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const result = await createDealFromRequest(requestId);
+    return res.status(201).json({
+      success: true,
+      data: result,
+      message: 'Deal created successfully',
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getDealsController,
   getDealByIdController,
   updateDealStatusController,
   selectOfferController,
+  selectDirectOfferController
 };

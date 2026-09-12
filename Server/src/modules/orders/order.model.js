@@ -15,7 +15,12 @@ const orderSchema = new mongoose.Schema(
     poolMember: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'PoolMember',
-        required: true,
+        required: false,
+    },
+    buyingRequest: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'BuyingRequest',
+    required: false,
     },
     supplier: {
         type: mongoose.Schema.Types.ObjectId,
