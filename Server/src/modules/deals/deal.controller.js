@@ -1,6 +1,94 @@
-﻿// Deal Controller
-// - Belongs to: Member 4
-// - GET  /          → list deals (ADMIN)
-// - GET  /:id       → getDealById (ADMIN | SUPPLIER)
-// - GET  /my-deals  → getDealsBySupplier (SUPPLIER)
-// - Deal creation is triggered internally by buyingPool.service (not via HTTP)
+﻿const {
+  getDeals,
+  getDealById,
+  updateDealStatus,
+  createDealFromPool,
+  createDealFromRequest
+} = require('./deal.service');
+
+const getDealsController = async (req, res) => {
+  try {
+    const deals = await getDeals();
+    return res.status(200).json({
+      success: true,
+      data: deals,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const getDealByIdController = async (req, res) => {
+  try {
+    const deal = await getDealById(req.params.id);
+    return res.status(200).json({
+      success: true,
+      data: deal,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const updateDealStatusController = async (req, res) => {
+  try {
+    const deal = await updateDealStatus(req.params.id, req.body.status);
+    return res.status(200).json({
+      success: true,
+      data: deal,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const selectOfferController = async (req, res) => {
+  try {
+    const { poolId } = req.params;
+    const result = await createDealFromPool(poolId);
+    return res.status(201).json({
+      success: true,
+      data: result,
+      message: 'Deal created successfully',
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const selectDirectOfferController = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const result = await createDealFromRequest(requestId);
+    return res.status(201).json({
+      success: true,
+      data: result,
+      message: 'Deal created successfully',
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  getDealsController,
+  getDealByIdController,
+  updateDealStatusController,
+  selectOfferController,
+  selectDirectOfferController
+};
