@@ -1,14 +1,13 @@
-﻿const SupplierOffer = require('../supplierOffers/supplierOffer.model');
-const BuyingRequest = require('../buyingRequests/buyingRequest.model');
+﻿const AppError = require('../../utils/AppError');
+const SupplierOffer = require('../supplierOffers/supplierOffer.model');
 const BuyingPool = require('../buyingPools/buyingPool.model');
 const PoolMember = require('../poolMembers/poolMember.model');
+const BuyingRequest = require('../buyingRequests/buyingRequest.model');
 const Deal = require('./deal.model');
 const Order = require('./order.model');
 
 function getEffectivePrice(pricingTiers, finalQuantity) {
-  const sortedTiers = [...pricingTiers].sort(
-    (a, b) => a.minQty - b.minQty
-  );
+  const sortedTiers = [...pricingTiers].sort((a, b) => a.minQty - b.minQty);
 
   let selectedTier = null;
   for (const tier of sortedTiers) {
@@ -64,7 +63,7 @@ async function createDealFromPool(poolId) {
   const pool = await BuyingPool.findById(poolId);
 
   if (!pool) {
-    throw new Error('Pool not found');
+    throw new AppError('Pool not found', 404);
   }
 
   const finalQuantity = pool.totalQuantity;
@@ -72,7 +71,7 @@ async function createDealFromPool(poolId) {
   const bestOfferResult = await selectBestOffer(poolId, finalQuantity);
 
   if (!bestOfferResult) {
-    throw new Error('No eligible offer found for this pool');
+    throw new AppError('No eligible offer found for this pool', 400);
   }
 
   const winningOffer = bestOfferResult.offer;
@@ -85,7 +84,6 @@ async function createDealFromPool(poolId) {
     {
       pool: poolId,
       _id: { $ne: winningOffer._id },
-      status: 'PENDING',
     },
     { status: 'INELIGIBLE' }
   );
@@ -103,8 +101,7 @@ async function createDealFromPool(poolId) {
   const members = await PoolMember.find({
     pool: poolId,
     status: 'ACTIVE',
-  })
-  .populate('buyer');
+  }).populate('buyer');
 
   const orders = [];
   for (const member of members) {
@@ -117,11 +114,7 @@ async function createDealFromPool(poolId) {
       unitPrice: effectivePrice,
       deliveryFee: 0,
       totalAmount: member.quantity * effectivePrice,
-      shippingAddress: {
-        street: 'TBD',
-        city: 'TBD',
-        country: 'TBD',
-      },
+      shippingAddress: { street: 'TBD', city: 'TBD', country: 'TBD' },
       phone: 'TBD',
       status: 'PENDING',
     });
@@ -131,47 +124,11 @@ async function createDealFromPool(poolId) {
   return { deal, orders };
 }
 
-async function getDeals() {
-  const deals = await Deal.find()
-    .populate('supplier')
-    .populate('selectedOffer')
-    .populate('pool');
-
-  return deals;
-}
-
-async function getDealById(dealId) {
-  const deal = await Deal.findById(dealId)
-    .populate('supplier')
-    .populate('selectedOffer')
-    .populate('pool');
-
-  if (!deal) {
-    throw new Error('Deal not found');
-  }
-
-  return deal;
-}
-
-async function updateDealStatus(dealId, status) {
-  const deal = await Deal.findById(dealId);
-
-  if (!deal) {
-    throw new Error('Deal not found');
-  }
-
-  deal.status = status;
-
-  await deal.save();
-
-  return deal;
-}
-
 async function createDealFromRequest(requestId) {
   const request = await BuyingRequest.findById(requestId);
 
   if (!request) {
-    throw new Error('BuyingRequest not found');
+    throw new AppError('BuyingRequest not found', 404);
   }
 
   const finalQuantity = request.quantity;
@@ -184,7 +141,7 @@ async function createDealFromRequest(requestId) {
   const ranked = rankEligibleOffers(offers, finalQuantity);
 
   if (ranked.length === 0) {
-    throw new Error('No eligible offer found for this request');
+    throw new AppError('No eligible offer found for this request', 400);
   }
 
   const bestOfferResult = ranked[0];
@@ -221,11 +178,7 @@ async function createDealFromRequest(requestId) {
     unitPrice: effectivePrice,
     deliveryFee: 0,
     totalAmount: finalQuantity * effectivePrice,
-    shippingAddress: {
-      street: 'TBD',
-      city: 'TBD',
-      country: 'TBD',
-    },
+    shippingAddress: { street: 'TBD', city: 'TBD', country: 'TBD' },
     phone: 'TBD',
     status: 'PENDING',
   });
@@ -233,13 +186,43 @@ async function createDealFromRequest(requestId) {
   return { deal, order };
 }
 
-module.exports = { 
-  selectBestOffer, 
-  getEffectivePrice, 
-  rankEligibleOffers, 
+async function getDeals() {
+  return Deal.find().populate('supplier').populate('selectedOffer').populate('pool');
+}
+
+async function getDealById(dealId) {
+  const deal = await Deal.findById(dealId)
+    .populate('supplier')
+    .populate('selectedOffer')
+    .populate('pool');
+
+  if (!deal) {
+    throw new AppError('Deal not found', 404);
+  }
+
+  return deal;
+}
+
+async function updateDealStatus(dealId, status) {
+  const deal = await Deal.findById(dealId);
+
+  if (!deal) {
+    throw new AppError('Deal not found', 404);
+  }
+
+  deal.status = status;
+  await deal.save();
+
+  return deal;
+}
+
+module.exports = {
+  selectBestOffer,
+  getEffectivePrice,
+  rankEligibleOffers,
   createDealFromPool,
+  createDealFromRequest,
   getDeals,
   getDealById,
   updateDealStatus,
-  createDealFromRequest
 };
