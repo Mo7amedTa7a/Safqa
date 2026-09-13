@@ -1,13 +1,13 @@
-﻿const express = require('express');
+import express from 'express';
 
-const {
+import {
     getDealsController,
     getDealByIdController,
     updateDealStatusController
-} = require('./deal.controller');
+} from './deal.controller.js';
 
-const authMiddleware = require('../../middlewares/auth.middleware');
-const { restrictTo } = require('../../middlewares/role.middleware');
+import authMiddleware from '../../middlewares/auth.middleware.js';
+import { restrictTo } from '../../middlewares/role.middleware.js';
 
 const router = express.Router();
 
@@ -32,4 +32,4 @@ router.patch(
     updateDealStatusController
 );
 
-module.exports = router;
+export default router;

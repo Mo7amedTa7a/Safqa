@@ -1,3 +1,8 @@
-﻿// Settlement Validation (express-validator)
+// Settlement Validation
 // - Belongs to: Member 5
-// - validateSettlementId: must be valid MongoDB ObjectId
+
+import Joi from "joi";
+
+// No specific body required for these endpoints based on the PDF
+
+export {};

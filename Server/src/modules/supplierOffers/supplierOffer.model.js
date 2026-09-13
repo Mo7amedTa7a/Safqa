@@ -1,4 +1,4 @@
-﻿// SupplierOffer Model
+// SupplierOffer Model
 // - Belongs to: Member 3
 // - Fields: pool (ref), supplier (ref: User), moq, pricingTiers[], deliveryDays, warranty, terms
 // - pricingTier sub-schema: minQty, unitPrice
@@ -7,7 +7,7 @@
 
 
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 // pricingTier sub-schema
 const pricingTierSchema = new mongoose.Schema(
@@ -68,6 +68,6 @@ const SupplierOfferSchema = new mongoose.Schema({
 
 SupplierOfferSchema.index({ pool: 1, supplier: 1 }, { unique: true });
 
-const SupplierOffer = mongoose.model("SupplierOffer",SupplierOfferSchema);
+const SupplierOffer = mongoose.model("SupplierOffer", SupplierOfferSchema);
 
-module.exports = SupplierOffer;
+export default SupplierOffer;

@@ -1,10 +1,10 @@
-﻿const {
+import {
   getDeals,
   getDealById,
   updateDealStatus,
   createDealFromPool,
   createDealFromRequest
-} = require('./deal.service');
+} from './deal.service.js';
 
 const getDealsController = async (req, res) => {
   try {
@@ -85,7 +85,7 @@ const selectDirectOfferController = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getDealsController,
   getDealByIdController,
   updateDealStatusController,

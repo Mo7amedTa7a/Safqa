@@ -1,9 +1,9 @@
-﻿// BuyingPool Controller
+// BuyingPool Controller
 // - Belongs to: Member 3
 // - GET  /          → list all OPEN pools (public or ADMIN)
 // - GET  /:id       → getPoolById
 // - POST /:id/close → closePool (ADMIN)
-const { createBuyingPool,getpool,getPoolById ,closePool} = require('./buyingPool.service');
+import { createBuyingPool, getpool, getPoolById, closePool } from './buyingPool.service.js';
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -32,15 +32,15 @@ const createPool = async (req, res, next) => {
 
 //////////////////////////////////////////////
 
-const getpools=async(req,res,next)=>{
-  try{
+const getpools = async (req, res, next) => {
+  try {
 
-    const pool=await getpool()
+    const pool = await getpool()
     res.status(200).json({
-      success:true,
-      data:pool
+      success: true,
+      data: pool
     })
-  }catch(err){
+  } catch (err) {
     next(err)
   }
  
@@ -82,4 +82,4 @@ const closePoolcontrol = async (req, res, next) => {
 };
 
 
-module.exports = {createPool,getpools,getPoolsById,closePoolcontrol};
+export { createPool, getpools, getPoolsById, closePoolcontrol };

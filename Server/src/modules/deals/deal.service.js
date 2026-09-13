@@ -1,9 +1,9 @@
-﻿const SupplierOffer = require('../supplierOffers/supplierOffer.model');
-const BuyingRequest = require('../buyingRequests/buyingRequest.model');
-const BuyingPool = require('../buyingPools/buyingPool.model');
-const PoolMember = require('../poolMembers/poolMember.model');
-const Deal = require('./deal.model');
-const Order = require('./order.model');
+import SupplierOffer from '../supplierOffers/supplierOffer.model.js';
+import BuyingRequest from '../buyingRequests/buyingRequest.model.js';
+import BuyingPool from '../buyingPools/buyingPool.model.js';
+import PoolMember from '../poolMembers/poolMember.model.js';
+import Deal from './deal.model.js';
+import Order from '../orders/order.model.js';
 
 function getEffectivePrice(pricingTiers, finalQuantity) {
   const sortedTiers = [...pricingTiers].sort(
@@ -233,7 +233,7 @@ async function createDealFromRequest(requestId) {
   return { deal, order };
 }
 
-module.exports = { 
+export { 
   selectBestOffer, 
   getEffectivePrice, 
   rankEligibleOffers, 

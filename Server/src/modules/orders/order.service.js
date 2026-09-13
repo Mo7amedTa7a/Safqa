@@ -1,4 +1,4 @@
-﻿const Order = require('./order.model');
+import Order from './order.model.js';
 
 async function getOrders(user) {
   let filter = {};
@@ -114,7 +114,7 @@ async function cancelOrder(orderId, user) {
   return order;
 }
 
-module.exports = {
+export {
   getOrders,
   getOrderById,
   updateOrderStatus,

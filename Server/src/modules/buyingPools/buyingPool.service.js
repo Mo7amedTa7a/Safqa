@@ -1,13 +1,12 @@
-﻿// BuyingPool Service
+// BuyingPool Service
 // - Belongs to: Member 3
 // - findOrCreatePool(product, variant): find OPEN pool or create new one with 3-day expiry
 // - getPoolById(id): get pool with members and offers
 // - closePool(poolId): set status CLOSED, trigger Deal creation (notify Member 4)
 // - calculateTotalQuantity(poolId): sum all PoolMember quantities
-const { get } = require("mongoose");
-const BuyingRequest = require("../buyingRequests/buyingRequest.model");
-const BuyingPool = require("./buyingPool.model");
-const PoolMember=require("../poolMembers/poolMember.model")
+import BuyingRequest from "../buyingRequests/buyingRequest.model.js";
+import BuyingPool from "./buyingPool.model.js";
+import PoolMember from "../poolMembers/poolMember.model.js";
 
 const createBuyingPool = async (buyingRequestId, buyerId) => {
 
@@ -75,9 +74,9 @@ const getpool = async () => {
 
 /////////////////////////////////////////////////////
 
-const getPoolById=async(poolid)=>{
-    const person=await BuyingPool.findById(poolid)
-    if(!person){
+const getPoolById = async (poolid) => {
+    const person = await BuyingPool.findById(poolid)
+    if (!person) {
         throw new Error("not exist pool")
     }
     return person
@@ -107,5 +106,4 @@ const closePool = async (poolId) => {
 
 
 
-
-module.exports = {createBuyingPool,getpool,getPoolById,closePool};
+export { createBuyingPool, getpool, getPoolById, closePool };

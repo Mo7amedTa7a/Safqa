@@ -1,10 +1,10 @@
-﻿const {
+import {
   getOrders,
   getOrderById,
   updateOrderStatus,
   markOrderReadyForPickup,
   cancelOrder,
-} = require('./order.service');
+} from './order.service.js';
 
 const getOrdersController = async (req, res) => {
   try {
@@ -83,7 +83,7 @@ const cancelOrderController = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getOrdersController,
   getOrderByIdController,
   updateOrderStatusController,

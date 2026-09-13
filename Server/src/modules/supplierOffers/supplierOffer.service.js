@@ -1,4 +1,4 @@
-﻿// SupplierOffer Service
+// SupplierOffer Service
 // - Belongs to: Member 3
 // - createOffer(supplierId, poolId, data): submit a new offer
 // - updateOffer(offerId, supplierId, data): update before pool closes
@@ -7,8 +7,8 @@
 // - checkEligibility(offerId, totalQty): validate MOQ against final quantity
 
 
-const BuyingPool = require("../buyingPools/buyingPool.model");
-const SupplierOffer = require("./supplierOffer.model");
+import BuyingPool from "../buyingPools/buyingPool.model.js";
+import SupplierOffer from "./supplierOffer.model.js";
 
 const createOffer = async (poolid, supplierid, data) => {
 
@@ -150,4 +150,5 @@ const checkEligibility = async (offerId, totalQty) => {
 
   return offer;
 };
-module.exports = {createOffer,updateOffer,withdrawOffer,getOffersForPool,checkEligibility};
+
+export { createOffer, updateOffer, withdrawOffer, getOffersForPool, checkEligibility };

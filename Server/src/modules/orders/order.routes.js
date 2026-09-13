@@ -1,18 +1,19 @@
-﻿const express = require('express');
-const router = express.Router();
+import express from 'express';
 
-const {
+import {
   getOrdersController,
   getOrderByIdController,
   updateOrderStatusController,
   readyForPickupController,
   cancelOrderController,
-} = require('./order.controller');
+} from './order.controller.js';
 
-const authMiddleware = require('../../middlewares/auth.middleware');
-const { restrictTo } = require('../../middlewares/role.middleware');
-const validate = require('../../middlewares/validate.middleware');
-const { updateOrderStatusValidation } = require('./order.validation');
+import authMiddleware from '../../middlewares/auth.middleware.js';
+import { restrictTo } from '../../middlewares/role.middleware.js';
+import validate from '../../middlewares/validate.middleware.js';
+import { updateOrderStatusValidation } from './order.validation.js';
+
+const router = express.Router();
 
 router.get(
   '/',
@@ -50,4 +51,4 @@ router.patch(
   cancelOrderController
 );
 
-module.exports = router;
+export default router;

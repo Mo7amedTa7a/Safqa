@@ -1,16 +1,17 @@
-﻿// PoolMember Service
+// PoolMember Service
 // - Belongs to: Member 3
 // - joinPool(poolId, buyerId, requestId, quantity): add buyer to pool
 // - updateQuantity(memberId, quantity): adjust buyer quantity
 // - leavePool(memberId): set status WITHDRAWN
 // - getPoolMembers(poolId): list all ACTIVE members
 
-const poolMember=require('./poolMember.model')
-const BuyingPool=require("../buyingPools/buyingPool.model")
+import PoolMember from './poolMember.model.js';
+import BuyingPool from "../buyingPools/buyingPool.model.js";
+import BuyingRequest from "../buyingRequests/buyingRequest.model.js";
 
 
 
-const joinPool = async (poolId,buyerId) => {
+const joinPool = async (poolId, buyerId) => {
 
     const pool = await BuyingPool.findById(poolId);
 
@@ -40,7 +41,7 @@ if (request.product.toString() !== pool.product.toString()) {
         throw new Error("Variant does not match the pool");
     }
 
-    const existingMember=await PoolMember.findOne({
+    const existingMember = await PoolMember.findOne({
          pool: poolId,
          buyer: buyerId
     })
@@ -71,8 +72,7 @@ await pool.save();
 
 
 
-return {member: newMember,pool: pool};
-
+return {member: newMember, pool: pool};
 
 
 
@@ -83,40 +83,37 @@ return {member: newMember,pool: pool};
 
 
 
-
-
-
-const updateQuantity=async(poolId,buyerId,nwequantity)=>{
-    const member=await poolMember.findOne({
-        pool:poolId,
-        buyer:buyerId
+const updateQuantity = async (poolId, buyerId, nwequantity) => {
+    const member = await PoolMember.findOne({
+        pool: poolId,
+        buyer: buyerId
 
     })
-    if(!member){
+    if (!member) {
         throw new Error("not exist member")
     }
 
-    if(member.status!=="ACTIVE"){
+    if (member.status !== "ACTIVE") {
         throw new Error("the member not active")
 
     }
-    const different=nwequantity-member.quantity
+    const different = nwequantity - member.quantity
 
-    member.quantity=nwequantity
+    member.quantity = nwequantity
 
-    const pool=await BuyingPool.findById(poolId)
-    if(!pool){
+    const pool = await BuyingPool.findById(poolId)
+    if (!pool) {
         throw new Error("the pool not exist")
     }
 
-    pool.totalQuantity +=different
+    pool.totalQuantity += different
 
     await member.save()
     await pool.save()
     
 
     return {
-        member,pool
+        member, pool
     }
 
 
@@ -127,7 +124,7 @@ const updateQuantity=async(poolId,buyerId,nwequantity)=>{
 
 const leavePool = async (poolId, buyerId) => {
 
-  const member = await poolMember.findOne({
+  const member = await PoolMember.findOne({
     pool: poolId,
     buyer: buyerId
   });
@@ -178,7 +175,7 @@ const getPoolMembersbyid = async (poolId) => {
     throw new Error("The pool does not exist");
   }
 
-  const members = await poolMember.find({
+  const members = await PoolMember.find({
     pool: poolId,
     status: "ACTIVE"
   });
@@ -188,5 +185,4 @@ const getPoolMembersbyid = async (poolId) => {
 
 
 
-
-module.exports={joinPool,updateQuantity,leavePool,getPoolMembersbyid}
+export { joinPool, updateQuantity, leavePool, getPoolMembersbyid };

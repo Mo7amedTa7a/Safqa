@@ -1,9 +1,10 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express';
 
-const { selectOfferController } = require('./deal.controller');
-const authMiddleware = require('../../middlewares/auth.middleware');
-const { restrictTo } = require('../../middlewares/role.middleware');
+import { selectOfferController } from './deal.controller.js';
+import authMiddleware from '../../middlewares/auth.middleware.js';
+import { restrictTo } from '../../middlewares/role.middleware.js';
+
+const router = express.Router();
 
 router.post(
     '/:poolId/select-offer',
@@ -12,4 +13,4 @@ router.post(
     selectOfferController
 );
 
-module.exports = router;
+export default router;
