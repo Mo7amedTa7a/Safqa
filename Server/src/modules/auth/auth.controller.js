@@ -1,4 +1,4 @@
-﻿// Auth Controller
+// Auth Controller
 // - Belongs to: Member 1
 // - register: POST /api/auth/register
 // - login:    POST /api/auth/login
@@ -10,6 +10,9 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import authService from "./auth.service.js";
 
 export const register = asyncHandler(async (req, res) => {
+    if (req.file) {
+        req.body.profileImage = req.file.path;
+    }
     const user = await authService.register(req.body);
 
     //remove password
@@ -34,4 +37,17 @@ export const logout = asyncHandler(async (req, res) => {
         200,
         "Logout successful"
     );
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const result = await authService.forgotPassword(email);
+    return sendSuccess(res, 200, result.message);
+});
+
+export const resetPassword = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+    const result = await authService.resetPassword(token, password);
+    return sendSuccess(res, 200, result.message);
 });

@@ -1,4 +1,4 @@
-﻿// User Model
+// User Model
 // - Belongs to: Member 1
 // - Fields: name, email, password, role, phone, address, isActive, rating, createdAt
 // - Roles enum: BUYER | SUPPLIER | ADMIN | SHIPPING_PARTNER
@@ -6,6 +6,7 @@
 
 
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import mongoose from 'mongoose'
 
 
@@ -56,7 +57,9 @@ const UserSchema = new mongoose.Schema(
             default: 0,
             min: 0,
             max: 5
-        }
+        },
+        resetPasswordToken: String,
+        resetPasswordExpires: Date
 
     }, {
     timestamps: true
@@ -72,6 +75,13 @@ UserSchema.pre("save", async function () {
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password)
+}
+
+UserSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 mins
+    return resetToken;
 }
 
 const User = mongoose.model("User", UserSchema);

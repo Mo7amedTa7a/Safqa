@@ -53,7 +53,7 @@ const settlementSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-settlementSchema.index({ order: 1 });
+
 settlementSchema.index({ supplier: 1, status: 1 });
 settlementSchema.index({ payment: 1 });
 

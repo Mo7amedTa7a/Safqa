@@ -7,28 +7,28 @@ import {
 } from './deal.controller.js';
 
 import authMiddleware from '../../middlewares/auth.middleware.js';
-import { restrictTo } from '../../middlewares/role.middleware.js';
+import authorize from '../../middlewares/role.middleware.js';
 
 const router = express.Router();
 
 router.get(
     '/',
     authMiddleware,
-    restrictTo('ADMIN'),
+    authorize('ADMIN'),
     getDealsController
 );
 
 router.get(
     '/:id',
     authMiddleware,
-    restrictTo('ADMIN', 'SUPPLIER'),
+    authorize('ADMIN', 'SUPPLIER'),
     getDealByIdController
 );
 
 router.patch(
     '/:id/status',
     authMiddleware,
-    restrictTo('ADMIN', 'SUPPLIER'),
+    authorize('ADMIN', 'SUPPLIER'),
     updateDealStatusController
 );
 

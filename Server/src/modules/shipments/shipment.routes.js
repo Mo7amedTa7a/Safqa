@@ -3,7 +3,7 @@
 
 import express from "express";
 import protect from "../../middlewares/auth.middleware.js";
-import { restrictTo } from "../../middlewares/role.middleware.js";
+import authorize from "../../middlewares/role.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
 import {
   createShipmentValidation,
@@ -24,7 +24,7 @@ const router = express.Router();
 router.post(
   "/orders/:orderId/shipments",
   protect,
-  restrictTo("ADMIN"),
+  authorize("ADMIN"),
   validate(createShipmentValidation),
   createShipmentController
 );
@@ -32,7 +32,7 @@ router.post(
 router.get(
   "/shipments",
   protect,
-  restrictTo("SHIPPING_PARTNER", "SUPPLIER", "ADMIN"),
+  authorize("SHIPPING_PARTNER", "SUPPLIER", "ADMIN"),
   getShipmentsController
 );
 
@@ -45,7 +45,7 @@ router.get(
 router.patch(
   "/shipments/:id/assign",
   protect,
-  restrictTo("ADMIN"),
+  authorize("ADMIN"),
   validate(assignShipmentValidation),
   assignShippingPartnerController
 );
@@ -53,7 +53,7 @@ router.patch(
 router.patch(
   "/shipments/:id/status",
   protect,
-  restrictTo("SHIPPING_PARTNER", "ADMIN"),
+  authorize("SHIPPING_PARTNER", "ADMIN"),
   validate(updateShipmentStatusValidation),
   updateShipmentStatusController
 );
@@ -61,7 +61,7 @@ router.patch(
 router.post(
   "/shipments/:id/pickup-proof",
   protect,
-  restrictTo("SHIPPING_PARTNER"),
+  authorize("SHIPPING_PARTNER"),
   addPickupProofController
 );
 

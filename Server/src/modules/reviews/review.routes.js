@@ -3,7 +3,7 @@
 
 import express from "express";
 import protect from "../../middlewares/auth.middleware.js";
-import { restrictTo } from "../../middlewares/role.middleware.js";
+import authorize from "../../middlewares/role.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
 import { createReviewValidation } from "./review.validation.js";
 import {
@@ -16,7 +16,7 @@ const router = express.Router();
 router.post(
   "/orders/:orderId/reviews",
   protect,
-  restrictTo("BUYER", "SUPPLIER"),
+  authorize("BUYER", "SUPPLIER"),
   validate(createReviewValidation),
   createReviewController
 );

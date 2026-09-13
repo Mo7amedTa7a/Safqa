@@ -3,7 +3,7 @@
 
 import express from "express";
 import protect from "../../middlewares/auth.middleware.js";
-import { restrictTo } from "../../middlewares/role.middleware.js";
+import authorize from "../../middlewares/role.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
 import { collectPaymentValidation } from "./payment.validation.js";
 import {
@@ -18,7 +18,7 @@ const router = express.Router();
 router.post(
   "/orders/:orderId/payments/cod",
   protect,
-  restrictTo("SYSTEM", "ADMIN", "SHIPPING_PARTNER"),
+  authorize("SYSTEM", "ADMIN", "SHIPPING_PARTNER"),
   createCodPaymentController
 );
 
@@ -31,7 +31,7 @@ router.get(
 router.patch(
   "/payments/:id/collect",
   protect,
-  restrictTo("SHIPPING_PARTNER", "ADMIN"),
+  authorize("SHIPPING_PARTNER", "ADMIN"),
   validate(collectPaymentValidation),
   collectPaymentController
 );
@@ -39,7 +39,7 @@ router.patch(
 router.patch(
   "/payments/:id/failed",
   protect,
-  restrictTo("SHIPPING_PARTNER", "ADMIN"),
+  authorize("SHIPPING_PARTNER", "ADMIN"),
   failPaymentController
 );
 

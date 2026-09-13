@@ -3,7 +3,7 @@
 
 import express from "express";
 import protect from "../../middlewares/auth.middleware.js";
-import { restrictTo } from "../../middlewares/role.middleware.js";
+import authorize from "../../middlewares/role.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
 import { updateReturnStatusValidation } from "./return.validation.js";
 import {
@@ -19,28 +19,28 @@ const router = express.Router();
 router.post(
   "/disputes/:disputeId/return",
   protect,
-  restrictTo("ADMIN"),
+  authorize("ADMIN"),
   createReturnController
 );
 
 router.get(
   "/returns",
   protect,
-  restrictTo("BUYER", "ADMIN", "SHIPPING_PARTNER"),
+  authorize("BUYER", "ADMIN", "SHIPPING_PARTNER"),
   getReturnsController
 );
 
 router.get(
   "/returns/:id",
   protect,
-  restrictTo("BUYER", "ADMIN", "SHIPPING_PARTNER"),
+  authorize("BUYER", "ADMIN", "SHIPPING_PARTNER"),
   getReturnByIdController
 );
 
 router.patch(
   "/returns/:id/status",
   protect,
-  restrictTo("SHIPPING_PARTNER", "ADMIN"),
+  authorize("SHIPPING_PARTNER", "ADMIN"),
   validate(updateReturnStatusValidation),
   updateReturnStatusController
 );

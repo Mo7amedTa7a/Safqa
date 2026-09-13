@@ -1,4 +1,4 @@
-// App Entry Point
+﻿// App Entry Point
 // - Initialize Express app
 // - Apply global middlewares (CORS, Helmet, rate limiting, body parser)
 // - Mount all module routers (e.g. /api/auth, /api/products ...)
@@ -17,7 +17,6 @@ import apiLimit from './middlewares/rateLimiter.js'
 import authRoutes from "./modules/auth/auth.routes.js"
 import supplierProfileRoutes from "./modules/supplierProfiles/supplierProfile.routes.js"
 import userRoutes from "./modules/users/user.routes.js";
-import adminRoutes from "./modules/users/admin.routes.js";
 import categoryRoutes from "./modules/categories/category.routes.js";
 import productRoutes from "./modules/products/product.routes.js";
 import buyingRequestRoutes from "./modules/buyingRequests/buyingRequest.routes.js";
@@ -29,7 +28,6 @@ import dealSelectionRoutes from "./modules/deals/dealSelection.routes.js";
 import directDealSelectionRoutes from "./modules/deals/directDealSelection.routes.js";
 import orderRoutes from "./modules/orders/order.routes.js";
 
-// Member 5 Routes
 import shipmentRoutes from "./modules/shipments/shipment.routes.js";
 import paymentRoutes from "./modules/payments/payment.routes.js";
 import settlementRoutes from "./modules/settlements/settlement.routes.js";
@@ -50,9 +48,8 @@ app.use(express.json())
 app.use("/api", apiLimit)
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
-app.use("/api/admin", adminRoutes)
-app.use("/api/supplier-profiles", supplierProfileRoutes)
 app.use("/api/categories", categoryRoutes)
+app.use("/api/supplier-profiles", supplierProfileRoutes)
 app.use("/api/products", productRoutes)
 app.use("/api/buying-requests", buyingRequestRoutes)
 app.use("/api/buying-pools", buyingPoolRoutes)

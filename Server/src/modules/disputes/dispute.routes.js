@@ -3,7 +3,7 @@
 
 import express from "express";
 import protect from "../../middlewares/auth.middleware.js";
-import { restrictTo } from "../../middlewares/role.middleware.js";
+import authorize from "../../middlewares/role.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
 import {
   createDisputeValidation,
@@ -23,7 +23,7 @@ const router = express.Router();
 router.post(
   "/orders/:orderId/disputes",
   protect,
-  restrictTo("BUYER"),
+  authorize("BUYER"),
   validate(createDisputeValidation),
   createDisputeController
 );
@@ -31,21 +31,21 @@ router.post(
 router.get(
   "/disputes",
   protect,
-  restrictTo("BUYER", "ADMIN"),
+  authorize("BUYER", "ADMIN"),
   getDisputesController
 );
 
 router.get(
   "/disputes/:id",
   protect,
-  restrictTo("BUYER", "ADMIN"),
+  authorize("BUYER", "ADMIN"),
   getDisputeByIdController
 );
 
 router.patch(
   "/disputes/:id/review",
   protect,
-  restrictTo("ADMIN"),
+  authorize("ADMIN"),
   validate(reviewDisputeValidation),
   reviewDisputeController
 );
@@ -53,7 +53,7 @@ router.patch(
 router.patch(
   "/disputes/:id/resolve",
   protect,
-  restrictTo("ADMIN"),
+  authorize("ADMIN"),
   validate(resolveDisputeValidation),
   resolveDisputeController
 );

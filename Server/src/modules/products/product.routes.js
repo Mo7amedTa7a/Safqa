@@ -1,4 +1,4 @@
-﻿// Product Routes
+// Product Routes
 // - Belongs to: Member 2
 // - Public routes: GET / and GET /:id
 // - Protected routes: POST, PATCH, DELETE require auth middleware
@@ -15,7 +15,7 @@ import {
 
 import protect from "../../middlewares/auth.middleware.js";
 import authorize from "../../middlewares/role.middleware.js";
-import validate from "../../middlewares/validation.middleware.js";
+import validate from "../../middlewares/validate.middleware.js";
 
 import {
     validateCreateProduct,
@@ -31,7 +31,7 @@ const router = express.Router();
 // Public
 router.get(
     "/",
-    validateProductQuery,
+    validate(validateProductQuery, "query"),
     getAllProductsController
 );
 
@@ -40,7 +40,7 @@ router.get(
 // Public
 router.get(
     "/:id",
-    validateProductId,
+    validate(validateProductId, "params"),
     getProductByIdController
 );
 
