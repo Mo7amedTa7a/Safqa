@@ -1,9 +1,8 @@
-﻿// BuyingRequest Model
+// BuyingRequest Model
 // - Belongs to: Member 2
 // - Fields: buyer (ref: User), product (ref: Product), variant, quantity, location
 // - purchaseType: DIRECT | GROUP
 // - status: OPEN | CLOSED | CANCELLED | FULFILLED
-// - Index on buyer+status and product+variant
 
 import mongoose from "mongoose";
 
@@ -46,7 +45,7 @@ const buyingRequestSchema = new mongoose.Schema(
 
         status: {
             type: String,
-            enum: ["OPEN", "CLOSED", "CANCELLED", "FULFILLED"],
+            enum: ["OPEN", "PENDING", "POOLED", "CLOSED", "CANCELLED", "FULFILLED", "COMPLETED"],
             default: "OPEN"
         }
     },
@@ -64,6 +63,12 @@ buyingRequestSchema.index({
 buyingRequestSchema.index({
     product: 1,
     variant: 1,
+    status: 1
+});
+
+buyingRequestSchema.index({
+    buyer: 1,
+    product: 1,
     status: 1
 });
 

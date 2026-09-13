@@ -19,6 +19,7 @@ import authRoutes from "./modules/auth/auth.routes.js"
 import supplierProfileRoutes from "./modules/supplierProfiles/supplierProfile.routes.js"
 import productRoutes from "./modules/products/product.routes.js"
 import buyingRequestRoutes from "./modules/buyingRequests/buyingRequest.routes.js"
+import buyingPoolRoutes from "./modules/buyingPools/buyingPool.routes.js"
 
 const app = express()
 
@@ -34,6 +35,7 @@ app.use("/api/users", userRoutes)
 app.use("/api/supplier-profiles", supplierProfileRoutes)
 app.use("/api/products", productRoutes)
 app.use("/api/buying-requests", buyingRequestRoutes)
+app.use("/api/buying-pools", buyingPoolRoutes)
 
 
 

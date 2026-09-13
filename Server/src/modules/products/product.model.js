@@ -27,6 +27,7 @@ const variantSchema = new mongoose.Schema(
         },
         stock: {
             type: Number,
+            required: true,
             default: 0,
             min: 0,
         },
@@ -45,6 +46,7 @@ const productSchema = new mongoose.Schema(
         },
         description: {
             type: String,
+            required: true,
             trim: true,
             maxlength: 2000,
         },
