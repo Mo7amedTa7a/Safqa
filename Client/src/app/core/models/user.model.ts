@@ -1,10 +1,21 @@
-﻿// Member 1 - User Model
-// _id: string
-// name: string
-// email: string
-// role: 'BUYER' | 'SUPPLIER' | 'ADMIN' | 'SHIPPING_PARTNER'
-// status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
-// phone?: string
-// avatar?: string
-// reputation?: number
-// createdAt / updatedAt: string
+﻿export enum UserRole {
+  BUYER = 'BUYER',
+  SUPPLIER = 'SUPPLIER',
+  SHIPPING_PARTNER = 'SHIPPING_PARTNER',
+  ADMIN = 'ADMIN'
+}
+
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  phone?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    country?: string;
+  };
+  rating?: number;
+  isActive?: boolean;
+}
