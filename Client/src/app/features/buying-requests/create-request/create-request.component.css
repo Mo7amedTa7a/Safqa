@@ -1,1 +1,26 @@
-﻿/* create-request styles */
+:host{display:block;min-height:100vh;background:#F8FAFC}
+.request-page{max-width:980px;margin:auto;padding:28px;color:#0F172A}
+.top{margin-bottom:18px}.top a{color:#0F5132;text-decoration:none;font-weight:700}
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:14px;padding:26px}
+.heading{margin-bottom:24px}.heading span{color:#059669;font-size:12px;font-weight:800}.heading h1{margin:7px 0;font-size:30px}.heading p{margin:0;color:#64748B}
+.product-summary{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px;background:#F8FAFC;border-radius:11px;margin-bottom:20px}
+.product-summary span,.variant-summary label{display:block;color:#64748B;font-size:12px;margin-bottom:5px}
+.product-summary strong{display:block;font-size:19px}.product-summary small{color:#059669}
+select,input{width:100%;padding:11px;border:1px solid #E2E8F0;border-radius:8px;background:#fff;outline:none}
+select:focus,input:focus{border-color:#0F5132}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-grid label{display:grid;gap:7px;font-weight:700}
+.form-grid small{color:#B91C1C;font-weight:400}
+.purchase-type{margin-top:24px}.purchase-type h3{font-size:16px}
+.purchase-type label{display:flex;align-items:flex-start;gap:10px;padding:15px;border:1px solid #E2E8F0;border-radius:10px;margin:9px 0;cursor:pointer}
+.purchase-type label.selected{border-color:#0F5132;background:#F0FDF4}
+.purchase-type input{width:auto;margin-top:4px}
+.purchase-type span{display:grid;gap:3px}.purchase-type small{color:#64748B}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:25px}
+.actions button,.cancel{padding:11px 20px;border-radius:9px;font-weight:700;text-decoration:none}
+.actions button{border:0;background:#0F5132;color:#fff;cursor:pointer}.actions button:disabled{opacity:.6}
+.cancel{border:1px solid #E2E8F0;color:#475569;background:#fff}
+.error{padding:12px;background:#FEF2F2;color:#991B1B;border-radius:8px;margin-bottom:15px}
+.state{text-align:center;padding:35px;color:#64748B}
+@media(max-width:700px){.product-summary,.form-grid{grid-template-columns:1fr}.card{padding:18px}}
+
