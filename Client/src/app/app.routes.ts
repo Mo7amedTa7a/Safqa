@@ -82,6 +82,14 @@ import { OfferDetailsComponent } from './features/supplier-offers/offer-details/
 import { EditOfferComponent } from './features/supplier-offers/edit-offer/edit-offer.component';
 
 
+// Deals
+import { DealListComponent } from './features/deals/deal-list/deal-list.component';
+import { DealDetailsComponent } from './features/deals/deal-details/deal-details.component';
+
+//Orders
+import { OrderListComponent } from './features/orders/order-list/order-list.component';
+import { OrderDetailsComponent } from './features/orders/order-details/order-details.component';
+
 export const routes: Routes = [
 
   // =========================================================
@@ -165,6 +173,7 @@ export const routes: Routes = [
 <<<<<<< HEAD
       { path: 'dashboard', component: DashboardHomeComponent },
 
+<<<<<<< HEAD
       // Products Routes
       { path: 'products', component: ProductListComponent },
       { path: 'products/:id', component: ProductDetailsComponent },
@@ -267,6 +276,8 @@ export const routes: Routes = [
 
 >>>>>>> origin/member_3
 
+=======
+>>>>>>> origin/Member_4
       // User Profile Routes
 
       {
@@ -303,7 +314,22 @@ export const routes: Routes = [
       },
 
 
+      // Deals
+      { path: 'deals', component: DealListComponent },
+      {
+        path: 'deals/:id', component: DealDetailsComponent
+      },
+
+      //Orders
+      {
+        path: 'orders', component: OrderListComponent
+      },
+      {
+        path: 'orders/:id', component: OrderDetailsComponent
+      },
+
       // Admin Routes
+<<<<<<< HEAD
 <<<<<<< HEAD
       {
         path: 'admin/dashboard',
@@ -326,6 +352,14 @@ export const routes: Routes = [
 =======
 
 >>>>>>> origin/member_3
+=======
+      {
+        path: 'admin/users',
+        component: UsersManagementComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN] }
+      },
+>>>>>>> origin/Member_4
       {
         path: 'admin/suppliers',
         component: SuppliersManagementComponent,

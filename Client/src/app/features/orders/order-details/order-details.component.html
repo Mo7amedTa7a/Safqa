@@ -1,1 +1,381 @@
-﻿<!-- order-details template -->
+﻿<div class="order-details-page">
+
+  <!-- Back -->
+  <a routerLink="/orders" class="back-link">
+    ← العودة إلى الطلبات
+  </a>
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="state-message">
+      <p>جاري تحميل تفاصيل الطلب...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (!isLoading && errorMessage) {
+    <div class="state-message error">
+      <p>{{ errorMessage }}</p>
+    </div>
+  }
+
+  <!-- Order -->
+  @if (!isLoading && !errorMessage && order) {
+
+    <!-- Header -->
+    <div class="order-header">
+      <div>
+        <h1>تفاصيل الطلب</h1>
+
+        <p class="order-id">
+          رقم الطلب:
+          <strong>{{ order._id }}</strong>
+        </p>
+      </div>
+
+      <span
+        class="status-badge"
+        [class.status-pending]="order.status === 'PENDING'"
+        [class.status-confirmed]="order.status === 'CONFIRMED'"
+        [class.status-ready]="order.status === 'READY_FOR_PICKUP'"
+        [class.status-shipped]="order.status === 'SHIPPED'"
+        [class.status-delivered]="order.status === 'DELIVERED'"
+        [class.status-returned]="order.status === 'RETURNED'"
+        [class.status-cancelled]="order.status === 'CANCELLED'"
+      >
+        {{ getStatusLabel(order.status) }}
+      </span>
+    </div>
+
+    <!-- Action Message -->
+    @if (actionMessage) {
+      <div class="action-message">
+        {{ actionMessage }}
+      </div>
+    }
+
+    <!-- Status Timeline -->
+    <section class="details-card">
+      <h2>حالة الطلب</h2>
+
+      <div class="status-timeline">
+
+        @for (status of getStatusSteps(); track status) {
+
+          <div
+            class="timeline-step"
+            [class.completed]="isStatusCompleted(status)"
+            [class.current]="order.status === status"
+          >
+
+            <div class="timeline-icon">
+
+              @if (isStatusCompleted(status)) {
+                ✓
+              } @else {
+                {{ $index + 1 }}
+              }
+
+            </div>
+
+            <div class="timeline-content">
+
+              <strong>
+                {{ getStatusLabel(status) }}
+              </strong>
+
+              @if (order.status === status) {
+                <span class="current-label">
+                  الحالة الحالية
+                </span>
+              }
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+    </section>
+
+    <!-- Supplier Actions -->
+    @if (isSupplier()) {
+
+      <section class="details-card actions-card">
+
+        <h2>إجراءات المورد</h2>
+
+        <div class="actions">
+
+          @if (canConfirm()) {
+            <button
+              type="button"
+              class="action-btn confirm-btn"
+              (click)="confirmOrder()"
+              [disabled]="isUpdating"
+            >
+              {{ isUpdating ? 'جاري التحديث...' : 'تأكيد الطلب' }}
+            </button>
+          }
+
+          @if (canMarkReadyForPickup()) {
+            <button
+              type="button"
+              class="action-btn ready-btn"
+              (click)="markReadyForPickup()"
+              [disabled]="isUpdating"
+            >
+              {{ isUpdating ? 'جاري التحديث...' : 'جاهز للاستلام' }}
+            </button>
+          }
+
+          @if (canShip()) {
+            <button
+              type="button"
+              class="action-btn ship-btn"
+              (click)="shipOrder()"
+              [disabled]="isUpdating"
+            >
+              {{ isUpdating ? 'جاري التحديث...' : 'شحن الطلب' }}
+            </button>
+          }
+
+          @if (canDeliver()) {
+            <button
+              type="button"
+              class="action-btn deliver-btn"
+              (click)="deliverOrder()"
+              [disabled]="isUpdating"
+            >
+              {{ isUpdating ? 'جاري التحديث...' : 'تأكيد التوصيل' }}
+            </button>
+          }
+
+        </div>
+
+      </section>
+
+    }
+
+    <!-- Buyer Actions -->
+    @if (isBuyer() && canCancel()) {
+
+      <section class="details-card actions-card">
+
+        <h2>إجراءات الطلب</h2>
+
+        <button
+          type="button"
+          class="action-btn cancel-btn"
+          (click)="cancelOrder()"
+          [disabled]="isUpdating"
+        >
+          {{ isUpdating ? 'جاري الإلغاء...' : 'إلغاء الطلب' }}
+        </button>
+
+      </section>
+
+    }
+
+    <!-- Order Information -->
+    <section class="details-card">
+
+      <h2>معلومات الطلب</h2>
+
+      <div class="details-grid">
+
+        <div class="detail-item">
+          <span>الكمية</span>
+          <strong>{{ order.quantity }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>سعر الوحدة</span>
+          <strong>{{ order.unitPrice | number }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>رسوم التوصيل</span>
+          <strong>{{ order.deliveryFee | number }}</strong>
+        </div>
+
+        <div class="detail-item total-item">
+          <span>الإجمالي</span>
+          <strong>{{ order.totalAmount | number }}</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Supplier -->
+    <section class="details-card">
+
+      <h2>المورد</h2>
+
+      <div class="person-info">
+
+        <div class="person-avatar">
+          {{ getSupplierName().charAt(0) }}
+        </div>
+
+        <div>
+
+          <strong>
+            {{ getSupplierName() }}
+          </strong>
+
+          @if (order.supplier.email) {
+            <p>{{ order.supplier.email }}</p>
+          }
+
+          @if (order.supplier.phone) {
+            <p>{{ order.supplier.phone }}</p>
+          }
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Buyer -->
+    <section class="details-card">
+
+      <h2>العميل</h2>
+
+      <div class="person-info">
+
+        <div class="person-avatar">
+          {{ getBuyerName().charAt(0) }}
+        </div>
+
+        <div>
+
+          <strong>
+            {{ getBuyerName() }}
+          </strong>
+
+          @if (order.buyer.email) {
+            <p>{{ order.buyer.email }}</p>
+          }
+
+          @if (order.buyer.phone) {
+            <p>{{ order.buyer.phone }}</p>
+          }
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Shipping -->
+    <section class="details-card">
+
+      <h2>بيانات الشحن</h2>
+
+      <div class="details-grid">
+
+        <div class="detail-item">
+          <span>العنوان</span>
+          <strong>{{ order.shippingAddress.street }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>المدينة</span>
+          <strong>{{ order.shippingAddress.city }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>الدولة</span>
+          <strong>{{ order.shippingAddress.country }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>رقم الهاتف</span>
+          <strong>{{ order.phone }}</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Related Deal -->
+    @if (order.deal) {
+
+      <section class="details-card">
+
+        <h2>الصفقة المرتبطة</h2>
+
+        <div class="details-grid">
+
+          <div class="detail-item">
+            <span>Deal ID</span>
+            <strong>{{ order.deal._id }}</strong>
+          </div>
+
+          @if (order.deal.finalQuantity !== undefined) {
+            <div class="detail-item">
+              <span>الكمية النهائية</span>
+              <strong>{{ order.deal.finalQuantity }}</strong>
+            </div>
+          }
+
+          @if (order.deal.effectiveUnitPrice !== undefined) {
+            <div class="detail-item">
+              <span>سعر الوحدة</span>
+
+              <strong>
+                {{ order.deal.effectiveUnitPrice | number }}
+              </strong>
+            </div>
+          }
+
+          @if (order.deal.deliveryDays !== undefined) {
+            <div class="detail-item">
+              <span>مدة التوصيل</span>
+
+              <strong>
+                {{ order.deal.deliveryDays }} يوم
+              </strong>
+            </div>
+          }
+
+        </div>
+
+      </section>
+
+    }
+
+    <!-- Dates -->
+    <section class="details-card">
+
+      <h2>التواريخ</h2>
+
+      <div class="details-grid">
+
+        <div class="detail-item">
+          <span>تاريخ الإنشاء</span>
+
+          <strong>
+            {{ order.createdAt | date:'medium' }}
+          </strong>
+        </div>
+
+        <div class="detail-item">
+          <span>آخر تحديث</span>
+
+          <strong>
+            {{ order.updatedAt | date:'medium' }}
+          </strong>
+        </div>
+
+      </div>
+
+    </section>
+
+  }
+
+</div>
