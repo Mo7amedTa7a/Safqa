@@ -1,1 +1,86 @@
-﻿<!-- public-layout template -->
+<div class="auth-page-wrapper">
+  <!-- Top Brand Header -->
+  <header class="auth-header">
+    <a routerLink="/" class="brand-logo" title="الرئيسية">
+      <div class="brand-icon">
+        <i class="bi bi-layers-fill"></i>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">صفقة</span>
+        <span class="brand-tag">للمشتريات والتوريد</span>
+      </div>
+    </a>
+
+    <a routerLink="/" class="btn-back-home">
+      <i class="bi bi-house"></i>
+      <span>الرئيسية</span>
+    </a>
+  </header>
+
+  <div class="auth-container">
+    <!-- Visual Value Proposition Side (Dark Green Hero - Minimal & Airy) -->
+    <div class="auth-hero-panel">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="bi bi-layers-fill"></i>
+          <span>منصة المشتريات الجماعية والتوريد</span>
+        </div>
+        
+        <h2 class="hero-title">
+          قوتك الشرائية أكبر <br>
+          <span class="text-emerald-light">لما تشتري مع غيرك</span>
+        </h2>
+        
+        <p class="hero-desc">
+          وفّر حتى 35% من تكاليف التوريد عبر تجميع طلبك مع شركات أخرى للحصول على أسعار الجملة مباشرة.
+        </p>
+
+        <!-- Stats Bar -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">35%</span>
+            <span class="stat-label">متوسط التوفير</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">48 ساعة</span>
+            <span class="stat-label">إغلاق الصفقات</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">موردون معتمدون</span>
+          </div>
+        </div>
+
+        <!-- Clean Concise Highlights -->
+        <div class="hero-highlights">
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="bi bi-shield-check"></i></div>
+            <span>حماية كاملة للمدفوعات حتى الفحص والاستلام.</span>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="bi bi-tag-fill"></i></div>
+            <span>أسعار جملة حقيقية ومنافسة معلنة بدون أي عمولات خفية.</span>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-icon"><i class="bi bi-patch-check-fill"></i></div>
+            <span>موردون ومصانع معتمدة بسجلات تجارية موثقة.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Footer -->
+      <div class="hero-footer">
+        <span class="security-text"><i class="bi bi-lock-fill"></i> معاملات تجارية آمنة وموثقة 100%</span>
+      </div>
+    </div>
+
+    <!-- Active Form View (Login / Register / Reset Password etc.) -->
+    <div class="auth-form-panel">
+      <div class="auth-form-container">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,148 @@
-﻿<!-- my-profile template -->
+<div class="profile-container" *ngIf="user">
+  <!-- Profile Header Card -->
+  <div class="safqa-card mb-4 profile-header-card">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar-large">
+          <img *ngIf="user.profileImage" [src]="user.profileImage" alt="avatar" class="avatar-img-large">
+          <span *ngIf="!user.profileImage">{{ user.name.charAt(0).toUpperCase() }}</span>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+            <h3 class="mb-0 fw-bold">{{ user.name }}</h3>
+            <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
+              {{ getRoleTitle(user.role) }}
+            </span>
+            <span *ngIf="user.role === UserRole.SUPPLIER && supplierProfile?.verificationStatus === 'PENDING'" class="badge bg-warning text-dark">
+              <i class="bi bi-hourglass-split me-1"></i> قيد المراجعة (PENDING)
+            </span>
+            <span *ngIf="user.role === UserRole.SUPPLIER && supplierProfile?.verificationStatus === 'APPROVED'" class="badge bg-success">
+              <i class="bi bi-patch-check-fill me-1"></i> معتمد (APPROVED)
+            </span>
+            <span *ngIf="user.role === UserRole.SUPPLIER && supplierProfile?.verificationStatus === 'REJECTED'" class="badge bg-danger">
+              <i class="bi bi-x-circle-fill me-1"></i> مرفوض (REJECTED)
+            </span>
+          </div>
+          <div class="user-contacts-row">
+            <span class="contact-pill">
+              <i class="bi bi-envelope-fill text-success"></i>
+              <span dir="ltr">{{ user.email }}</span>
+            </span>
+            <span class="contact-pill" *ngIf="user.phone">
+              <i class="bi bi-telephone-fill text-success"></i>
+              <span dir="ltr">{{ user.phone }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 flex-wrap">
+        <a *ngIf="user.role === UserRole.SUPPLIER" routerLink="/supplier/complete-profile" class="btn-safqa-secondary">
+          <i class="bi bi-building"></i>
+          <span>ملف المنشأة والتوريد</span>
+        </a>
+        <a routerLink="/profile/edit" class="btn-safqa-primary">
+          <i class="bi bi-pencil-square"></i>
+          <span>تعديل البيانات</span>
+        </a>
+        <a routerLink="/profile/change-password" class="btn-safqa-outline">
+          <i class="bi bi-key"></i>
+          <span>كلمة المرور</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Information Grid -->
+  <div class="row g-4">
+    <!-- User Account Summary -->
+    <div class="col-md-6">
+      <div class="safqa-card h-100">
+        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-person-lines-fill text-success"></i>
+          <span>بيانات الاتصال والعنوان</span>
+        </h5>
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-label"><i class="bi bi-person text-success me-1"></i> الاسم الكامل:</span>
+            <span class="info-val">{{ user.name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label"><i class="bi bi-envelope text-success me-1"></i> البريد الإلكتروني:</span>
+            <span class="info-val" dir="ltr">{{ user.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label"><i class="bi bi-telephone text-success me-1"></i> رقم الهاتف:</span>
+            <span class="info-val" dir="ltr">{{ user.phone || 'غير محدد' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label"><i class="bi bi-geo-alt text-success me-1"></i> العنوان التجاري:</span>
+            <span class="info-val">{{ user.address || 'لم يتم إضافة عنوان بعد' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platform Reputation & Activity -->
+    <div class="col-md-6">
+      <div class="safqa-card h-100">
+        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-shield-check text-success"></i>
+          <span>التقييم وموثوقية الحساب</span>
+        </h5>
+        
+        <div class="reputation-box p-3 rounded-3 mb-3 bg-light d-flex align-items-center justify-content-between">
+          <div>
+            <div class="text-muted small">تقييم الموثوقية العام</div>
+            <div class="fs-4 fw-bold text-dark d-flex align-items-center gap-2">
+              <span>{{ user.rating || 5.0 }}</span>
+              <div class="stars text-warning fs-6">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+            </div>
+          </div>
+          <span *ngIf="user.role !== UserRole.SUPPLIER || supplierProfile?.verificationStatus === 'APPROVED'" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+            <i class="bi bi-check-circle-fill"></i> حساب نشط وموثق
+          </span>
+          <span *ngIf="user.role === UserRole.SUPPLIER && supplierProfile?.verificationStatus === 'PENDING'" class="badge bg-warning text-dark border border-warning px-3 py-2">
+            <i class="bi bi-hourglass-split"></i> الحساب قيد التدقيق (PENDING)
+          </span>
+          <span *ngIf="user.role === UserRole.SUPPLIER && supplierProfile?.verificationStatus === 'REJECTED'" class="badge bg-danger text-white border border-danger px-3 py-2">
+            <i class="bi bi-x-circle-fill"></i> طلب مرفوض (REJECTED)
+          </span>
+        </div>
+
+        <!-- Supplier Notice if Pending -->
+        <div *ngIf="user.role === UserRole.SUPPLIER && supplierProfile?.verificationStatus === 'PENDING'" class="alert alert-warning border-warning p-3 rounded-3 mb-3 small">
+          <div class="d-flex align-items-center gap-2 mb-1 fw-bold text-dark">
+            <i class="bi bi-hourglass-split text-warning"></i>
+            <span>حساب المورد قيد التدقيق والمراجعة (PENDING)</span>
+          </div>
+          <p class="text-secondary mb-2 small">
+            تم استلام بيانات السجل التجاري والبطاقة الضريبية وهي قيد الفحص الآن من قِبل إدارة منصة صفقة.
+          </p>
+          <a routerLink="/supplier/complete-profile" class="btn btn-sm btn-outline-dark">
+            <i class="bi bi-building"></i> عرض وتعديل بيانات ملف المورد
+          </a>
+        </div>
+
+        <div class="quick-notice p-3 rounded-3 border">
+          <p class="small text-muted mb-0">
+            <i class="bi bi-info-circle text-primary me-1"></i>
+            حسابات المشترين والموردين المعتمدين في صفقة تخضع لمراقبة الجودة وحماية المعاملات المالية لضمان أعلى معايير الشفافية والتنافسية العادلة.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div *ngIf="isLoading" class="text-center py-5">
+  <div class="spinner-border text-success" role="status"></div>
+  <p class="text-muted mt-2">جاري تحميل بيانات الملف الشخصي...</p>
+</div>

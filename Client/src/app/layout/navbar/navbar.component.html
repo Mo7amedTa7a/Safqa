@@ -1,1 +1,97 @@
-﻿<!-- navbar template -->
+<header class="safqa-navbar">
+  <div class="navbar-content">
+    <!-- Right side: Hamburger Button (for mobile) + Search Box -->
+    <div class="d-flex align-items-center gap-2 flex-grow-1 max-w-search">
+      <!-- Hamburger Toggle Button (mobile only) -->
+      <button 
+        *ngIf="showSidebarToggle"
+        type="button" 
+        class="btn-hamburger d-lg-none" 
+        (click)="toggleSidebar.emit()"
+        title="القائمة الرئيسية"
+        aria-label="القائمة الرئيسية"
+      >
+        <i class="bi bi-list"></i>
+      </button>
+
+      <!-- Search Bar -->
+      <div class="search-container">
+        <span class="search-icon"><i class="bi bi-search"></i></span>
+        <input 
+          type="text" 
+          class="form-control search-input" 
+          placeholder="ابحث عن صفقات، مناقصات، موردين..."
+        />
+      </div>
+    </div>
+
+    <!-- Left side Actions (Notifications, User Profile) -->
+    <div class="navbar-actions">
+      <!-- Action Icons -->
+      <div class="action-buttons">
+        <button class="icon-btn d-none d-sm-flex" title="الرسائل">
+          <i class="bi bi-chat-dots"></i>
+        </button>
+        <button class="icon-btn position-relative" title="التنبيهات">
+          <i class="bi bi-bell"></i>
+          <span class="notification-badge"></span>
+        </button>
+      </div>
+
+      <!-- User Menu -->
+      <div class="user-profile-menu dropdown" *ngIf="currentUser">
+        <div class="user-info-trigger" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="user-text text-end d-none d-md-flex">
+            <span class="user-name">{{ currentUser.name }}</span>
+            <span class="user-role-rating">
+              <span class="role-badge">{{ getRoleLabel(currentUser.role) }}</span>
+              <span class="user-rating"><i class="bi bi-star-fill text-warning"></i> {{ currentUser.rating || 4.9 }}</span>
+            </span>
+          </div>
+          <div class="user-avatar">
+            <img *ngIf="currentUser.profileImage" [src]="currentUser.profileImage" alt="avatar" class="avatar-img-navbar">
+            <span *ngIf="!currentUser.profileImage">{{ currentUser.name.charAt(0).toUpperCase() }}</span>
+          </div>
+        </div>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+          <li class="d-md-none px-3 py-2 border-bottom">
+            <div class="fw-bold">{{ currentUser.name }}</div>
+            <div class="small text-muted">{{ getRoleLabel(currentUser.role) }}</div>
+          </li>
+          <li>
+            <a class="dropdown-item py-2 d-flex align-items-center gap-2" routerLink="/profile">
+              <i class="bi bi-person text-success"></i>
+              <span>الملف الشخصي</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item py-2 d-flex align-items-center gap-2" routerLink="/profile/edit">
+              <i class="bi bi-gear text-muted"></i>
+              <span>تعديل الحساب</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item py-2 d-flex align-items-center gap-2" routerLink="/profile/change-password">
+              <i class="bi bi-shield-lock text-muted"></i>
+              <span>تغيير كلمة المرور</span>
+            </a>
+          </li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <button class="dropdown-item py-2 text-danger d-flex align-items-center gap-2" (click)="logout()">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>تسجيل الخروج</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Guest Login Link if not logged in -->
+      <div *ngIf="!currentUser" class="guest-actions">
+        <a routerLink="/auth/login" class="btn-safqa-outline py-1 px-3">تسجيل الدخول</a>
+        <a routerLink="/auth/register" class="btn-safqa-primary py-1 px-3">انضم الآن</a>
+      </div>
+    </div>
+  </div>
+</header>

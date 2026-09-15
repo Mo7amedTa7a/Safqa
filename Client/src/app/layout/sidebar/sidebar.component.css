@@ -1,1 +1,269 @@
-﻿/* sidebar styles */
+:host {
+  display: block;
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 991px) {
+  :host {
+    display: contents !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+}
+
+.safqa-sidebar {
+  width: 260px;
+  background: #FFFFFF;
+  border-left: 1px solid #E2E8F0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 1000;
+  box-shadow: -2px 0 8px rgba(15, 23, 42, 0.02);
+}
+
+.sidebar-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #F1F5F9;
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  text-decoration: none;
+}
+
+/* Close button for mobile */
+.btn-close-sidebar {
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  color: #475569;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-close-sidebar:hover {
+  background: #E2E8F0;
+  color: #0F172A;
+}
+
+@media (min-width: 992px) {
+  .btn-close-sidebar {
+    display: none !important;
+  }
+}
+
+
+/* Navigation */
+.sidebar-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem 0.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+.nav-section-title {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #94A3B8;
+  padding: 0.5rem 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  color: #475569;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background: #F1F5F9;
+  color: #0F5132;
+}
+
+.nav-item.active {
+  background: #0F5132;
+  color: #FFFFFF;
+}
+
+.nav-item.active .nav-icon {
+  color: #FFFFFF;
+}
+
+.nav-icon {
+  font-size: 1.15rem;
+  color: #64748B;
+}
+
+/* Footer User Card */
+.sidebar-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-card-avatar {
+  width: 38px;
+  height: 38px;
+  background: #0F5132;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-img-sidebar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.user-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.user-card-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0F172A;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.user-card-role {
+  font-size: 0.75rem;
+  color: #64748B;
+}
+
+.btn-logout {
+  background: none;
+  border: none;
+  color: #94A3B8;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: color 0.2s;
+}
+
+.btn-logout:hover {
+  color: #DC2626;
+}
+
+/* Responsive Behavior for Mobile & Tablet: Full Width Drawer (تاخد العرض كله) */
+@media (max-width: 991px) {
+  .safqa-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    background: #FFFFFF !important;
+    z-index: 1050 !important;
+    transform: translateX(100%) !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, visibility 0.3s !important;
+    border-left: none !important;
+    box-shadow: none !important;
+    overflow-y: auto !important;
+  }
+
+  .safqa-sidebar.open {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .btn-close-sidebar {
+    display: flex !important;
+  }
+
+  .sidebar-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .sidebar-nav {
+    flex: initial !important;
+    overflow-y: visible !important;
+    padding: 1rem 1.25rem;
+  }
+
+  .nav-item {
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+  }
+}

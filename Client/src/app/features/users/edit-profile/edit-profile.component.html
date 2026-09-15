@@ -1,1 +1,117 @@
-﻿<!-- edit-profile template -->
+<div class="edit-profile-container">
+  <div class="safqa-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4 class="fw-bold mb-1">تعديل بيانات الحساب</h4>
+        <p class="text-muted small mb-0">يمكنك تحديث بياناتك الأساسية للتواصل وبيانات العنوان.</p>
+      </div>
+      <a routerLink="/profile" class="btn-safqa-outline py-1 px-3">
+        <i class="bi bi-arrow-right"></i>
+        <span>رجوع للملف الشخصي</span>
+      </a>
+    </div>
+
+    <!-- Feedback messages -->
+    <div *ngIf="successMessage" class="alert alert-success d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div>{{ successMessage }}</div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div>{{ errorMessage }}</div>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Profile Picture Upload Section -->
+      <div class="profile-image-section mb-4 text-center">
+        <div class="avatar-edit-wrapper mx-auto position-relative">
+          <div class="avatar-preview">
+            <img *ngIf="profileImage" [src]="profileImage" alt="الصورة الشخصية" class="preview-img">
+            <div *ngIf="!profileImage" class="preview-placeholder">
+              <i class="bi bi-person-fill"></i>
+            </div>
+          </div>
+          <label for="profileImageInput" class="btn-avatar-upload" title="تغيير الصورة">
+            <i class="bi bi-camera-fill"></i>
+          </label>
+          <input 
+            type="file" 
+            id="profileImageInput" 
+            class="d-none" 
+            accept="image/png, image/jpeg, image/jpg, image/webp" 
+            (change)="onFileSelected($event)"
+          />
+        </div>
+        <div class="avatar-actions mt-2 d-flex justify-content-center align-items-center gap-2">
+          <label for="profileImageInput" class="btn btn-sm btn-outline-success">
+            <i class="bi bi-upload me-1"></i>
+            <span>رفع صورة</span>
+          </label>
+          <button 
+            type="button" 
+            *ngIf="profileImage" 
+            class="btn btn-sm btn-outline-danger" 
+            (click)="removeProfileImage()"
+          >
+            <i class="bi bi-trash me-1"></i>
+            <span>حذف الصورة</span>
+          </button>
+        </div>
+        <div *ngIf="imageError" class="text-danger small mt-2">
+          {{ imageError }}
+        </div>
+        <div class="text-muted small mt-1">
+          الصيغ المدعومة: PNG, JPG, WEBP (الحد الأقصى: 5 ميجابايت)
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="editName">الاسم الكامل / اسم المنشأة</label>
+        <input
+          id="editName"
+          type="text"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="profileForm.get('name')?.touched && profileForm.get('name')?.invalid"
+        />
+        <div *ngIf="profileForm.get('name')?.touched && profileForm.get('name')?.invalid" class="invalid-feedback">
+          الاسم مطلوب (3 أحرف على الأقل).
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="editPhone">رقم الهاتف للتواصل</label>
+        <input
+          id="editPhone"
+          type="tel"
+          class="form-control"
+          formControlName="phone"
+          [class.is-invalid]="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid"
+        />
+        <div *ngIf="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid" class="invalid-feedback">
+          رقم الهاتف مطلوب.
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="editAddress">العنوان ومقر النشاط</label>
+        <textarea
+          id="editAddress"
+          rows="3"
+          class="form-control"
+          placeholder="مثال: القاهرة، التجمع الخامس، مبنى رقم..."
+          formControlName="address"
+        ></textarea>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <a routerLink="/profile" class="btn-safqa-outline">إلغاء</a>
+        <button type="submit" class="btn-safqa-primary" [disabled]="isSaving">
+          <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          <span>حفظ التعديلات</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

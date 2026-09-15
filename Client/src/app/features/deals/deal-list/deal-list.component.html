@@ -1,1 +1,192 @@
-﻿<!-- deal-list template -->
+﻿<div class="deal-page" dir="rtl">
+
+  <!-- Header -->
+  <div class="container-fluid py-4">
+
+    <div class="page-header mb-4">
+      <div>
+        <span class="page-label">إدارة الصفقات</span>
+        <h2 class="page-title">قائمة الصفقات</h2>
+        <p class="page-subtitle">
+          تابع الصفقات الخاصة بك وتفاصيل العروض والأسعار
+        </p>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div
+      *ngIf="isLoading"
+      class="loading-container d-flex justify-content-center align-items-center"
+    >
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">جاري التحميل...</span>
+      </div>
+
+      <span class="me-3">جاري تحميل الصفقات...</span>
+    </div>
+
+    <!-- Error -->
+    <div
+      *ngIf="!isLoading && errorMessage"
+      class="alert custom-alert-error"
+      role="alert"
+    >
+      {{ errorMessage }}
+    </div>
+
+    <!-- Empty State -->
+    <div
+      *ngIf="!isLoading && !errorMessage && deals.length === 0"
+      class="empty-state"
+    >
+      <div class="empty-icon">
+        📦
+      </div>
+
+      <h4>لا توجد صفقات حالياً</h4>
+
+      <p>
+        لا توجد صفقات متاحة لعرضها في الوقت الحالي.
+      </p>
+    </div>
+
+    <!-- Deals -->
+    <div
+      *ngIf="!isLoading && !errorMessage && deals.length > 0"
+      class="row g-4"
+    >
+
+      <div
+        class="col-12 col-lg-6"
+        *ngFor="let deal of deals"
+      >
+
+        <div class="deal-card h-100">
+
+          <!-- Card Header -->
+          <div class="deal-card-header">
+
+            <div>
+              <span class="deal-label">
+                المورد
+              </span>
+
+              <h5 class="supplier-name mb-0">
+                {{ deal.supplier.name }}
+              </h5>
+            </div>
+
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-active': deal.status === 'ACTIVE',
+                'status-completed': deal.status === 'COMPLETED',
+                'status-cancelled': deal.status === 'CANCELLED'
+              }"
+            >
+              {{ deal.status }}
+            </span>
+
+          </div>
+
+          <!-- Divider -->
+          <div class="deal-divider"></div>
+
+          <!-- Main Info -->
+          <div class="row g-3 mb-4">
+
+            <!-- Quantity -->
+            <div class="col-6">
+
+              <div class="info-box">
+
+                <span class="info-label">
+                  الكمية النهائية
+                </span>
+
+                <div class="info-value">
+                  {{ deal.finalQuantity }}
+                </div>
+
+                <span class="info-unit">
+                  وحدة
+                </span>
+
+              </div>
+
+            </div>
+
+            <!-- Price -->
+            <div class="col-6">
+
+              <div class="info-box price-box">
+
+                <span class="info-label">
+                  سعر الوحدة
+                </span>
+
+                <div class="info-value">
+                  {{ deal.effectiveUnitPrice | number }}
+                </div>
+
+                <span class="info-unit">
+                  جنيه
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Additional Details -->
+          <div class="deal-details">
+
+            <div class="detail-item">
+
+              <span class="detail-label">
+                مدة التوصيل
+              </span>
+
+              <span class="detail-value">
+                {{ deal.deliveryDays }} أيام
+              </span>
+
+            </div>
+
+            <div class="detail-item">
+
+              <span class="detail-label">
+                رقم الصفقة
+              </span>
+
+              <span class="detail-value deal-id">
+                #{{ deal._id }}
+              </span>
+
+            </div>
+
+          </div>
+
+          <!-- Footer -->
+          <div class="deal-card-footer">
+
+            <a
+              [routerLink]="['/deals', deal._id]"
+              class="btn btn-primary-custom"
+            >
+            عرض التفاصيل
+            <span class="arrow">←</span>
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

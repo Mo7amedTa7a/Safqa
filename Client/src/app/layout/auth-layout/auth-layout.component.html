@@ -1,1 +1,27 @@
-﻿<!-- auth-layout template -->
+<div class="dashboard-wrapper">
+  <!-- Backdrop Overlay for Mobile Screen -->
+  <div 
+    *ngIf="showSidebar"
+    class="sidebar-backdrop" 
+    [class.show]="isSidebarOpen"
+    (click)="closeSidebar()"
+  ></div>
+
+  <!-- Right Sidebar (RTL) - Only shown when approved or for non-suppliers -->
+  <app-sidebar 
+    *ngIf="showSidebar"
+    [isOpen]="isSidebarOpen" 
+    (closeSidebar)="closeSidebar()"
+  ></app-sidebar>
+
+  <!-- Main Content Area -->
+  <div class="main-viewport" [class.no-sidebar]="!showSidebar">
+    <!-- Top Navbar with toggle action -->
+    <app-navbar [showSidebarToggle]="showSidebar" (toggleSidebar)="toggleSidebar()"></app-navbar>
+
+    <!-- Page Content Router Outlet -->
+    <main class="content-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -30,6 +30,11 @@ const SupplierOfferSchema = new mongoose.Schema({
       ref: "BuyingPool",
     },
 
+    buyingRequest: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "BuyingRequest",
+    },
+
     supplier: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

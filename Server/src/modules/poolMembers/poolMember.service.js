@@ -27,7 +27,7 @@ const joinPool = async (poolId, buyerId) => {
     const request = await BuyingRequest.findOne({
         buyer: buyerId,
         purchaseType: "GROUP",
-        status: "PENDING"
+        status: "OPEN"
     });
     if (!request) {
         throw new Error("No valid buying request found");

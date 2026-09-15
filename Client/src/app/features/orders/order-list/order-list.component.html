@@ -1,1 +1,236 @@
-﻿<!-- order-list template -->
+﻿<div class="order-page" dir="rtl">
+
+  <!-- Page Header -->
+  <div class="page-header">
+
+    <div>
+      <span class="page-label">SAFQA</span>
+
+      <h1>طلباتي</h1>
+
+      <p>
+        تابع طلباتك وحالة كل طلب وتفاصيله.
+      </p>
+    </div>
+
+  </div>
+
+
+  <!-- Loading -->
+  <div
+    *ngIf="isLoading"
+    class="state-card text-center"
+  >
+
+    <div
+      class="spinner-border text-success"
+      role="status"
+    ></div>
+
+    <p class="mt-3 mb-0">
+      جاري تحميل الطلبات...
+    </p>
+
+  </div>
+
+
+  <!-- Error -->
+  <div
+    *ngIf="!isLoading && errorMessage"
+    class="state-card error-state"
+  >
+
+    <div class="state-icon">
+      !
+    </div>
+
+    <h4>حدث خطأ</h4>
+
+    <p>
+      {{ errorMessage }}
+    </p>
+
+    <button
+      class="btn btn-primary-custom"
+      (click)="loadOrders()"
+    >
+      إعادة المحاولة
+    </button>
+
+  </div>
+
+
+  <!-- Empty -->
+  <div
+    *ngIf="!isLoading && !errorMessage && orders.length === 0"
+    class="state-card text-center"
+  >
+
+    <div class="empty-icon">
+      📦
+    </div>
+
+    <h4>
+      لا توجد طلبات حالياً
+    </h4>
+
+    <p>
+      عندما يتم إنشاء طلباتك ستظهر هنا.
+    </p>
+
+  </div>
+
+
+  <!-- Orders -->
+  <div
+    *ngIf="!isLoading && !errorMessage && orders.length > 0"
+    class="row g-4"
+  >
+
+    <div
+      class="col-12 col-lg-6"
+      *ngFor="let order of orders"
+    >
+
+      <div class="order-card">
+
+        <!-- Card Header -->
+        <div class="order-card-header">
+
+          <div>
+
+            <span class="order-label">
+              رقم الطلب
+            </span>
+
+            <h5>
+              #{{ order._id.slice(-8) }}
+            </h5>
+
+          </div>
+
+
+          <span
+            class="status-badge"
+            [ngClass]="'status-' + order.status.toLowerCase()"
+          >
+            {{ order.status }}
+          </span>
+
+        </div>
+
+
+        <!-- Supplier -->
+        <div class="supplier-section">
+
+          <div class="supplier-avatar">
+
+            {{ getSupplierName(order).charAt(0) }}
+
+          </div>
+
+          <div>
+
+            <span class="info-label">
+              المورد
+            </span>
+
+            <strong>
+              {{ getSupplierName(order) }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- Order Info -->
+        <div class="order-info-grid">
+
+          <div class="info-box">
+
+            <span>
+              الكمية
+            </span>
+
+            <strong>
+              {{ order.quantity }}
+            </strong>
+
+          </div>
+
+
+          <div class="info-box">
+
+            <span>
+              سعر الوحدة
+            </span>
+
+            <strong>
+              {{ order.unitPrice | number }} جنيه
+            </strong>
+
+          </div>
+
+
+          <div class="info-box">
+
+            <span>
+              رسوم التوصيل
+            </span>
+
+            <strong>
+              {{ order.deliveryFee | number }} جنيه
+            </strong>
+
+          </div>
+
+
+          <div class="info-box total-box">
+
+            <span>
+              الإجمالي
+            </span>
+
+            <strong>
+              {{ order.totalAmount | number }} جنيه
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- Footer -->
+        <div class="order-card-footer">
+
+          <div>
+
+            <span class="info-label">
+              تاريخ الطلب
+            </span>
+
+            <span>
+              {{ order.createdAt | date:'dd/MM/yyyy' }}
+            </span>
+
+          </div>
+
+
+          <a
+            [routerLink]="['/orders', order._id]"
+            class="btn btn-primary-custom"
+          >
+            عرض التفاصيل
+            <span class="arrow">←</span>
+          </a>
+          
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

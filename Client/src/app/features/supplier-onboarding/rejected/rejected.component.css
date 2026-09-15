@@ -1,1 +1,19 @@
-﻿/* rejected styles */
+.rejected-card {
+  max-width: 650px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+.status-icon-circle {
+  width: 72px;
+  height: 72px;
+  background: #FEE2E2;
+  color: #DC2626;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}

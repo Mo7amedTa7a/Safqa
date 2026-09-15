@@ -1,1 +1,262 @@
-﻿/* public-layout styles */
+/* ==========================================================================
+   Public Auth Layout Styling (Safqa Split Screen)
+   ========================================================================== */
+
+.auth-page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFF;
+  direction: rtl;
+  text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   Top Brand Header
+   -------------------------------------------------------------------------- */
+.auth-header {
+  height: 72px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  z-index: 10;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 0.5rem 1.1rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-back-home:hover {
+  background-color: #F1F5F9;
+  color: #0F5132;
+  border-color: #CBD5E1;
+}
+
+/* --------------------------------------------------------------------------
+   Two-Column Split Container (Hero Right + Form Left)
+   -------------------------------------------------------------------------- */
+.auth-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 72px);
+}
+
+/* --------------------------------------------------------------------------
+   Hero Panel (Right column in RTL: Visual Value Proposition)
+   -------------------------------------------------------------------------- */
+.auth-hero-panel {
+  background: radial-gradient(circle at 15% 20%, rgba(52, 211, 153, 0.12) 0%, transparent 45%),
+              radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+              linear-gradient(145deg, #0A3622 0%, #0F5132 55%, #064E3B 100%);
+  color: #FFFFFF;
+  padding: 4rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  color: #6EE7B7;
+  padding: 0.45rem 1.1rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: fit-content;
+  margin-bottom: 2rem;
+}
+
+.hero-title {
+  font-size: 2.35rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #FFFFFF;
+  margin-bottom: 1.25rem;
+}
+
+.text-emerald-light {
+  color: #34D399;
+  font-weight: 800;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: #D1FAE5;
+  margin-bottom: 2.25rem;
+  max-width: 500px;
+  opacity: 0.95;
+}
+
+/* Stats Bar */
+.hero-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  padding: 1.25rem 1.75rem;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+  backdrop-filter: blur(6px);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-number {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #A7F3D0;
+  font-weight: 600;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Concise Highlights */
+.hero-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  max-width: 500px;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.95rem;
+  color: #E2E8F0;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.highlight-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(52, 211, 153, 0.18);
+  border: 1px solid rgba(52, 211, 153, 0.32);
+  color: #34D399;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+
+/* Security Footer */
+.hero-footer {
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.security-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #A7F3D0;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Form Panel (Left column in RTL: Full Left Space, Clean Seamless White)
+   -------------------------------------------------------------------------- */
+.auth-form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 2.5rem;
+  background-color: #FFFFFF;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.auth-form-container router-outlet {
+  display: none !important;
+}
+
+.auth-form-container > * {
+  display: block;
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 991px) {
+  .auth-header {
+    padding: 0 1.25rem;
+  }
+
+  .auth-container {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-hero-panel {
+    display: none; /* Hide hero on tablets and mobile to prioritize form */
+  }
+
+  .auth-form-panel {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .auth-form-container {
+    max-width: 500px;
+  }
+}

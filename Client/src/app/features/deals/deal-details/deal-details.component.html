@@ -1,1 +1,381 @@
-﻿<!-- deal-details template -->
+﻿<div class="deal-details-page">
+
+  <!-- Back -->
+  <a routerLink="/deals" class="back-link">
+    ← العودة إلى الصفقات
+  </a>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="state-box loading">
+    <div class="spinner"></div>
+    <p>جاري تحميل تفاصيل الصفقة...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!isLoading && errorMessage" class="state-box error">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Deal -->
+  <div *ngIf="!isLoading && deal" class="deal-container">
+
+    <!-- Header -->
+    <div class="deal-header">
+      <div>
+        <span class="deal-label">Deal</span>
+        <h1>تفاصيل الصفقة</h1>
+        <p class="deal-id">
+          {{ deal._id }}
+        </p>
+      </div>
+
+      <span
+        class="status-badge"
+        [class.active]="deal.status === 'ACTIVE'"
+        [class.completed]="deal.status === 'COMPLETED'"
+        [class.cancelled]="deal.status === 'CANCELLED'"
+      >
+        {{ deal.status }}
+      </span>
+    </div>
+
+    <!-- Main Summary -->
+    <div class="summary-grid">
+
+      <div class="info-card">
+        <span class="info-label">المورد</span>
+        <strong>{{ deal.supplier.name }}</strong>
+      </div>
+
+      <div class="info-card">
+        <span class="info-label">تقييم المورد</span>
+        <strong>
+          ⭐ {{ deal.supplier.rating}}
+        </strong>
+      </div>
+
+      <div class="info-card">
+        <span class="info-label">الكمية النهائية</span>
+        <strong>
+          {{ deal.finalQuantity }}
+        </strong>
+      </div>
+
+      <div class="info-card">
+        <span class="info-label">سعر الوحدة</span>
+        <strong>
+          {{ deal.effectiveUnitPrice | number }}
+        </strong>
+      </div>
+
+      <div class="info-card">
+        <span class="info-label">مدة التوصيل</span>
+        <strong>
+          {{ deal.deliveryDays }} يوم
+        </strong>
+      </div>
+
+    </div>
+
+    <!-- Selected Offer -->
+    <section class="details-section">
+
+      <div class="section-title">
+        <h2>العرض المختار</h2>
+      </div>
+
+      <div class="offer-grid">
+
+        <div class="detail-item">
+          <span>MOQ</span>
+          <strong>
+            {{ deal.selectedOffer.moq }}
+          </strong>
+        </div>
+
+        <div class="detail-item">
+          <span>مدة التوصيل</span>
+          <strong>
+            {{ deal.selectedOffer.deliveryDays }} يوم
+          </strong>
+        </div>
+
+        <div class="detail-item">
+          <span>الضمان</span>
+          <strong>
+            {{ deal.selectedOffer.warranty || 'غير محدد' }}
+          </strong>
+        </div>
+
+        <div class="detail-item">
+          <span>الشروط</span>
+          <strong>
+            {{ deal.selectedOffer.terms || 'غير محدد' }}
+          </strong>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Pricing Tiers -->
+    <section class="details-section">
+
+      <div class="section-title">
+        <h2>شرائح الأسعار</h2>
+      </div>
+
+      <div class="pricing-table">
+
+        <div class="pricing-header">
+          <span>الحد الأدنى للكمية</span>
+          <span>سعر الوحدة</span>
+        </div>
+
+        <div
+          class="pricing-row"
+          *ngFor="let tier of deal.selectedOffer.pricingTiers"
+        >
+          <span>
+            {{ tier.minQty }}
+          </span>
+
+          <strong>
+            {{ tier.unitPrice | number }}
+          </strong>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Dates -->
+    <section class="details-section">
+
+      <div class="section-title">
+        <h2>معلومات الصفقة</h2>
+      </div>
+
+      <div class="dates-grid">
+
+        <div class="detail-item">
+          <span>تاريخ الإنشاء</span>
+          <strong>
+            {{ deal.createdAt | date:'medium' }}
+          </strong>
+        </div>
+
+        <div class="detail-item">
+          <span>آخر تحديث</span>
+          <strong>
+            {{ deal.updatedAt | date:'medium' }}
+          </strong>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Create Order -->
+    <section
+      *ngIf="canCreateOrder()"
+      class="create-order-section"
+    >
+
+      <div class="order-action-header">
+        <div>
+          <span class="deal-label">Buyer</span>
+          <h2>جاهز لإنشاء الطلب؟</h2>
+
+          <p>
+            بعد تأكيد الطلب، سيتم إنشاء Order خاص بك باستخدام الكمية
+            والسعر المحددين في الصفقة.
+          </p>
+        </div>
+
+        <button
+          *ngIf="!showOrderForm"
+          type="button"
+          class="create-order-btn"
+          (click)="openOrderForm()"
+        >
+          🛒 إنشاء طلب
+        </button>
+      </div>
+
+      <!-- Order Form -->
+      <div *ngIf="showOrderForm" class="order-form-container">
+
+        <div class="form-header">
+          <div>
+            <h3>بيانات الشحن</h3>
+            <p>
+              أدخل البيانات المطلوبة لإنشاء الطلب.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="close-btn"
+            (click)="closeOrderForm()"
+            [disabled]="isCreatingOrder"
+          >
+            ×
+          </button>
+        </div>
+
+        <!-- Error -->
+        <div
+          *ngIf="orderErrorMessage"
+          class="form-message error-message"
+        >
+          {{ orderErrorMessage }}
+        </div>
+
+        <!-- Success -->
+        <div
+          *ngIf="orderSuccessMessage"
+          class="form-message success-message"
+        >
+          {{ orderSuccessMessage }}
+        </div>
+
+        <form
+          *ngIf="!orderSuccessMessage"
+          (ngSubmit)="createOrder()"
+        >
+
+          <div class="form-grid">
+
+            <!-- Street -->
+            <div class="form-group full-width">
+              <label for="street">
+                العنوان بالتفصيل
+              </label>
+
+              <input
+                id="street"
+                type="text"
+                name="street"
+                [(ngModel)]="shippingAddress.street"
+                placeholder="مثال: 15 شارع أحمد"
+                required
+                [disabled]="isCreatingOrder"
+              />
+            </div>
+
+            <!-- City -->
+            <div class="form-group">
+              <label for="city">
+                المدينة
+              </label>
+
+              <input
+                id="city"
+                type="text"
+                name="city"
+                [(ngModel)]="shippingAddress.city"
+                placeholder="مثال: Cairo"
+                required
+                [disabled]="isCreatingOrder"
+              />
+            </div>
+
+            <!-- Country -->
+            <div class="form-group">
+              <label for="country">
+                الدولة
+              </label>
+
+              <input
+                id="country"
+                type="text"
+                name="country"
+                [(ngModel)]="shippingAddress.country"
+                placeholder="مثال: Egypt"
+                required
+                [disabled]="isCreatingOrder"
+              />
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group full-width">
+              <label for="phone">
+                رقم الهاتف
+              </label>
+
+              <input
+                id="phone"
+                type="tel"
+                name="phone"
+                [(ngModel)]="phone"
+                placeholder="مثال: 01012345678"
+                required
+                [disabled]="isCreatingOrder"
+              />
+            </div>
+
+          </div>
+
+          <!-- Order Summary -->
+          <div class="order-summary">
+
+            <div>
+              <span>الكمية</span>
+              <strong>
+                سيتم تحديدها تلقائيًا
+              </strong>
+            </div>
+
+            <div>
+              <span>سعر الوحدة</span>
+              <strong>
+                {{ deal.effectiveUnitPrice | number }}
+              </strong>
+            </div>
+
+            <div>
+              <span>رسوم التوصيل</span>
+              <strong>
+                0
+              </strong>
+            </div>
+
+          </div>
+
+          <div class="form-actions">
+
+            <button
+              type="button"
+              class="cancel-btn"
+              (click)="closeOrderForm()"
+              [disabled]="isCreatingOrder"
+            >
+              إلغاء
+            </button>
+
+            <button
+              type="submit"
+              class="submit-order-btn"
+              [disabled]="isCreatingOrder"
+            >
+              <span *ngIf="!isCreatingOrder">
+                تأكيد وإنشاء الطلب
+              </span>
+
+              <span *ngIf="isCreatingOrder">
+                جاري إنشاء الطلب...
+              </span>
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
