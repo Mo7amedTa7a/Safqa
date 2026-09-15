@@ -81,100 +81,55 @@ import { MyOffersComponent } from './features/supplier-offers/my-offers/my-offer
 import { OfferDetailsComponent } from './features/supplier-offers/offer-details/offer-details.component';
 import { EditOfferComponent } from './features/supplier-offers/edit-offer/edit-offer.component';
 
-
 // Deals
 import { DealListComponent } from './features/deals/deal-list/deal-list.component';
 import { DealDetailsComponent } from './features/deals/deal-details/deal-details.component';
 
-//Orders
+// Orders
 import { OrderListComponent } from './features/orders/order-list/order-list.component';
 import { OrderDetailsComponent } from './features/orders/order-details/order-details.component';
 
 export const routes: Routes = [
-
-  // =========================================================
   // Public Landing / Home Page
-  // =========================================================
-
   {
     path: '',
     component: HomeComponent,
     pathMatch: 'full'
   },
-
   {
     path: 'home',
     redirectTo: '',
     pathMatch: 'full'
   },
 
-
-  // =========================================================
   // Public Auth Routes
-  // =========================================================
-
   {
     path: 'auth',
     component: PublicLayoutComponent,
-
     children: [
-
-      {
-        path: 'login',
-        component: LoginComponent
-      },
-
-      {
-        path: 'register',
-        component: RegisterComponent
-      },
-
-      {
-        path: 'forgot-password',
-        component: ForgotPasswordComponent
-      },
-
-      {
-        path: 'reset-password/:token',
-        component: ResetPasswordComponent
-      },
-
-      {
-        path: '',
-        redirectTo: 'login',
-        pathMatch: 'full'
-      }
-
+      { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
+      { path: 'forgot-password', component: ForgotPasswordComponent },
+      { path: 'reset-password/:token', component: ResetPasswordComponent },
+      { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
-
   },
 
-
-  // =========================================================
   // Unauthorized
-  // =========================================================
-
   {
     path: 'unauthorized',
     component: UnauthorizedComponent
   },
 
-
-  // =========================================================
   // Authenticated Application / Dashboard Routes
-  // =========================================================
-
   {
     path: '',
     component: AuthLayoutComponent,
     canActivate: [authGuard],
-
     children: [
-<<<<<<< HEAD
       { path: 'dashboard', component: DashboardHomeComponent },
 
-<<<<<<< HEAD
-      // Products Routes
+      // Products & Categories Routes
       { path: 'products', component: ProductListComponent },
       { path: 'products/:id', component: ProductDetailsComponent },
       { path: 'categories', component: CategoryListComponent },
@@ -185,186 +140,84 @@ export const routes: Routes = [
         data: { roles: [UserRole.ADMIN, UserRole.SUPPLIER] }
       },
 
-      // Buying Requests Routes
+      // Buying Requests Routes (المناقصات والطلبات)
       { path: 'buying-requests', component: MyRequestsComponent },
       { path: 'buying-requests/create', component: BuyingRequestCreateComponent },
       { path: 'buying-requests/:id/edit', component: BuyingRequestEditComponent },
       { path: 'buying-requests/:id', component: BuyingRequestDetailsComponent },
-=======
 
-      // =====================================================
-      // Dashboard
-      // =====================================================
-
-      {
-        path: 'dashboard',
-        component: DashboardHomeComponent
-      },
-
-
-      // =====================================================
-      // Buying Pools
-      // =====================================================
-
-      {
-        path: 'buying-pools',
-        component: PoolListComponent
-      },
-
-      {
-        path: 'buying-pools/:id',
-        component: PoolDetailsComponent
-      },
-
-      {
-        path: 'buying-pools/:id/join',
-        component: JoinComponent
-      },
-
-
-      // Member 3 - Supplier Offers
-
-
-      {
-        path: 'supplier/available-pools',
-        component: AvailableOffersComponent,
-        canActivate: [roleGuard],
-        data: {
-          roles: [UserRole.SUPPLIER]
-        }
-      },
-
-
+      // Buying Pools Routes (تجمعات الشراء)
+      { path: 'buying-pools', component: PoolListComponent },
+      { path: 'buying-pools/:id', component: PoolDetailsComponent },
+      { path: 'buying-pools/:id/join', component: JoinComponent },
       {
         path: 'buying-pools/:id/create-offer',
         component: CreateOfferComponent,
         canActivate: [roleGuard],
-        data: {
-          roles: [UserRole.SUPPLIER]
-        }
+        data: { roles: [UserRole.SUPPLIER] }
       },
 
-
+      // Supplier Offers Routes
+      {
+        path: 'supplier/available-pools',
+        component: AvailableOffersComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.SUPPLIER] }
+      },
       {
         path: 'supplier/my-offers',
         component: MyOffersComponent,
         canActivate: [roleGuard],
-        data: {
-          roles: [UserRole.SUPPLIER]
-        }
+        data: { roles: [UserRole.SUPPLIER] }
       },
-
       {
         path: 'supplier/offer-details/:id',
         component: OfferDetailsComponent,
         canActivate: [roleGuard],
-        data: {
-          roles: [UserRole.SUPPLIER]
-        }
+        data: { roles: [UserRole.SUPPLIER] }
       },
-
-
-
       {
         path: 'supplier/edit-offer/:id',
         component: EditOfferComponent,
         canActivate: [roleGuard],
-        data: {
-          roles: [UserRole.SUPPLIER]
-        }
+        data: { roles: [UserRole.SUPPLIER] }
       },
 
->>>>>>> origin/member_3
-
-=======
->>>>>>> origin/Member_4
       // User Profile Routes
-
-      {
-        path: 'profile',
-        component: MyProfileComponent
-      },
-
-      {
-        path: 'profile/edit',
-        component: EditProfileComponent
-      },
-
-      {
-        path: 'profile/change-password',
-        component: ChangePasswordComponent
-      },
-
+      { path: 'profile', component: MyProfileComponent },
+      { path: 'profile/edit', component: EditProfileComponent },
+      { path: 'profile/change-password', component: ChangePasswordComponent },
 
       // Supplier Onboarding Routes
-
-      {
-        path: 'supplier/complete-profile',
-        component: CompleteProfileComponent
-      },
-
-      {
-        path: 'supplier/pending-review',
-        component: PendingReviewComponent
-      },
-
-      {
-        path: 'supplier/rejected',
-        component: RejectedComponent
-      },
-
+      { path: 'supplier/complete-profile', component: CompleteProfileComponent },
+      { path: 'supplier/pending-review', component: PendingReviewComponent },
+      { path: 'supplier/rejected', component: RejectedComponent },
 
       // Deals
       { path: 'deals', component: DealListComponent },
-      {
-        path: 'deals/:id', component: DealDetailsComponent
-      },
+      { path: 'deals/:id', component: DealDetailsComponent },
 
-      //Orders
-      {
-        path: 'orders', component: OrderListComponent
-      },
-      {
-        path: 'orders/:id', component: OrderDetailsComponent
-      },
+      // Orders
+      { path: 'orders', component: OrderListComponent },
+      { path: 'orders/:id', component: OrderDetailsComponent },
 
       // Admin Routes
-<<<<<<< HEAD
-<<<<<<< HEAD
       {
         path: 'admin/dashboard',
         component: AdminDashboardComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN] }
       },
-=======
-
->>>>>>> origin/member_3
-      {
-        path: 'admin/users',
-        component: UsersManagementComponent,
-        canActivate: [roleGuard],
-        data: {
-          roles: [UserRole.ADMIN]
-        }
-      },
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/member_3
-=======
       {
         path: 'admin/users',
         component: UsersManagementComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN] }
       },
->>>>>>> origin/Member_4
       {
         path: 'admin/suppliers',
         component: SuppliersManagementComponent,
         canActivate: [roleGuard],
-<<<<<<< HEAD
         data: { roles: [UserRole.ADMIN] }
       },
       {
@@ -446,27 +299,17 @@ export const routes: Routes = [
         data: { roles: [UserRole.BUYER, UserRole.SUPPLIER] }
       },
 
-      // Notifications Route (all authenticated users)
+      // Notifications Route
       {
         path: 'notifications',
         component: NotificationCenterComponent
-=======
-        data: {
-          roles: [UserRole.ADMIN]
-        }
->>>>>>> origin/member_3
       }
-
     ]
-
   },
 
-
   // Fallback
-
   {
     path: '**',
     redirectTo: ''
   }
-
 ];

@@ -32,9 +32,33 @@
           </a>
         </li>
         <li>
+          <a routerLink="/buying-pools" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-people-fill nav-icon"></i>
+            <span>تجمعات الشراء</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/buying-requests" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-file-earmark-diff nav-icon"></i>
+            <span>المناقصات والطلبات</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/products" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-box-seam nav-icon"></i>
+            <span>سوق المنتجات</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/orders" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-bag-check nav-icon"></i>
+            <span>طلباتي وأوامري</span>
+          </a>
+        </li>
+        <li>
           <a routerLink="/deals" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-file-earmark-text nav-icon"></i>
-            <span>العقود وأوامر التوريد</span>
+            <span>العقود والصفقات</span>
           </a>
         </li>
         <li>
@@ -61,6 +85,24 @@
             class="nav-item" (click)="onNavClick()">
             <i class="bi bi-speedometer2 nav-icon"></i>
             <span>لوحة المورد</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/supplier/available-pools" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-people-fill nav-icon"></i>
+            <span>فرص التوريد والتجمعات</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/supplier/my-offers" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-tag nav-icon"></i>
+            <span>عروضي المقدمة</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/products" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-box-seam nav-icon"></i>
+            <span>إدارة المنتجات والكتالوج</span>
           </a>
         </li>
         <li>

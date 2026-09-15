@@ -104,10 +104,28 @@ const releaseSettlement = async (settlementId) => {
   return settlement;
 };
 
+const autoReleaseExpiredSettlements = async () => {
+  const now = new Date();
+  const expiredSettlements = await Settlement.find({
+    status: "HELD",
+    heldUntil: { $lte: now }
+  });
+
+  let count = 0;
+  for (const s of expiredSettlements) {
+    s.status = "RELEASED";
+    s.releasedAt = now;
+    await s.save();
+    count++;
+  }
+  return count;
+};
+
 export {
   createSettlement,
   getSettlements,
   getSettlementById,
   holdSettlement,
   releaseSettlement,
+  autoReleaseExpiredSettlements
 };
