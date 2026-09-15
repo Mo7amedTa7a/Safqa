@@ -25,3 +25,49 @@ export interface BuyingPoolDetailsResponse {
   success: boolean;
   data: BuyingPool;
 }
+
+// Create Pool
+export interface CreateBuyingPoolRequest {
+  buyingRequestId: string;
+}
+
+// Pool Member
+export interface PoolMember {
+  _id: string;
+  pool: string;
+  buyer: string;
+  buyingRequest: string;
+  quantity: number;
+  status: 'ACTIVE' | 'WITHDRAWN';
+}
+
+// Join Pool
+export interface JoinPoolResponse {
+  success: boolean;
+  data: {
+    member: PoolMember;
+    pool: BuyingPool;
+  };
+}
+
+// Update Quantity
+export interface UpdateQuantityRequest {
+  quantity: number;
+}
+
+export interface UpdateQuantityResponse {
+  success: boolean;
+  data: {
+    member: PoolMember;
+    pool: BuyingPool;
+  };
+}
+
+// Leave Pool
+export interface LeavePoolResponse {
+  success: boolean;
+  data: {
+    member: PoolMember;
+    pool: BuyingPool;
+  };
+}

@@ -1,4 +1,4 @@
-// PoolMember Routes
+﻿// PoolMember Routes
 // - Belongs to: Member 3
 // - All routes protected by auth middleware
 import express from "express";
@@ -15,4 +15,4 @@ router.patch("/:id/members/me", protect, authorize("BUYER"), validate(updateQuan
 router.delete("/:id/members/me", protect, authorize("BUYER"), leavePoolcontrol);
 router.get("/:id/members", protect, authorize("ADMIN"), getPoolMemberscontrol);
 
-export default router;
+export default router; 

@@ -1,14 +1,30 @@
-// SupplierOffer Service
+﻿// SupplierOffer Service
+
 // - Belongs to: Member 3
+
 // - createOffer(supplierId, poolId, data): submit a new offer
+
 // - updateOffer(offerId, supplierId, data): update before pool closes
+
 // - withdrawOffer(offerId, supplierId): set status WITHDRAWN
+
 // - getOffersForPool(poolId): list all offers on a pool
+
+// - getMyOffers(supplierId): list all offers created by supplier
+
+// - getOfferById(offerId): get one offer by id
+
 // - checkEligibility(offerId, totalQty): validate MOQ against final quantity
 
 
 import BuyingPool from "../buyingPools/buyingPool.model.js";
+
 import SupplierOffer from "./supplierOffer.model.js";
+
+
+// ==========================================
+// Create Offer
+// ==========================================
 
 const createOffer = async (poolid, supplierid, data) => {
 
@@ -40,7 +56,11 @@ const createOffer = async (poolid, supplierid, data) => {
   return offer;
 };
 
-///////////////////////////////////
+
+// ==========================================
+// Update Offer
+// ==========================================
+
 const updateOffer = async (offerId, supplierId, data) => {
 
   const offer = await SupplierOffer.findById(offerId);
@@ -74,7 +94,11 @@ const updateOffer = async (offerId, supplierId, data) => {
 
   return updatedOffer;
 };
-//////////////////////////////////////////////
+
+
+// ==========================================
+// Withdraw Offer
+// ==========================================
 
 const withdrawOffer = async (offerId, supplierId) => {
 
@@ -109,8 +133,10 @@ const withdrawOffer = async (offerId, supplierId) => {
   return offer;
 };
 
-///////////////////////////
 
+// ==========================================
+// Get Offers For Pool
+// ==========================================
 
 const getOffersForPool = async (poolId) => {
 
@@ -126,7 +152,43 @@ const getOffersForPool = async (poolId) => {
 
   return offers;
 };
-/////////////////////////////important
+
+
+// ==========================================
+// Get My Offers
+// GET /api/supplier-offers/my
+// ==========================================
+
+const getMyOffers = async (supplierId) => {
+
+  const offers = await SupplierOffer.find({
+    supplier: supplierId
+  });
+
+  return offers;
+};
+
+
+// ==========================================
+// Get Offer By ID
+// GET /api/supplier-offers/:id
+// ==========================================
+
+const getOfferById = async (offerId) => {
+
+  const offer = await SupplierOffer.findById(offerId);
+
+  if (!offer) {
+    throw new Error("Offer not found");
+  }
+
+  return offer;
+};
+
+
+// ==========================================
+// Check Eligibility
+// ==========================================
 
 const checkEligibility = async (offerId, totalQty) => {
 
@@ -151,4 +213,13 @@ const checkEligibility = async (offerId, totalQty) => {
   return offer;
 };
 
-export { createOffer, updateOffer, withdrawOffer, getOffersForPool, checkEligibility };
+
+export {
+  createOffer,
+  updateOffer,
+  withdrawOffer,
+  getOffersForPool,
+  getMyOffers,
+  getOfferById,
+  checkEligibility
+};
