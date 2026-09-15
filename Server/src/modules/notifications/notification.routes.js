@@ -12,19 +12,19 @@ import {
 const router = express.Router();
 
 router.get(
-  "/notifications",
+  "/",
   protect,
   getUserNotificationsController
 );
 
 router.patch(
-  "/notifications/read-all",
+  "/read-all",
   protect,
   markAllAsReadController
 );
 
 router.patch(
-  "/notifications/:id/read",
+  "/:id/read",
   protect,
   markAsReadController
 );

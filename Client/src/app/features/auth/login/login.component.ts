@@ -57,9 +57,11 @@ export class LoginComponent {
 
         // Role-based redirect
         if (user?.role === UserRole.ADMIN) {
-          this.router.navigate(['/admin/users']);
+          this.router.navigate(['/admin/dashboard']);
         } else if (user?.role === UserRole.SUPPLIER) {
-          this.router.navigate(['/supplier/complete-profile']);
+          this.router.navigate(['/dashboard']);
+        } else if (user?.role === UserRole.SHIPPING_PARTNER) {
+          this.router.navigate(['/shipments']);
         } else {
           this.router.navigate(['/dashboard']);
         }

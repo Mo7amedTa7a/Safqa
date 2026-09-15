@@ -16,11 +16,8 @@
       <!-- Desktop Nav Links -->
       <nav class="desktop-nav d-none d-lg-flex">
         <a (click)="scrollToSection('hero')" class="nav-link">الرئيسية</a>
-        <a (click)="scrollToSection('about')" class="nav-link">ما هي صفقة؟</a>
-        <a (click)="scrollToSection('how-it-works')" class="nav-link">كيف تعمل؟</a>
-        <a (click)="scrollToSection('buying-methods')" class="nav-link">طرق الشراء</a>
-        <a (click)="scrollToSection('why-safqa')" class="nav-link">المميزات</a>
-        <a (click)="scrollToSection('suppliers')" class="nav-link">للموردين</a>
+        <a routerLink="/buying-pools" class="nav-link">تجمعات الشراء</a>
+        <a routerLink="/buying-requests" class="nav-link">المناقصات والطلبات</a>
       </nav>
 
       <!-- User Auth Actions -->
@@ -67,25 +64,13 @@
           <i class="bi bi-house"></i>
           <span>الرئيسية</span>
         </a>
-        <a (click)="scrollToSection('about')" class="mobile-nav-item">
-          <i class="bi bi-info-circle"></i>
-          <span>ما هي صفقة؟</span>
+        <a routerLink="/buying-pools" (click)="closeMobileMenu()" class="mobile-nav-item">
+          <i class="bi bi-people-fill"></i>
+          <span>تجمعات الشراء</span>
         </a>
-        <a (click)="scrollToSection('how-it-works')" class="mobile-nav-item">
-          <i class="bi bi-arrow-repeat"></i>
-          <span>كيف تعمل؟</span>
-        </a>
-        <a (click)="scrollToSection('buying-methods')" class="mobile-nav-item">
-          <i class="bi bi-grid"></i>
-          <span>طرق الشراء</span>
-        </a>
-        <a (click)="scrollToSection('why-safqa')" class="mobile-nav-item">
-          <i class="bi bi-shield-check"></i>
-          <span>المميزات</span>
-        </a>
-        <a (click)="scrollToSection('suppliers')" class="mobile-nav-item">
-          <i class="bi bi-building"></i>
-          <span>للموردين</span>
+        <a routerLink="/buying-requests" (click)="closeMobileMenu()" class="mobile-nav-item">
+          <i class="bi bi-file-earmark-diff"></i>
+          <span>المناقصات والطلبات</span>
         </a>
       </nav>
 

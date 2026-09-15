@@ -1,1 +1,43 @@
-﻿<!-- notification-center template -->
+<div class="container-fluid py-4" dir="rtl">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-0">الإشعارات</h2>
+      <small class="text-muted" *ngIf="unreadCount > 0">{{ unreadCount }} إشعار غير مقروء</small>
+    </div>
+    <button class="btn btn-outline-primary btn-sm" (click)="markAllAsRead()" *ngIf="unreadCount > 0">
+      تعليم الكل كمقروء
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <div *ngIf="!isLoading && notifications.length === 0" class="text-center text-muted py-5">
+    لا توجد إشعارات
+  </div>
+
+  <div class="list-group" *ngIf="!isLoading && notifications.length > 0">
+    <div class="list-group-item list-group-item-action d-flex align-items-start gap-3"
+         *ngFor="let notification of notifications"
+         [class.bg-light]="!notification.isRead"
+         [class.border-start]="!notification.isRead"
+         [class.border-primary]="!notification.isRead"
+         [class.border-3]="!notification.isRead"
+         (click)="markAsRead(notification)"
+         style="cursor: pointer;">
+      <div class="flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center">
+          <h6 class="mb-1" [class.fw-bold]="!notification.isRead">{{ notification.title }}</h6>
+          <small class="text-muted">{{ getTimeAgo(notification.createdAt) }}</small>
+        </div>
+        <p class="mb-0 text-muted small">{{ notification.message }}</p>
+      </div>
+      <span *ngIf="!notification.isRead" class="badge bg-primary rounded-pill align-self-center">جديد</span>
+    </div>
+  </div>
+</div>

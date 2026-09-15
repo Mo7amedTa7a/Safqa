@@ -1,1 +1,108 @@
-﻿<!-- dispute-details template -->
+<div class="container-fluid py-4" dir="rtl">
+  <div class="mb-4 d-flex align-items-center">
+    <a routerLink="/disputes" class="btn btn-outline-secondary me-3">
+      <i class="bi bi-arrow-right"></i> عودة للنزاعات
+    </a>
+    <h2 class="mb-0">تفاصيل النزاع</h2>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <div *ngIf="dispute && !isLoading" class="row">
+    <!-- Dispute Info -->
+    <div class="col-md-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">معلومات النزاع</h5>
+          <span [class]="getStatusBadgeClass(dispute.status)">
+            {{ getStatusLabel(dispute.status) }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">رقم الطلب</div>
+            <div class="col-sm-8 fw-bold">{{ dispute.order?._id || 'غير متوفر' }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">السبب</div>
+            <div class="col-sm-8">
+              <span class="badge bg-secondary">{{ getReasonLabel(dispute.reason) }}</span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">الوصف</div>
+            <div class="col-sm-8">{{ dispute.description }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">تاريخ الإنشاء</div>
+            <div class="col-sm-8">{{ dispute.createdAt | date:'medium' }}</div>
+          </div>
+          <div class="row mb-3" *ngIf="dispute.adminNote">
+            <div class="col-sm-4 text-muted">ملاحظة الإدارة</div>
+            <div class="col-sm-8 text-info">{{ dispute.adminNote }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidence -->
+      <div class="card shadow-sm mb-4" *ngIf="dispute.evidence && dispute.evidence.length > 0">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">الأدلة المرفقة</h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4" *ngFor="let img of dispute.evidence">
+              <img [src]="img" alt="دليل" class="img-fluid rounded border">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Actions -->
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-4 border-primary">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">إجراءات الإدارة</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">ملاحظة الإدارة</label>
+            <textarea class="form-control" rows="3" [(ngModel)]="adminNote" placeholder="أضف ملاحظة..."></textarea>
+          </div>
+
+          <div class="d-grid gap-2" *ngIf="dispute.status === 'OPEN'">
+            <button class="btn btn-info text-white" (click)="reviewDispute('UNDER_REVIEW')" [disabled]="isUpdating">
+              بدء المراجعة
+            </button>
+          </div>
+          
+          <div class="d-grid gap-2" *ngIf="dispute.status === 'UNDER_REVIEW'">
+            <button class="btn btn-success" (click)="reviewDispute('APPROVED')" [disabled]="isUpdating">
+              الموافقة على النزاع
+            </button>
+            <button class="btn btn-danger" (click)="reviewDispute('REJECTED')" [disabled]="isUpdating">
+              رفض النزاع
+            </button>
+          </div>
+
+          <div class="d-grid gap-2" *ngIf="dispute.status === 'APPROVED'">
+            <button class="btn btn-secondary" (click)="resolveDispute()" [disabled]="isUpdating">
+              تم الحل
+            </button>
+          </div>
+
+          <div *ngIf="dispute.status === 'RESOLVED' || dispute.status === 'REJECTED'" class="text-center text-muted mt-3">
+            تم اتخاذ إجراء بخصوص هذا النزاع
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

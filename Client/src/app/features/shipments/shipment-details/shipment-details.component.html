@@ -1,1 +1,105 @@
-﻿<!-- shipment-details template -->
+<div class="container-fluid py-4" dir="rtl">
+  <div class="mb-4 d-flex align-items-center">
+    <a routerLink="/shipments" class="btn btn-outline-secondary me-3">
+      <i class="bi bi-arrow-right"></i> عودة للشحنات
+    </a>
+    <h2 class="mb-0">تفاصيل الشحنة</h2>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="shipment && !isLoading" class="row">
+    <!-- Shipment Info -->
+    <div class="col-md-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">معلومات الشحنة الأساسية</h5>
+          <span [class]="getStatusBadgeClass(shipment.status)">
+            {{ shipment.status }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">رقم التتبع</div>
+            <div class="col-sm-8 fw-bold">{{ shipment.trackingNumber }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">نوع الشحنة</div>
+            <div class="col-sm-8">{{ shipment.shipmentType === 'OUTBOUND' ? 'توصيل للمشتري' : 'مرتجع' }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">قيمة الدفع عند الاستلام (COD)</div>
+            <div class="col-sm-8 text-primary fw-bold">{{ shipment.codAmount }} ج.م</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">تاريخ الإنشاء</div>
+            <div class="col-sm-8">{{ shipment.createdAt | date:'medium' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Addresses -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+              <h5 class="mb-0">عنوان الاستلام (Pickup)</h5>
+            </div>
+            <div class="card-body" *ngIf="shipment.pickupAddress">
+              <p class="mb-1"><i class="bi bi-geo-alt me-2 text-muted"></i> {{ shipment.pickupAddress.street }}</p>
+              <p class="mb-1"><i class="bi bi-building me-2 text-muted"></i> {{ shipment.pickupAddress.city }}, {{
+                shipment.pickupAddress.country }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+              <h5 class="mb-0">عنوان التسليم (Delivery)</h5>
+            </div>
+            <div class="card-body" *ngIf="shipment.deliveryAddress">
+              <p class="mb-1"><i class="bi bi-geo-alt me-2 text-muted"></i> {{ shipment.deliveryAddress.street }}</p>
+              <p class="mb-1"><i class="bi bi-building me-2 text-muted"></i> {{ shipment.deliveryAddress.city }}, {{
+                shipment.deliveryAddress.country }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions / Status Update -->
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-4 border-primary">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">تحديث الحالة</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small mb-3">بصفتك شركة شحن، يمكنك تحديث حالة الشحنة من هنا.</p>
+
+          <div class="mb-3">
+            <label class="form-label">تغيير الحالة إلى:</label>
+            <select class="form-select" #statusSelect [disabled]="isUpdating">
+              <option *ngFor="let opt of statusOptions" [value]="opt.value" [selected]="opt.value === shipment.status">
+                {{ opt.label }}
+              </option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary w-100" (click)="updateStatus(statusSelect.value)" [disabled]="isUpdating">
+            <span *ngIf="isUpdating" class="spinner-border spinner-border-sm me-2" role="status"
+              aria-hidden="true"></span>
+            تحديث الحالة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

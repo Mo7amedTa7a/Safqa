@@ -1,0 +1,136 @@
+﻿<div class="container-fluid py-4 fade-in-up">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h2 class="h3 mb-1 text-gray-800 fw-bold">الإدارة المالية والتسويات</h2>
+      <p class="text-muted mb-0">متابعة العمولات وتجميد/إفراج الأموال</p>
+    </div>
+    <button class="btn btn-safqa-primary shadow-sm" (click)="loadSettlements()" [disabled]="isLoading">
+      <i class="bi bi-arrow-clockwise me-2" [class.fa-spin]="isLoading"></i>تحديث البيانات
+    </button>
+  </div>
+
+  <div class="alert alert-danger shadow-sm border-0 rounded-3" *ngIf="errorMessage && !isLoading">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Financial Summary Cards -->
+  <div class="row g-4 mb-4" *ngIf="!isLoading">
+    <div class="col-md-4 fade-in-up delay-1">
+      <div class="safqa-modern-card card-primary h-100">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="text-sm fw-bold text-muted mb-1">إجمالي عمولات المنصة</div>
+            <div class="h3 mb-0 fw-bold text-gray-800">{{ totalCommissions | currency:'EGP':'symbol' }}</div>
+          </div>
+          <div class="safqa-icon-wrapper safqa-icon-wrapper-primary">
+            <i class="bi bi-piggy-bank fs-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 fade-in-up delay-2">
+      <div class="safqa-modern-card card-secondary h-100">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="text-sm fw-bold text-muted mb-1">الأموال المجمدة مؤقتاً</div>
+            <div class="h3 mb-0 fw-bold text-gray-800">{{ totalHeld | currency:'EGP':'symbol' }}</div>
+          </div>
+          <div class="safqa-icon-wrapper safqa-icon-wrapper-secondary">
+            <i class="bi bi-hourglass-split fs-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 fade-in-up delay-3">
+      <div class="safqa-modern-card card-tertiary h-100">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="text-sm fw-bold text-muted mb-1">الأموال المفرج عنها</div>
+            <div class="h3 mb-0 fw-bold text-gray-800">{{ totalReleased | currency:'EGP':'symbol' }}</div>
+          </div>
+          <div class="safqa-icon-wrapper safqa-icon-wrapper-tertiary">
+            <i class="bi bi-wallet2 fs-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fade-in-up delay-4" *ngIf="!isLoading">
+    <div class="d-flex align-items-center mb-3">
+      <h5 class="m-0 fw-bold text-gray-800"><i class="bi bi-receipt me-2 text-safqa-primary"></i> سجل التسويات المالية</h5>
+    </div>
+    
+    <div class="table-wrapper-modern p-0">
+      <div class="text-center py-5" *ngIf="isLoading">
+        <div class="spinner-border text-safqa-primary" role="status">
+          <span class="visually-hidden">جاري التحميل...</span>
+        </div>
+      </div>
+
+      <div class="table-responsive" *ngIf="!isLoading && settlements.length > 0">
+        <table class="table-safqa-modern">
+          <thead>
+            <tr>
+              <th>رقم الطلب</th>
+              <th>المورد</th>
+              <th>قيمة المنتجات</th>
+              <th>عمولة المنصة (3%)</th>
+              <th>مستحقات المورد</th>
+              <th>الحالة</th>
+              <th>وقت الإفراج المتوقع</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let settlement of settlements">
+              <td class="fw-bold font-monospace text-muted">#{{ settlement.order?._id | slice:-6 }}</td>
+              <td class="fw-bold">{{ settlement.supplier?.name || 'غير معروف' }}</td>
+              <td class="text-safqa-primary fw-bold">{{ settlement.productAmount | currency:'EGP':'symbol' }}</td>
+              <td class="text-success fw-bold">{{ settlement.commissionAmount | currency:'EGP':'symbol' }}</td>
+              <td class="text-dark fw-bold">{{ settlement.supplierAmount | currency:'EGP':'symbol' }}</td>
+              <td>
+                <span class="badge rounded-pill" 
+                      [ngClass]="{'badge-safqa-secondary': settlement.status === 'HELD', 'badge-safqa-success': settlement.status === 'RELEASED'}">
+                  <i class="bi" [ngClass]="{'bi-lock-fill': settlement.status === 'HELD', 'bi-unlock-fill': settlement.status === 'RELEASED'}"></i>
+                  {{ settlement.status === 'HELD' ? 'مجمد (قيد الحماية)' : 'تم الإفراج' }}
+                </span>
+              </td>
+              <td class="small">
+                <span *ngIf="settlement.status === 'HELD'"><i class="bi bi-clock me-1 text-muted"></i>{{ settlement.heldUntil | date:'short' }}</span>
+                <span *ngIf="settlement.status === 'RELEASED'" class="text-muted"><i class="bi bi-check-circle me-1"></i>أُفرج عنه في {{ settlement.releasedAt | date:'short' }}</span>
+              </td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-sm btn-light border shadow-sm text-safqa-tertiary fw-bold" 
+                          *ngIf="settlement.status === 'HELD'" 
+                          (click)="releaseSettlement(settlement._id)" 
+                          title="الإفراج عن الأموال للمورد">
+                    <i class="bi bi-unlock-fill me-1"></i> إفراج
+                  </button>
+                  <button class="btn btn-sm btn-light border shadow-sm text-safqa-secondary fw-bold" 
+                          *ngIf="settlement.status === 'RELEASED'" 
+                          (click)="holdSettlement(settlement._id)" 
+                          title="تجميد الأموال للتحقيق">
+                    <i class="bi bi-lock-fill me-1"></i> تجميد
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-center py-5 text-muted" *ngIf="!isLoading && settlements.length === 0">
+        <div class="safqa-icon-wrapper safqa-icon-wrapper-secondary mx-auto mb-3" style="width: 80px; height: 80px;">
+          <i class="bi bi-inbox fs-1"></i>
+        </div>
+        <h5 class="fw-bold text-gray-800">لا توجد تسويات مالية</h5>
+        <p>لا توجد تسويات مسجلة في النظام حالياً.</p>
+      </div>
+    </div>
+  </div>
+</div>
+

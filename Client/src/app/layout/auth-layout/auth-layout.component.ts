@@ -17,6 +17,7 @@ import { UserRole } from '../../core/models/user.model';
 })
 export class AuthLayoutComponent implements OnInit, OnDestroy {
   isSidebarOpen = false;
+  isSidebarCollapsed = false;
   showSidebar = true;
   private routerSub?: Subscription;
   private authSub?: Subscription;
@@ -26,7 +27,7 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private supplierProfileService: SupplierProfileService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Close sidebar on mobile upon route change
@@ -46,7 +47,8 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
 
     // If user logs out while in dashboard layout, redirect to login
     this.authSub = this.authService.currentUser$.subscribe(user => {
-      if (!user && !this.authService.isLoggedIn) {
+      const isBrowser = typeof window !== 'undefined';
+      if (isBrowser && !user && !this.authService.isLoggedIn) {
         this.router.navigate(['/auth/login']);
         return;
       }
@@ -83,7 +85,12 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
   }
 
   toggleSidebar(): void {
-    this.isSidebarOpen = !this.isSidebarOpen;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 992;
+    if (isMobile) {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    } else {
+      this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    }
   }
 
   closeSidebar(): void {

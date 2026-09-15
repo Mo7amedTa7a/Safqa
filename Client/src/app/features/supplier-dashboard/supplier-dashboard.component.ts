@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SupplierProfileService } from '../../core/services/supplier-profile.service';
+import { OrderService } from '../../core/services/order.service';
 import { User, UserRole } from '../../core/models/user.model';
 import { SupplierProfile } from '../../core/models/supplier-profile.model';
+import { Order } from '../../core/models/order.model';
 
 @Component({
   selector: 'app-supplier-dashboard',
@@ -19,56 +21,29 @@ export class SupplierDashboardComponent implements OnInit {
   isPendingSupplier = false;
   isRejectedSupplier = false;
   rejectionReason: string | null = null;
-  isLoadingProfile = false;
+  isLoadingProfile = true;
   UserRole = UserRole;
-
+  
+  recentOrders: Order[] = [];
+  totalProfit = 0;
+  
   supplierKpiStats = [
-    { value: '18', label: 'طلب توريد متاح', icon: 'bi-inbox-fill' },
-    { value: '5', label: 'عروض أسعار نشطة', icon: 'bi-send-check' },
-    { value: '42', label: 'صفقة توريد ناجحة', icon: 'bi-check2-circle' },
-    { value: '4.9 ★', label: 'تقييم المنشأة', icon: 'bi-patch-check-fill' }
-  ];
-
-  openRfqs = [
-    {
-      id: '101',
-      title: 'مطلوب توريد 500 كرتونة تغليف مقاس 40×40 سم 5 طبقات',
-      category: 'تعبئة وتغليف',
-      buyer: 'مؤسسة التجارة والخدمات اللوجستية',
-      deadline: 'باقي يومين',
-      bidsCount: 3,
-      status: 'مفتوح لتقديم العروض'
-    },
-    {
-      id: '102',
-      title: 'توريد أجهزة حواسيب مكتبية وشاشات عرض للمقر الرئيسي',
-      category: 'أجهزة وتقنية',
-      buyer: 'شركة النماء للاستثمار',
-      deadline: 'باقي 5 أيام',
-      bidsCount: 6,
-      status: 'مفتوح لتقديم العروض'
-    },
-    {
-      id: '103',
-      title: 'توريد ورق تصوير وطباعة أبيض مستورد 80 جرام كميات كبرى',
-      category: 'مستلزمات مكتبية',
-      buyer: 'سلسلة مراكز الأعمال المتطورة',
-      deadline: 'ينتهي اليوم',
-      bidsCount: 8,
-      status: 'يغلق قريباً'
-    }
+    { value: '0', label: 'إجمالي الطلبات', icon: 'bi-box-seam' },
+    { value: '0 ج.م', label: 'إجمالي الأرباح', icon: 'bi-cash-coin' },
+    { value: '0', label: 'طلبات قيد التنفيذ', icon: 'bi-hourglass-split' },
+    { value: '0', label: 'التقييم العام', icon: 'bi-star-fill' }
   ];
 
   constructor(
     private authService: AuthService,
-    private supplierService: SupplierProfileService
+    private supplierService: SupplierProfileService,
+    private orderService: OrderService
   ) {}
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(u => {
       this.currentUser = u;
       if (u && u.role === UserRole.SUPPLIER) {
-        this.isPendingSupplier = true;
         this.loadSupplierStatus();
       }
     });
@@ -89,6 +64,7 @@ export class SupplierDashboardComponent implements OnInit {
         this.supplierProfile = res.data || null;
         if (this.supplierProfile) {
           this.evaluateStatus(this.supplierProfile);
+          this.loadDashboardData();
         } else {
           this.isPendingSupplier = true;
         }
@@ -112,6 +88,28 @@ export class SupplierDashboardComponent implements OnInit {
       this.isPendingSupplier = true;
       this.isRejectedSupplier = false;
     }
+  }
+
+  loadDashboardData(): void {
+    if (this.isPendingSupplier || this.isRejectedSupplier) return;
+    
+    this.orderService.getOrders().subscribe({
+      next: (res) => {
+        const orders = res.data || [];
+        this.recentOrders = orders.slice(0, 5); // Take top 5 recent orders
+        
+        const pendingCount = orders.filter(o => o.status !== 'DELIVERED' && o.status !== 'CANCELLED').length;
+        this.totalProfit = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+        
+        this.supplierKpiStats = [
+          { value: `${orders.length}`, label: 'إجمالي الطلبات', icon: 'bi-box-seam' },
+          { value: `${this.totalProfit.toLocaleString('en-US')} ج.م`, label: 'إجمالي الأرباح', icon: 'bi-cash-coin' },
+          { value: `${pendingCount}`, label: 'طلبات قيد التنفيذ', icon: 'bi-hourglass-split' },
+          { value: `${this.currentUser?.rating || 0}`, label: 'التقييم العام', icon: 'bi-star-fill' }
+        ];
+      },
+      error: (err) => console.error('Error loading orders', err)
+    });
   }
 
   getRoleLabel(): string {

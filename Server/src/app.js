@@ -36,6 +36,7 @@ import returnRoutes from "./modules/returns/return.routes.js";
 import refundRoutes from "./modules/refunds/refund.routes.js";
 import reviewRoutes from "./modules/reviews/review.routes.js";
 import notificationRoutes from "./modules/notifications/notification.routes.js";
+import adminRoutes from "./modules/admin/admin.routes.js";
 
 const app = express()
 
@@ -68,6 +69,7 @@ app.use("/api/returns", returnRoutes)
 app.use("/api/refunds", refundRoutes)
 app.use("/api/reviews", reviewRoutes)
 app.use("/api/notifications", notificationRoutes)
+app.use("/api/admin", adminRoutes)
 
 // Test Route
 app.get('/', (req, res) => {

@@ -83,6 +83,17 @@
   pointer-events: none;
 }
 
+/* Public Links */
+.header-link {
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.header-link:hover {
+  color: #0F5132 !important;
+}
+
 /* Navbar Actions */
 .navbar-actions {
   display: flex;

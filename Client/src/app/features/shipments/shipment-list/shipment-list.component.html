@@ -1,1 +1,62 @@
-﻿<!-- shipment-list template -->
+<div class="container-fluid py-4" dir="rtl">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">إدارة الشحنات</h2>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 text-center">
+          <thead class="table-light">
+            <tr>
+              <th>رقم التتبع</th>
+              <th>نوع الشحنة</th>
+              <th>قيمة التحصيل (COD)</th>
+              <th>تاريخ الإنشاء</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td colspan="6" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">جاري التحميل...</span>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!isLoading && shipments.length === 0">
+              <td colspan="6" class="text-center py-4 text-muted">
+                لا توجد شحنات حالياً
+              </td>
+            </tr>
+            <tr *ngFor="let shipment of shipments">
+              <td><strong>{{ shipment.trackingNumber }}</strong></td>
+              <td>
+                <span class="badge bg-secondary">
+                  {{ shipment.shipmentType === 'OUTBOUND' ? 'توصيل للمشتري' : 'مرتجع' }}
+                </span>
+              </td>
+              <td>{{ shipment.codAmount }} ج.م</td>
+              <td>{{ shipment.createdAt | date:'shortDate' }}</td>
+              <td>
+                <span [class]="getStatusBadgeClass(shipment.status)">
+                  {{ getStatusLabel(shipment.status) }}
+                </span>
+              </td>
+              <td>
+                <a [routerLink]="['/shipments', shipment._id]" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-eye"></i> عرض التفاصيل
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

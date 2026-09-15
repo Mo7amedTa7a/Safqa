@@ -1,1 +1,42 @@
-﻿<!-- create-review template -->
+<div class="container-fluid py-4" dir="rtl">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h4 class="mb-0">تقييم الطلب</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+          <div class="mb-4 text-center">
+            <label class="form-label d-block mb-3">التقييم <span class="text-danger">*</span></label>
+            <div class="d-inline-flex gap-2" style="font-size: 2rem; cursor: pointer;">
+              <span *ngFor="let star of [1,2,3,4,5]"
+                    (click)="setRating(star)"
+                    (mouseenter)="hoverRating = star"
+                    (mouseleave)="hoverRating = 0"
+                    [style.color]="(hoverRating || rating) >= star ? '#ffc107' : '#e0e0e0'">
+                &#9733;
+              </span>
+            </div>
+            <p class="text-muted small mt-1" *ngIf="rating > 0">{{ rating }} من 5</p>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">تعليقك (اختياري)</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="comment" placeholder="اكتب تعليقك عن التجربة..."></textarea>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" (click)="submitReview()" [disabled]="isSubmitting || rating === 0">
+              <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              إرسال التقييم
+            </button>
+            <a routerLink="/orders" class="btn btn-outline-secondary">إلغاء</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

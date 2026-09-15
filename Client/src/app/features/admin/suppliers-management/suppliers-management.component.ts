@@ -18,6 +18,7 @@ export class SuppliersManagementComponent implements OnInit {
   statusFilter = 'ALL';
   selectedProfileForReject: SupplierProfile | null = null;
   rejectionReasonInput = '';
+  searchTerm = '';
   isProcessing = false;
 
   constructor(private supplierService: SupplierProfileService) {}
@@ -41,11 +42,26 @@ export class SuppliersManagementComponent implements OnInit {
   }
 
   applyFilter(): void {
-    if (this.statusFilter === 'ALL') {
-      this.filteredProfiles = this.profiles;
-    } else {
-      this.filteredProfiles = this.profiles.filter(p => p.verificationStatus === this.statusFilter);
+    let result = this.profiles;
+    
+    // Status Filter
+    if (this.statusFilter !== 'ALL') {
+      result = result.filter(p => p.verificationStatus === this.statusFilter);
     }
+    
+    // Search Term
+    if (this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase();
+      result = result.filter(p => 
+        p.companyName?.toLowerCase().includes(term) ||
+        p.businessAddress?.toLowerCase().includes(term) ||
+        p.businessPhone?.toLowerCase().includes(term) ||
+        p.taxIdentificationNumber?.toLowerCase().includes(term) ||
+        p.commercialRegistrationNumber?.toLowerCase().includes(term)
+      );
+    }
+    
+    this.filteredProfiles = result;
   }
 
   approveSupplier(profile: SupplierProfile): void {

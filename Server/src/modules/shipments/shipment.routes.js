@@ -22,7 +22,7 @@ import {
 const router = express.Router();
 
 router.post(
-  "/orders/:orderId/shipments",
+  "/orders/:orderId",
   protect,
   authorize("ADMIN"),
   validate(createShipmentValidation),
@@ -30,20 +30,20 @@ router.post(
 );
 
 router.get(
-  "/shipments",
+  "/",
   protect,
   authorize("SHIPPING_PARTNER", "SUPPLIER", "ADMIN"),
   getShipmentsController
 );
 
 router.get(
-  "/shipments/:id",
+  "/:id",
   protect,
   getShipmentByIdController
 );
 
 router.patch(
-  "/shipments/:id/assign",
+  "/:id/assign",
   protect,
   authorize("ADMIN"),
   validate(assignShipmentValidation),
@@ -51,7 +51,7 @@ router.patch(
 );
 
 router.patch(
-  "/shipments/:id/status",
+  "/:id/status",
   protect,
   authorize("SHIPPING_PARTNER", "ADMIN"),
   validate(updateShipmentStatusValidation),
@@ -59,7 +59,7 @@ router.patch(
 );
 
 router.post(
-  "/shipments/:id/pickup-proof",
+  "/:id/pickup-proof",
   protect,
   authorize("SHIPPING_PARTNER"),
   addPickupProofController

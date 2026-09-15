@@ -1,37 +1,42 @@
-<div class="admin-page">
+<div class="admin-page fade-in-up" dir="rtl">
   <!-- Page Header -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-      <h3 class="fw-bold mb-1">إدارة مستخدمي المنصة</h3>
-      <p class="text-muted small mb-0">عرض وحصر جميع حسابات المشترين والموردين وشركاء الشحن وإدارتها بأمان.</p>
+      <h3 class="fw-bold mb-1 text-gray-800">إدارة مستخدمي المنصة والصلاحيات</h3>
+      <p class="text-muted small mb-0">إنشاء وتحديد أدوار حسابات المشترين والموردين وشركاء الشحن وإدارتها بأمان.</p>
     </div>
     <div class="d-flex align-items-center gap-2">
-      <span class="badge bg-light text-dark border px-3 py-2">
-        إجمالي المسجلين: {{ users.length }} مستخدم
+      <button class="btn btn-safqa-primary shadow-sm" (click)="openAddModal()">
+        <i class="bi bi-person-plus-fill me-1"></i> إضافة حساب / شركة شحن جديدة
+      </button>
+      <span class="badge bg-white text-safqa-primary border border-safqa-primary px-3 py-2 shadow-sm rounded-pill">
+        <i class="bi bi-people-fill me-1"></i> الإجمالي: {{ users.length }} مستخدم
       </span>
     </div>
   </div>
 
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = null"></button>
+  </div>
+
   <!-- Filters & Search Toolbar -->
-  <div class="safqa-card mb-4 p-3">
+  <div class="safqa-modern-card mb-4 fade-in-up delay-2">
     <div class="row g-3">
       <!-- Search Input -->
       <div class="col-md-7">
-        <div class="input-group">
-          <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
-          <input
-            type="text"
-            class="form-control border-start-0"
-            placeholder="ابحث بالاسم، البريد الإلكتروني، أو رقم الهاتف..."
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="applyFilter()"
-          />
+        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+          <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" class="form-control border-0 bg-light"
+            placeholder="ابحث بالاسم، البريد الإلكتروني، أو رقم الهاتف..." [(ngModel)]="searchTerm"
+            (ngModelChange)="applyFilter()" />
         </div>
       </div>
 
       <!-- Role Filter Tabs -->
       <div class="col-md-5">
-        <select class="form-select" [(ngModel)]="selectedRoleFilter" (ngModelChange)="applyFilter()">
+        <select class="form-select shadow-sm border-0 bg-light" [(ngModel)]="selectedRoleFilter"
+          (ngModelChange)="applyFilter()">
           <option value="ALL">جميع الأدوار والأنشطة</option>
           <option [value]="UserRole.BUYER">المشترون (Buyers)</option>
           <option [value]="UserRole.SUPPLIER">الموردون (Suppliers)</option>
@@ -43,15 +48,14 @@
   </div>
 
   <!-- Users Table -->
-  <div class="safqa-card p-0 overflow-hidden">
+  <div class="table-wrapper-modern fade-in-up delay-3">
     <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
+      <table class="table-safqa-modern mb-0">
+        <thead>
           <tr>
             <th class="ps-4">المستخدم</th>
-            <th>نوع الحساب</th>
+            <th>نوع الحساب (الدور)</th>
             <th>رقم الهاتف</th>
-            <th>التقييم</th>
             <th>الحالة</th>
             <th class="text-center pe-4">الإجراءات</th>
           </tr>
@@ -59,9 +63,9 @@
         <tbody>
           <tr *ngFor="let u of filteredUsers">
             <td class="ps-4">
-              <div class="d-flex align-items-center gap-2">
-                <div class="user-avatar-sm">
-                  {{ u.name.charAt(0).toUpperCase() }}
+              <div class="d-flex align-items-center gap-3">
+                <div class="safqa-icon-wrapper safqa-icon-wrapper-primary" style="width: 42px; height: 42px;">
+                  <span class="fw-bold fs-5">{{ u.name.charAt(0).toUpperCase() }}</span>
                 </div>
                 <div>
                   <div class="fw-bold text-dark">{{ u.name }}</div>
@@ -70,36 +74,41 @@
               </div>
             </td>
             <td>
-              <span class="badge" [ngClass]="getRoleBadge(u.role)">
+              <span class="badge rounded-pill fs-6" [ngClass]="getRoleBadge(u.role)">
                 {{ getRoleName(u.role) }}
               </span>
             </td>
-            <td class="text-muted small">{{ u.phone || '—' }}</td>
+            <td class="text-muted small fw-bold">{{ u.phone || '—' }}</td>
             <td>
-              <span class="text-warning small"><i class="bi bi-star-fill"></i> {{ u.rating || 5.0 }}</span>
-            </td>
-            <td>
-              <span class="badge" [class.bg-success-subtle]="u.isActive !== false" [class.text-success]="u.isActive !== false" [class.bg-danger-subtle]="u.isActive === false" [class.text-danger]="u.isActive === false">
+              <span class="badge rounded-pill"
+                [ngClass]="u.isActive !== false ? 'badge-safqa-success' : 'badge-safqa-danger'">
                 {{ u.isActive !== false ? 'نشط' : 'معطل' }}
               </span>
             </td>
             <td class="text-center pe-4">
-              <button 
-                class="btn btn-sm" 
-                [class.btn-outline-danger]="u.isActive !== false"
-                [class.btn-outline-success]="u.isActive === false"
-                (click)="toggleDeactivate(u)"
-              >
-                <i class="bi" [class.bi-slash-circle]="u.isActive !== false" [class.bi-check-circle]="u.isActive === false"></i>
-                <span class="ms-1">{{ u.isActive !== false ? 'تجميد الحساب' : 'تفعيل الحساب' }}</span>
-              </button>
+              <div class="btn-group gap-1">
+                <button class="btn btn-sm btn-outline-primary" (click)="openEditModal(u)" title="تعديل الحساب والدور">
+                  <i class="bi bi-pencil-square"></i> تعديل
+                </button>
+                <button class="btn btn-sm shadow-sm border" [class.btn-light]="u.isActive !== false"
+                  [class.text-safqa-danger]="u.isActive !== false" [class.btn-light]="u.isActive === false"
+                  [class.text-safqa-success]="u.isActive === false" (click)="toggleDeactivate(u)">
+                  <i class="bi" [class.bi-slash-circle-fill]="u.isActive !== false"
+                    [class.bi-check-circle-fill]="u.isActive === false"></i>
+                  <span class="ms-1">{{ u.isActive !== false ? 'تجميد' : 'تفعيل' }}</span>
+                </button>
+              </div>
             </td>
           </tr>
 
           <tr *ngIf="filteredUsers.length === 0 && !isLoading">
-            <td colspan="6" class="text-center py-5 text-muted">
-              <i class="bi bi-people fs-1 d-block mb-2 text-secondary"></i>
-              لم يتم العثور على مستخدمين يطابقون خيارات البحث والفلترة.
+            <td colspan="5" class="text-center py-5 text-muted">
+              <div class="safqa-icon-wrapper safqa-icon-wrapper-secondary mx-auto mb-3"
+                style="width: 80px; height: 80px;">
+                <i class="bi bi-people fs-1"></i>
+              </div>
+              <h5 class="fw-bold text-gray-800">لا توجد نتائج</h5>
+              <p>لم يتم العثور على مستخدمين يطابقون خيارات البحث والفلترة.</p>
             </td>
           </tr>
         </tbody>
@@ -109,7 +118,72 @@
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-success" role="status"></div>
-    <p class="text-muted mt-2">جاري تحميل بيانات المستخدمين...</p>
+    <div class="spinner-border text-safqa-primary" role="status"></div>
+    <p class="text-muted mt-3 fw-bold">جاري تحميل بيانات المستخدمين...</p>
+  </div>
+</div>
+
+<!-- Modal for Create / Edit User & Roles -->
+<div class="modal fade show d-block tab-modal-backdrop" *ngIf="showModal" tabindex="-1"
+  style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered" dir="rtl">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header">
+        <h5 class="modal-header-title fw-bold mb-0">
+          {{ isEditMode ? 'تعديل الحساب وتغيير الدور' : 'إنشاء حساب جديد / شركة شحن' }}
+        </h5>
+        <button type="button" class="btn-close ms-0" (click)="closeModal()"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <div *ngIf="errorMessage" class="alert alert-danger mb-3">{{ errorMessage }}</div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">الاسم <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" [(ngModel)]="formData.name"
+            placeholder="اسم المستخدم / اسم شركة الشحن">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">البريد الإلكتروني (اسم المستخدم للجميع) <span
+              class="text-danger">*</span></label>
+          <input type="email" class="form-control" [(ngModel)]="formData.email" placeholder="example@safqa.com">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">
+            كلمة المرور {{ isEditMode ? '(اتركها فارغة إذا لم ترد التغيير)' : '*' }}
+          </label>
+          <input type="password" class="form-control" [(ngModel)]="formData.password" placeholder="••••••••">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">رقم الهاتف <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" [(ngModel)]="formData.phone" placeholder="01xxxxxxxxx">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">نوع الحساب والصلاحيات (الدور) <span class="text-danger">*</span></label>
+          <select class="form-select" [(ngModel)]="formData.role">
+            <option [value]="UserRole.SHIPPING_PARTNER">شركة شحن (SHIPPING_PARTNER)</option>
+            <option [value]="UserRole.ADMIN">مسؤول نظام (ADMIN)</option>
+            <option [value]="UserRole.SUPPLIER">مورد (SUPPLIER)</option>
+            <option [value]="UserRole.BUYER">مشتري (BUYER)</option>
+          </select>
+          <div class="form-text mt-1 text-muted">
+            تحديد هذا الخيار يمنح المستخدم الوصول إلى اللوحة الخاصة به (لوحة الأدمن، لوحة الشحن، لوحة المورد، أو
+            المشتري).
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary px-4" (click)="closeModal()">إلغاء</button>
+        <button type="button" class="btn btn-primary px-4" (click)="saveUser()" [disabled]="isSubmitting">
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+          {{ isEditMode ? 'حفظ التغييرات' : 'إنشاء الحساب' }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

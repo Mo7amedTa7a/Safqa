@@ -14,7 +14,7 @@ import {
 const router = express.Router();
 
 router.post(
-  "/orders/:orderId/reviews",
+  "/orders/:orderId",
   protect,
   authorize("BUYER", "SUPPLIER"),
   validate(createReviewValidation),
@@ -22,7 +22,7 @@ router.post(
 );
 
 router.get(
-  "/users/:userId/reviews",
+  "/users/:userId",
   protect,
   getReviewsByUserController
 );

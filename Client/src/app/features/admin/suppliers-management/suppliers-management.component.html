@@ -1,171 +1,166 @@
-<div class="admin-page">
+﻿<div class="admin-page fade-in-up">
   <!-- Page Header -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-      <h3 class="fw-bold mb-1">اعتماد وإدارة طلبات الموردين</h3>
-      <p class="text-muted small mb-0">مراجعة ملفات المنشآت والتحقق من السجلات والبطاقات الضريبية قبل التفعيل.</p>
+      <h3 class="fw-bold mb-1 text-gray-800">اعتماد الموردين</h3>
+      <p class="text-muted small mb-0">مراجعة بيانات الموردين الجدد، واعتمادهم أو رفضهم للانضمام للمنصة.</p>
     </div>
-    
-    <!-- Status Filter Pills -->
-    <div class="btn-group" role="group">
-      <button 
-        type="button" 
-        class="btn btn-sm" 
-        [class.btn-safqa-primary]="statusFilter === 'ALL'"
-        [class.btn-safqa-outline]="statusFilter !== 'ALL'"
-        (click)="statusFilter = 'ALL'; applyFilter()"
-      >
-        الكل ({{ profiles.length }})
-      </button>
-      <button 
-        type="button" 
-        class="btn btn-sm" 
-        [class.btn-safqa-primary]="statusFilter === 'PENDING'"
-        [class.btn-safqa-outline]="statusFilter !== 'PENDING'"
-        (click)="statusFilter = 'PENDING'; applyFilter()"
-      >
-        بانتظار المراجعة
-      </button>
-      <button 
-        type="button" 
-        class="btn btn-sm" 
-        [class.btn-safqa-primary]="statusFilter === 'APPROVED'"
-        [class.btn-safqa-outline]="statusFilter !== 'APPROVED'"
-        (click)="statusFilter = 'APPROVED'; applyFilter()"
-      >
-        معتمدون
-      </button>
-      <button 
-        type="button" 
-        class="btn btn-sm" 
-        [class.btn-safqa-primary]="statusFilter === 'REJECTED'"
-        [class.btn-safqa-outline]="statusFilter !== 'REJECTED'"
-        (click)="statusFilter = 'REJECTED'; applyFilter()"
-      >
-        مرفوضون
-      </button>
+    <div class="d-flex align-items-center gap-2 fade-in-up delay-1">
+      <span class="badge bg-white text-safqa-secondary border border-safqa-secondary px-3 py-2 shadow-sm rounded-pill">
+        <i class="bi bi-clock-history me-1"></i> إجمالي الموردين: {{ profiles.length }}
+      </span>
     </div>
   </div>
 
-  <!-- Profiles List -->
-  <div class="row g-3" *ngIf="!isLoading">
+  <!-- Filters & Search Toolbar -->
+  <div class="safqa-modern-card mb-4 fade-in-up delay-2">
+    <div class="row g-3">
+      <!-- Search Input -->
+      <div class="col-md-7">
+        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+          <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+          <input
+            type="text"
+            class="form-control border-0 bg-light"
+            placeholder="ابحث باسم المورد، أو العنوان..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="applyFilter()"
+          />
+        </div>
+      </div>
+
+      <!-- Status Filter Tabs -->
+      <div class="col-md-5">
+        <select class="form-select shadow-sm border-0 bg-light" [(ngModel)]="statusFilter" (ngModelChange)="applyFilter()">
+          <option value="ALL">جميع حالات الاعتماد</option>
+          <option value="PENDING">قيد المراجعة (Pending)</option>
+          <option value="APPROVED">معتمد (Approved)</option>
+          <option value="REJECTED">مرفوض (Rejected)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suppliers Cards Grid -->
+  <div class="row g-4 fade-in-up delay-3" *ngIf="!isLoading">
     <div class="col-12" *ngFor="let p of filteredProfiles">
-      <div class="safqa-card">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 pb-3 border-bottom mb-3">
-          <div class="d-flex align-items-center gap-3">
-            <div class="company-avatar">
-              <i class="bi bi-building"></i>
-            </div>
-            <div>
-              <h5 class="fw-bold mb-1">{{ p.companyName }}</h5>
-              <div class="text-muted small">
-                <i class="bi bi-telephone me-1"></i> {{ p.businessPhone }} | 
-                <i class="bi bi-geo-alt me-1"></i> {{ p.businessAddress }}
-              </div>
-            </div>
-          </div>
+      <div class="safqa-modern-card p-4 border-0 position-relative h-100">
+        
+        <!-- Status Badge (Top Left Corner) -->
+        <div class="position-absolute" style="top: 20px; left: 20px;" dir="ltr">
+          <span class="badge rounded-pill px-3 py-2 shadow-sm" 
+                [ngClass]="{
+                  'bg-warning text-dark': p.verificationStatus === 'PENDING',
+                  'bg-success': p.verificationStatus === 'APPROVED',
+                  'bg-danger': p.verificationStatus === 'REJECTED'
+                }">
+            <i class="bi" 
+               [ngClass]="{
+                 'bi-hourglass-split': p.verificationStatus === 'PENDING',
+                 'bi-check-circle': p.verificationStatus === 'APPROVED',
+                 'bi-x-circle': p.verificationStatus === 'REJECTED'
+               }"></i>
+            {{ p.verificationStatus === 'PENDING' ? 'قيد المراجعة' : (p.verificationStatus === 'APPROVED' ? 'معتمد' : 'مرفوض') }}
+          </span>
+        </div>
 
-          <!-- Status Badge -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="safqa-icon-wrapper safqa-icon-wrapper-secondary" style="width: 55px; height: 55px;">
+            <span class="fw-bold fs-4">{{ p.companyName.charAt(0).toUpperCase() }}</span>
+          </div>
           <div>
-            <span *ngIf="p.verificationStatus === 'APPROVED'" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
-              <i class="bi bi-check-circle-fill"></i> مورد معتمد
-            </span>
-            <span *ngIf="p.verificationStatus === 'PENDING'" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2">
-              <i class="bi bi-hourglass-split"></i> قيد المراجعة
-            </span>
-            <span *ngIf="p.verificationStatus === 'REJECTED'" class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
-              <i class="bi bi-x-circle-fill"></i> مرفوض
-            </span>
+            <h5 class="fw-bold text-dark mb-1">{{ p.companyName }}</h5>
+            <div class="text-muted small">
+              <i class="bi bi-calendar-event me-1"></i> تاريخ التسجيل: {{ p.createdAt | date:'mediumDate' }}
+            </div>
           </div>
         </div>
 
-        <!-- Details Grid -->
-        <div class="row g-2 small text-muted mb-3">
-          <div class="col-md-3">
-            <span class="fw-bold text-dark">السجل التجاري (CR):</span> {{ p.commercialRegistrationNumber }}
+        <div class="row g-4 mb-4">
+          <div class="col-md-6 col-lg-3">
+            <label class="text-muted small fw-bold mb-1"><i class="bi bi-telephone me-1"></i> رقم الهاتف</label>
+            <div class="p-2 bg-light rounded-3 fw-bold text-dark" dir="ltr">{{ p.businessPhone || '—' }}</div>
           </div>
-          <div class="col-md-3">
-            <span class="fw-bold text-dark">البطاقة الضريبية (TIN):</span> {{ p.taxIdentificationNumber }}
+          <div class="col-md-6 col-lg-3">
+            <label class="text-muted small fw-bold mb-1"><i class="bi bi-geo-alt me-1"></i> العنوان</label>
+            <div class="p-2 bg-light rounded-3 fw-bold text-dark text-truncate" [title]="p.businessAddress">{{ p.businessAddress || '—' }}</div>
           </div>
-          <div class="col-md-3">
-            <span class="fw-bold text-dark">سنوات الخبرة:</span> {{ p.yearsInBusiness || 0 }} سنة
+          <div class="col-md-6 col-lg-3">
+            <label class="text-muted small fw-bold mb-1"><i class="bi bi-file-earmark-text me-1"></i> السجل التجاري</label>
+            <div class="p-2 bg-light rounded-3 fw-bold text-dark">{{ p.commercialRegistrationNumber || '—' }}</div>
           </div>
-          <div class="col-md-3" *ngIf="p.website">
-            <span class="fw-bold text-dark">الموقع:</span> <a [href]="p.website" target="_blank" class="text-success">{{ p.website }}</a>
+          <div class="col-md-6 col-lg-3">
+            <label class="text-muted small fw-bold mb-1"><i class="bi bi-receipt me-1"></i> الرقم الضريبي</label>
+            <div class="p-2 bg-light rounded-3 fw-bold text-dark">{{ p.taxIdentificationNumber || '—' }}</div>
+          </div>
+          <div class="col-md-12">
+            <label class="text-muted small fw-bold mb-1"><i class="bi bi-info-circle me-1"></i> وصف الشركة</label>
+            <div class="p-3 bg-light rounded-3 text-dark">{{ p.companyDescription || 'لا يوجد وصف متاح.' }}</div>
+          </div>
+          <div class="col-md-6">
+            <label class="text-muted small fw-bold mb-1"><i class="bi bi-globe me-1"></i> الموقع الإلكتروني</label>
+            <div class="p-2 bg-light rounded-3 fw-bold">
+              <a [href]="p.website" target="_blank" class="text-decoration-none text-primary" *ngIf="p.website">{{ p.website }}</a>
+              <span *ngIf="!p.website" class="text-dark">—</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="text-muted small fw-bold mb-1"><i class="bi bi-briefcase me-1"></i> سنوات الخبرة</label>
+            <div class="p-2 bg-light rounded-3 fw-bold text-dark">{{ p.yearsInBusiness ? p.yearsInBusiness + ' سنوات' : '—' }}</div>
           </div>
         </div>
 
-        <p class="mb-3 text-secondary small bg-light p-2 rounded">
-          <span class="fw-bold text-dark">وصف النشاط:</span> {{ p.companyDescription }}
-        </p>
-
-        <!-- Rejection reason note if rejected -->
-        <div *ngIf="p.rejectionReason" class="alert alert-danger py-2 small mb-3">
-          <strong>سبب الرفض:</strong> {{ p.rejectionReason }}
+        <div class="alert alert-danger mt-3 mb-4 border-0 rounded-3 p-3" *ngIf="p.verificationStatus === 'REJECTED'">
+          <h6 class="fw-bold"><i class="bi bi-x-circle me-1"></i> سبب الرفض السابق:</h6>
+          <p class="mb-0 mt-2">{{ p.rejectionReason }}</p>
         </div>
 
-        <!-- Action Buttons (Only if Pending) -->
-        <div class="d-flex justify-content-end gap-2" *ngIf="p.verificationStatus === 'PENDING'">
-          <button class="btn btn-sm btn-outline-danger px-3" (click)="openRejectModal(p)" [disabled]="isProcessing">
-            <i class="bi bi-x-lg"></i>
-            <span>رفض الطلب</span>
+        <!-- Action Buttons for Pending -->
+        <div class="d-flex justify-content-end gap-3 mt-auto pt-3 border-top" *ngIf="p.verificationStatus === 'PENDING'">
+          <button class="btn btn-light shadow-sm text-safqa-danger fw-bold px-4 rounded-pill" (click)="openRejectModal(p)">
+            <i class="bi bi-x-circle-fill me-1"></i> رفض الطلب
           </button>
-          <button class="btn-safqa-primary btn-sm px-4" (click)="approveSupplier(p)" [disabled]="isProcessing">
-            <i class="bi bi-check2"></i>
-            <span>اعتماد المورد وتفعيل حسابه</span>
+          <button class="btn btn-safqa-primary shadow-sm fw-bold px-4 rounded-pill" (click)="approveSupplier(p)">
+            <i class="bi bi-check-circle-fill me-1"></i> اعتماد المورد
           </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Empty State -->
-    <div class="col-12 text-center py-5" *ngIf="filteredProfiles.length === 0">
-      <div class="safqa-card py-5">
-        <i class="bi bi-inbox fs-1 d-block text-muted mb-2"></i>
-        <p class="text-muted mb-0">لا توجد طلبات موردين مسجلة بهذه الحالة حالياً.</p>
-      </div>
+  <!-- Empty State -->
+  <div *ngIf="filteredProfiles.length === 0 && !isLoading" class="text-center py-5 fade-in-up">
+    <div class="safqa-icon-wrapper safqa-icon-wrapper-secondary mx-auto mb-3" style="width: 80px; height: 80px;">
+      <i class="bi bi-shop fs-1"></i>
     </div>
+    <h5 class="fw-bold text-gray-800">لا توجد نتائج</h5>
+    <p class="text-muted">لم يتم العثور على موردين يطابقون خيارات البحث أو حالة الاعتماد المحددة.</p>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-success" role="status"></div>
-    <p class="text-muted mt-2">جاري جلب ملفات الموردين...</p>
+    <div class="spinner-border text-safqa-secondary" role="status"></div>
+    <p class="text-muted mt-3 fw-bold">جاري تحميل بيانات الموردين...</p>
   </div>
-</div>
-
-<!-- Reject Reason Modal (Custom Backdrop & Dialog) -->
-<div class="custom-modal-backdrop" *ngIf="selectedProfileForReject">
-  <div class="custom-modal-dialog">
-    <div class="safqa-card">
-      <h5 class="fw-bold mb-2 text-danger">
-        <i class="bi bi-exclamation-octagon-fill me-1"></i>
-        رفض طلب اعتماد المورد
-      </h5>
-      <p class="text-muted small mb-3">
-        يرجى كتابة سبب الرفض بوضوح لمساعدة المورد ({{ selectedProfileForReject.companyName }}) في تصحيح بياناته.
-      </p>
-
-      <div class="mb-3">
-        <label class="form-label">سبب الرفض الموجه للمورد</label>
-        <textarea
-          rows="3"
-          class="form-control"
-          placeholder="مثال: السجل التجاري غير مطابق للاسم التجاري أو البطاقة الضريبية منتهية..."
-          [(ngModel)]="rejectionReasonInput"
-        ></textarea>
-      </div>
-
-      <div class="d-flex justify-content-end gap-2">
-        <button class="btn-safqa-outline" (click)="closeRejectModal()" [disabled]="isProcessing">إلغاء</button>
-        <button 
-          class="btn btn-danger" 
-          [disabled]="!rejectionReasonInput.trim() || isProcessing"
-          (click)="confirmReject()"
-        >
-          <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-1" role="status"></span>
-          <span>تأكيد الرفض</span>
-        </button>
+  
+  <!-- Rejection Modal -->
+  <div class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);" *ngIf="selectedProfileForReject">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content safqa-modern-card p-0 border-0">
+        <div class="modal-header border-bottom-0 pb-0">
+          <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-octagon me-2"></i> سبب الرفض</h5>
+          <button type="button" class="btn-close m-0 ms-auto" (click)="closeRejectModal()" [disabled]="isProcessing"></button>
+        </div>
+        <div class="modal-body py-4">
+          <p class="text-muted mb-3">يرجى كتابة سبب رفض اعتماد المورد <strong>{{selectedProfileForReject.companyName}}</strong> لإبلاغه به:</p>
+          <textarea class="form-control" rows="3" [(ngModel)]="rejectionReasonInput" placeholder="اكتب السبب هنا..."></textarea>
+        </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" class="btn btn-light shadow-sm fw-bold" (click)="closeRejectModal()" [disabled]="isProcessing">إلغاء</button>
+          <button type="button" class="btn btn-safqa-primary bg-danger border-danger shadow-sm fw-bold" (click)="confirmReject()" [disabled]="isProcessing || !rejectionReasonInput.trim()">
+            <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span> تأكيد الرفض
+          </button>
+        </div>
       </div>
     </div>
   </div>

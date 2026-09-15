@@ -1,1 +1,41 @@
-﻿<!-- create-dispute template -->
+<div class="container-fluid py-4" dir="rtl">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h4 class="mb-0">تقديم نزاع / شكوى</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+          <div class="mb-3">
+            <label class="form-label">رقم الطلب</label>
+            <input type="text" class="form-control" [(ngModel)]="orderId" disabled>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">سبب النزاع <span class="text-danger">*</span></label>
+            <select class="form-select" [(ngModel)]="reason">
+              <option value="" disabled selected>اختر السبب</option>
+              <option *ngFor="let opt of reasonOptions" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">وصف المشكلة <span class="text-danger">*</span></label>
+            <textarea class="form-control" rows="4" [(ngModel)]="description" placeholder="اشرح المشكلة بالتفصيل..."></textarea>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" (click)="submitDispute()" [disabled]="isSubmitting">
+              <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              تقديم النزاع
+            </button>
+            <a routerLink="/disputes" class="btn btn-outline-secondary">إلغاء</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

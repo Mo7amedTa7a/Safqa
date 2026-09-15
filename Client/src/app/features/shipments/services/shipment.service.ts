@@ -1,6 +1,42 @@
-﻿// Member 5 - Shipment Service
-// getShipments(filters?)        → GET   /api/shipments
-// getShipmentById(id)           → GET   /api/shipments/:id
-// confirmPickup(id)             → PATCH /api/shipments/:id/pickup
-// markDelivered(id, proof)      → PATCH /api/shipments/:id/delivered
-// markFailedDelivery(id, notes) → PATCH /api/shipments/:id/failed
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { Shipment } from '../models/shipment.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ShipmentService {
+  private apiUrl = `${environment.apiUrl}/shipments`;
+
+  constructor(private http: HttpClient) {}
+
+  getShipments(filters?: any): Observable<{ message: string, data: Shipment[] }> {
+    let params = new HttpParams();
+    if (filters) {
+      Object.keys(filters).forEach(key => {
+        if (filters[key]) {
+          params = params.set(key, filters[key]);
+        }
+      });
+    }
+    return this.http.get<{ message: string, data: Shipment[] }>(this.apiUrl, { params });
+  }
+
+  getShipmentById(id: string): Observable<{ message: string, data: Shipment }> {
+    return this.http.get<{ message: string, data: Shipment }>(`${this.apiUrl}/${id}`);
+  }
+
+  updateShipmentStatus(id: string, status: string): Observable<{ message: string, data: Shipment }> {
+    return this.http.patch<{ message: string, data: Shipment }>(`${this.apiUrl}/${id}/status`, { status });
+  }
+
+  assignShippingPartner(id: string, shippingPartnerId: string): Observable<{ message: string, data: Shipment }> {
+    return this.http.patch<{ message: string, data: Shipment }>(`${this.apiUrl}/${id}/assign`, { shippingPartnerId });
+  }
+
+  addPickupProof(id: string, proof: FormData): Observable<{ message: string, data: Shipment }> {
+    return this.http.post<{ message: string, data: Shipment }>(`${this.apiUrl}/${id}/pickup-proof`, proof);
+  }
+}

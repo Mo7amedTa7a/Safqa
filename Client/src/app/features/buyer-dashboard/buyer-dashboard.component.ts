@@ -2,18 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { OrderService } from '../../core/services/order.service';
 import { User, UserRole } from '../../core/models/user.model';
-
-interface ActivePool {
-  id: string;
-  title: string;
-  category: string;
-  discount: string;
-  progressPercent: number;
-  currentUnits: string;
-  targetUnits: string;
-  timeLeft: string;
-}
+import { Order } from '../../core/models/order.model';
 
 @Component({
   selector: 'app-buyer-dashboard',
@@ -25,52 +16,43 @@ interface ActivePool {
 export class BuyerDashboardComponent implements OnInit {
   currentUser: User | null = null;
   UserRole = UserRole;
+  
+  recentOrders: Order[] = [];
+  totalSpending = 0;
 
   buyerKpiStats = [
-    { value: '1,480', label: 'صفقة نشطة', icon: 'bi-collection' },
-    { value: '+940', label: 'مورد معتمد', icon: 'bi-patch-check' },
-    { value: '35%', label: 'متوسط التوفير', icon: 'bi-percent' },
-    { value: '100%', label: 'ضمان الصفقات', icon: 'bi-shield-check' }
+    { value: '0', label: 'إجمالي الطلبات', icon: 'bi-bag-check' },
+    { value: '0 ج.م', label: 'إجمالي المشتريات', icon: 'bi-cash-stack' }
   ];
 
-  activePools: ActivePool[] = [
-    {
-      id: '1',
-      title: 'خامات ومواد تعبئة وتغليف كرتون مضلع',
-      category: 'التعبئة والتغليف',
-      discount: 'خصم 30%',
-      progressPercent: 85,
-      currentUnits: '425 كرتونة',
-      targetUnits: '500 كرتونة',
-      timeLeft: 'باقي 24 ساعة'
-    },
-    {
-      id: '2',
-      title: 'أجهزة ومستلزمات مكتبية وتقنية للشركات',
-      category: 'الأجهزة والمعدات',
-      discount: 'خصم 25%',
-      progressPercent: 65,
-      currentUnits: '65 شركة',
-      targetUnits: '100 شركة',
-      timeLeft: 'باقي 3 أيام'
-    },
-    {
-      id: '3',
-      title: 'ورق طباعة A4 مواصفات قياسية مستورد',
-      category: 'المستلزمات المكتبية',
-      discount: 'خصم 35%',
-      progressPercent: 92,
-      currentUnits: '920 باكتة',
-      targetUnits: '1,000 باكتة',
-      timeLeft: 'يغلق قريباً'
-    }
-  ];
-
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private orderService: OrderService
+  ) {}
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(u => {
       this.currentUser = u;
+      if (u && u.role === UserRole.BUYER) {
+        this.loadDashboardData();
+      }
+    });
+  }
+  
+  loadDashboardData(): void {
+    this.orderService.getOrders().subscribe({
+      next: (res) => {
+        const orders = res.data || [];
+        this.recentOrders = orders.slice(0, 5); // Take top 5
+        
+        this.totalSpending = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+        
+        this.buyerKpiStats = [
+          { value: `${orders.length}`, label: 'إجمالي الطلبات', icon: 'bi-bag-check' },
+          { value: `${this.totalSpending.toLocaleString('en-US')} ج.م`, label: 'إجمالي المشتريات', icon: 'bi-cash-stack' }
+        ];
+      },
+      error: (err) => console.error('Error loading orders', err)
     });
   }
 

@@ -13,6 +13,7 @@ import { User, UserRole } from '../../core/models/user.model';
 })
 export class SidebarComponent implements OnInit {
   @Input() isOpen = false;
+  @Input() isCollapsed = false;
   @Output() closeSidebar = new EventEmitter<void>();
 
   currentUser: User | null = null;

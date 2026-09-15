@@ -16,23 +16,13 @@
         </p>
       </div>
 
-      <div class="d-flex align-items-center gap-2 flex-wrap">
-        <a routerLink="/buying-requests" class="btn-safqa-secondary">
-          <i class="bi bi-plus-lg"></i>
-          <span>طلب شراء جديد</span>
-        </a>
-        <a routerLink="/buying-pools" class="btn-safqa-primary">
-          <i class="bi bi-grid-fill"></i>
-          <span>تصفح التجمعات</span>
-        </a>
-      </div>
     </div>
   </header>
 
   <!-- Buyer KPI Cards -->
   <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3" *ngFor="let stat of buyerKpiStats">
-      <div class="kpi-card">
+      <div class="kpi-card h-100">
         <div class="kpi-icon-box">
           <i class="bi" [ngClass]="stat.icon"></i>
         </div>
@@ -44,121 +34,55 @@
     </div>
   </div>
 
-  <!-- Buyer Main Columns -->
+  <!-- Dashboard Details: Orders and Spending -->
   <div class="row g-4">
-    <div class="col-lg-7">
-      <div class="safqa-card h-100">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div>
-            <h5 class="fw-bold mb-1 text-neutral">تجمعات شراء جماعي نشطة</h5>
-            <p class="text-muted small mb-0">صفقات يكتمل نصابها قريباً مع تخفيضات مباشرة</p>
-          </div>
-          <a routerLink="/buying-pools" class="view-all-link">
-            <span>عرض الكل</span>
-            <i class="bi bi-arrow-left"></i>
-          </a>
+    <!-- Recent Purchase Orders Table -->
+    <div class="col-xl-12">
+      <div class="safqa-card h-100 p-0 border-0">
+        <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
+          <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-bag-check me-2 text-safqa-primary"></i> أحدث أوامر الشراء</h5>
+          <a href="javascript:void(0)" class="text-safqa-primary small text-decoration-none">عرض الكل</a>
         </div>
-
-        <div class="pools-list">
-          <div class="pool-item" *ngFor="let pool of activePools">
-            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-              <div>
-                <span class="pool-category">{{ pool.category }}</span>
-                <h6 class="pool-title mb-0">{{ pool.title }}</h6>
-              </div>
-              <span class="badge-discount">{{ pool.discount }}</span>
-            </div>
-
-            <div class="pool-progress-wrap mb-2">
-              <div class="progress" style="height: 6px;">
-                <div 
-                  class="progress-bar bg-safqa-primary" 
-                  role="progressbar" 
-                  [style.width.%]="pool.progressPercent"
-                  [attr.aria-valuenow]="pool.progressPercent" 
-                  aria-valuemin="0" 
-                  aria-valuemax="100"
-                ></div>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center small text-muted">
-              <span>
-                <strong>{{ pool.currentUnits }}</strong> من {{ pool.targetUnits }}
-              </span>
-              <span class="pool-time">
-                <i class="bi bi-clock"></i>
-                {{ pool.timeLeft }}
-              </span>
-            </div>
-          </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light text-muted">
+              <tr>
+                <th class="ps-4">رقم الطلب</th>
+                <th>المنتج / التجمع</th>
+                <th>التاريخ</th>
+                <th>الكمية</th>
+                <th>التكلفة</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of recentOrders">
+                <td class="ps-4 fw-bold">#ORD-{{ order._id?.substring(0, 6) || 'N/A' }}</td>
+                <td>{{ order.supplier?.companyName || order.supplier?.name || 'مورد' }}</td>
+                <td>{{ order.createdAt | date:'longDate':'':'ar' }}</td>
+                <td>-</td>
+                <td class="fw-bold">{{ order.totalAmount }} ج.م</td>
+                <td>
+                  <span class="badge border rounded-pill px-3"
+                        [ngClass]="{
+                          'bg-success-subtle text-success border-success-subtle': order.status === 'DELIVERED',
+                          'bg-warning-subtle text-warning border-warning-subtle': order.status === 'PENDING',
+                          'bg-primary-subtle text-primary border-primary-subtle': order.status === 'SHIPPED',
+                          'bg-danger-subtle text-danger border-danger-subtle': order.status === 'CANCELLED'
+                        }">
+                    {{ order.status }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="recentOrders.length === 0">
+                <td colspan="6" class="text-center py-4 text-muted">لا توجد طلبات حديثة</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-
-    <!-- Right Side: Quick Shortcuts & Account Info -->
-    <div class="col-lg-5">
-      <div class="safqa-card h-100 d-flex flex-column justify-content-between">
-        <div>
-          <h5 class="fw-bold mb-1 text-neutral">روابط سريعة</h5>
-          <p class="text-muted small mb-3">الوصول السريع إلى خدمات ومتابعة معاملاتك</p>
-
-          <div class="shortcuts-list mb-4">
-            <a routerLink="/buying-requests" class="shortcut-item">
-              <div class="shortcut-icon bg-green-soft">
-                <i class="bi bi-file-earmark-text text-safqa-primary"></i>
-              </div>
-              <div class="shortcut-content">
-                <span class="shortcut-title">طلبات الشراء الخاصة بك</span>
-                <span class="shortcut-desc">متابعة العروض المقدمة وحالة طلباتك</span>
-              </div>
-              <i class="bi bi-chevron-left shortcut-arrow"></i>
-            </a>
-
-            <a routerLink="/buying-pools" class="shortcut-item">
-              <div class="shortcut-icon bg-amber-soft">
-                <i class="bi bi-people-fill text-safqa-secondary"></i>
-              </div>
-              <div class="shortcut-content">
-                <span class="shortcut-title">تجمعات الشراء المنضم لها</span>
-                <span class="shortcut-desc">متابعة اكتمال الحصص والشحن</span>
-              </div>
-              <i class="bi bi-chevron-left shortcut-arrow"></i>
-            </a>
-
-            <a routerLink="/profile" class="shortcut-item">
-              <div class="shortcut-icon bg-slate-soft">
-                <i class="bi bi-person-gear text-slate"></i>
-              </div>
-              <div class="shortcut-content">
-                <span class="shortcut-title">الملف الشخصي والبيانات</span>
-                <span class="shortcut-desc">إدارة بيانات حسابك وتفضيلاتك</span>
-              </div>
-              <i class="bi bi-chevron-left shortcut-arrow"></i>
-            </a>
-
-            <a *ngIf="currentUser?.role === UserRole.ADMIN" routerLink="/admin/users" class="shortcut-item">
-              <div class="shortcut-icon bg-purple-soft">
-                <i class="bi bi-shield-lock text-danger"></i>
-              </div>
-              <div class="shortcut-content">
-                <span class="shortcut-title">لوحة الإدارة والتحكم</span>
-                <span class="shortcut-desc">إدارة المستخدمين والعمليات</span>
-              </div>
-              <i class="bi bi-chevron-left shortcut-arrow"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="escrow-note">
-          <div class="escrow-icon">
-            <i class="bi bi-shield-check"></i>
-          </div>
-          <div class="escrow-text">
-            <strong>حماية الصفقات (Escrow):</strong> المدفوعات محمية ومجمدة بحساب الضمان حتى استلام الشحنة وفحصها 48 ساعة.
-          </div>
-        </div>
-      </div>
-    </div>
+    
+    <!-- Spending Overview Removed for COD Flow -->
   </div>
 </div>

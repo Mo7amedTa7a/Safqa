@@ -21,7 +21,7 @@ import {
 const router = express.Router();
 
 router.post(
-  "/orders/:orderId/disputes",
+  "/orders/:orderId",
   protect,
   authorize("BUYER"),
   validate(createDisputeValidation),
@@ -29,21 +29,21 @@ router.post(
 );
 
 router.get(
-  "/disputes",
+  "/",
   protect,
   authorize("BUYER", "ADMIN"),
   getDisputesController
 );
 
 router.get(
-  "/disputes/:id",
+  "/:id",
   protect,
   authorize("BUYER", "ADMIN"),
   getDisputeByIdController
 );
 
 router.patch(
-  "/disputes/:id/review",
+  "/:id/review",
   protect,
   authorize("ADMIN"),
   validate(reviewDisputeValidation),
@@ -51,7 +51,7 @@ router.patch(
 );
 
 router.patch(
-  "/disputes/:id/resolve",
+  "/:id/resolve",
   protect,
   authorize("ADMIN"),
   validate(resolveDisputeValidation),

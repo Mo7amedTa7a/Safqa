@@ -11,6 +11,7 @@
   <app-sidebar 
     *ngIf="showSidebar"
     [isOpen]="isSidebarOpen" 
+    [isCollapsed]="isSidebarCollapsed"
     (closeSidebar)="closeSidebar()"
   ></app-sidebar>
 

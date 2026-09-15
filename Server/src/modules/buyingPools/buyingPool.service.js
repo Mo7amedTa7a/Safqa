@@ -31,7 +31,7 @@ const createBuyingPool = async (buyingRequestId, buyerId) => {
 
     const pool = await BuyingPool.findOne({
         product: request.product,
-        variant:request.variant,
+        variant: request.variant,
 
         status: "OPEN"
     });
@@ -43,13 +43,14 @@ const createBuyingPool = async (buyingRequestId, buyerId) => {
     const startAt = new Date();
 
     const closeAt = new Date(
-        startAt.getTime() + 3 * 24 * 60 * 60 * 1000
+        // startAt.getTime() + 3 * 24 * 60 * 60 * 1000
+        startAt.getTime() + 3 * 60 * 1000 // 3 minutes for testing
     );
 
     const newPool = await BuyingPool.create({
         product: request.product,
         createdBy: request.buyer,
-        variant:request.variant,
+        variant: request.variant,
         totalQuantity: request.quantity,
         memberCount: 1,
         startAt: startAt,
@@ -82,28 +83,4 @@ const getPoolById = async (poolid) => {
     return person
 
 }
-///////////////////////////////////////
-
-const closePool = async (poolId) => {
-
-  const pool = await BuyingPool.findById(poolId);
-
-  if (!pool) {
-    throw new Error("The pool does not exist");
-  }
-
-  if (pool.status !== "OPEN") {
-    throw new Error("The pool is not open");
-  }
-
-  pool.status = "CLOSED";
-
-  await pool.save();
-
-  return pool;
-};
-
-
-
-
-export { createBuyingPool, getpool, getPoolById, closePool };
+export { createBuyingPool, getpool, getPoolById };

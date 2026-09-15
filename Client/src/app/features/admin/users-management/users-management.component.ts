@@ -16,8 +16,22 @@ export class UsersManagementComponent implements OnInit {
   filteredUsers: User[] = [];
   isLoading = true;
   errorMessage: string | null = null;
+  successMessage: string | null = null;
   searchTerm = '';
   selectedRoleFilter: string = 'ALL';
+
+  showModal = false;
+  isEditMode = false;
+  selectedUserId: string | null = null;
+  isSubmitting = false;
+
+  formData = {
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    role: UserRole.SHIPPING_PARTNER
+  };
 
   UserRole = UserRole;
 
@@ -52,6 +66,82 @@ export class UsersManagementComponent implements OnInit {
     });
   }
 
+  openAddModal(): void {
+    this.isEditMode = false;
+    this.selectedUserId = null;
+    this.formData = {
+      name: '',
+      email: '',
+      password: '',
+      phone: '',
+      role: UserRole.SHIPPING_PARTNER
+    };
+    this.errorMessage = null;
+    this.showModal = true;
+  }
+
+  openEditModal(user: User): void {
+    this.isEditMode = true;
+    this.selectedUserId = user._id;
+    this.formData = {
+      name: user.name,
+      email: user.email,
+      password: '',
+      phone: user.phone || '',
+      role: user.role
+    };
+    this.errorMessage = null;
+    this.showModal = true;
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+  }
+
+  saveUser(): void {
+    this.isSubmitting = true;
+    this.errorMessage = null;
+    this.successMessage = null;
+
+    if (this.isEditMode && this.selectedUserId) {
+      const updatePayload: any = {
+        name: this.formData.name,
+        email: this.formData.email,
+        phone: this.formData.phone,
+        role: this.formData.role
+      };
+      if (this.formData.password) {
+        updatePayload.password = this.formData.password;
+      }
+
+      this.userService.updateUser(this.selectedUserId, updatePayload).subscribe({
+        next: (res) => {
+          this.isSubmitting = false;
+          this.successMessage = 'تم تحديث بيانات ومستويات الحساب بنجاح.';
+          this.closeModal();
+          this.loadUsers();
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          this.errorMessage = err.error?.message || 'حدث خطأ أثناء تحديث بيانات الحساب.';
+        }
+      });
+    } else {
+      this.userService.createUser(this.formData).subscribe({
+        next: (res) => {
+          this.isSubmitting = false;
+          this.successMessage = 'تم إنشاء الحساب بنجاح وتعيين الصلاحيات.';
+          this.closeModal();
+          this.loadUsers();
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          this.errorMessage = err.error?.message || 'حدث خطأ أثناء إنشاء الحساب.';
+        }
+      });
+    }
+  }
+
   toggleDeactivate(user: User): void {
     if (!confirm(`هل أنت متأكد من تغيير حالة حساب المستخدم "${user.name}"؟`)) {
       return;
@@ -78,9 +168,9 @@ export class UsersManagementComponent implements OnInit {
 
   getRoleName(role: UserRole): string {
     switch (role) {
-      case UserRole.ADMIN: return 'مدير النظام';
+      case UserRole.ADMIN: return 'مدير النظام (Admin)';
       case UserRole.SUPPLIER: return 'مورد';
-      case UserRole.SHIPPING_PARTNER: return 'شريك لوجستي';
+      case UserRole.SHIPPING_PARTNER: return 'شركة شحن (Logistics)';
       default: return 'مشتري';
     }
   }

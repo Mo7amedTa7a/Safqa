@@ -15,16 +15,16 @@ import {
 const router = express.Router();
 
 router.get(
-  "/settlements",
+  "/",
   protect,
-  authorize("SUPPLIER", "ADMIN"),
+  authorize("SHIPPING_PARTNER", "SUPPLIER", "ADMIN"),
   getSettlementsController
 );
 
 router.get(
-  "/settlements/:id",
+  "/:id",
   protect,
-  authorize("SUPPLIER", "ADMIN"),
+  authorize("SHIPPING_PARTNER", "SUPPLIER", "ADMIN"),
   getSettlementByIdController
 );
 
@@ -36,14 +36,14 @@ router.post(
 );
 
 router.patch(
-  "/settlements/:id/hold",
+  "/:id/hold",
   protect,
   authorize("SYSTEM", "ADMIN"),
   holdSettlementController
 );
 
 router.patch(
-  "/settlements/:id/release",
+  "/:id/release",
   protect,
   authorize("SYSTEM", "ADMIN"),
   releaseSettlementController

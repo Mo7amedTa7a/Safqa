@@ -1,0 +1,83 @@
+﻿<div class="container-fluid py-4 fade-in-up">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h2 class="h3 mb-1 text-gray-800 fw-bold">إدارة التجمعات الشرائية النشطة</h2>
+      <p class="text-muted mb-0">مراقبة التجمعات المفتوحة والمغلقة في المنصة</p>
+    </div>
+    <button class="btn btn-safqa-primary shadow-sm" (click)="loadPools()" [disabled]="isLoading">
+      <i class="bi bi-arrow-clockwise me-2" [class.fa-spin]="isLoading"></i>تحديث البيانات
+    </button>
+  </div>
+
+  <div class="alert alert-danger shadow-sm border-0 rounded-3" *ngIf="errorMessage && !isLoading">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+  </div>
+
+  <div class="fade-in-up delay-1" *ngIf="!isLoading">
+    <div class="d-flex align-items-center mb-3">
+      <h5 class="m-0 fw-bold text-gray-800"><i class="bi bi-boxes me-2 text-safqa-primary"></i> قائمة التجمعات الشرائية</h5>
+    </div>
+
+    <div class="table-wrapper-modern p-0">
+      <div class="text-center py-5" *ngIf="isLoading">
+        <div class="spinner-border text-safqa-primary" role="status">
+          <span class="visually-hidden">جاري التحميل...</span>
+        </div>
+      </div>
+
+      <div class="table-responsive" *ngIf="!isLoading && pools.length > 0">
+        <table class="table-safqa-modern">
+          <thead>
+            <tr>
+              <th>تاريخ الإنشاء</th>
+              <th>المنتج</th>
+              <th>المنشئ (المشتري)</th>
+              <th>الكمية الإجمالية المطلوبة</th>
+              <th>الأعضاء</th>
+              <th>تاريخ الانتهاء</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pool of pools">
+              <td class="small text-muted fw-bold">{{ pool.createdAt | date:'shortDate' }}</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="me-3 rounded overflow-hidden shadow-sm" style="width: 48px; height: 48px; background: #F8FAFC; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: center;">
+                    <img *ngIf="pool.product?.images?.length" [src]="pool.product.images[0]" alt="Product" style="width: 100%; height: 100%; object-fit: cover;">
+                    <i *ngIf="!pool.product?.images?.length" class="bi bi-box fs-4 text-muted"></i>
+                  </div>
+                  <span class="fw-bold text-dark">{{ pool.product?.name || 'منتج غير معروف' }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-person-circle text-safqa-primary me-2"></i>
+                  <span class="fw-bold">{{ pool.createdBy?.name || 'غير معروف' }}</span>
+                </div>
+              </td>
+              <td class="fw-bold"><i class="bi bi-stack me-1 text-muted"></i> {{ pool.totalQuantity }}</td>
+              <td class="fw-bold"><i class="bi bi-people-fill me-1 text-safqa-secondary"></i> {{ pool.memberCount }}</td>
+              <td class="small text-danger fw-bold"><i class="bi bi-hourglass-bottom me-1"></i> {{ pool.closeAt | date:'shortDate' }}</td>
+              <td>
+                <span class="badge rounded-pill" 
+                      [ngClass]="{'badge-safqa-success': pool.status === 'OPEN', 'badge-safqa-danger': pool.status === 'CLOSED'}">
+                  {{ pool.status === 'OPEN' ? 'مفتوح' : 'مغلق' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-center py-5 text-muted" *ngIf="!isLoading && pools.length === 0">
+        <div class="safqa-icon-wrapper safqa-icon-wrapper-primary mx-auto mb-3" style="width: 80px; height: 80px;">
+          <i class="bi bi-inbox fs-1"></i>
+        </div>
+        <h5 class="fw-bold text-gray-800">لا توجد تجمعات شرائية</h5>
+        <p>لم يتم إنشاء أي تجمعات شرائية حتى الآن.</p>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -31,6 +31,30 @@ import { RejectedComponent } from './features/supplier-onboarding/rejected/rejec
 // Admin Features
 import { UsersManagementComponent } from './features/admin/users-management/users-management.component';
 import { SuppliersManagementComponent } from './features/admin/suppliers-management/suppliers-management.component';
+import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+import { AdminBuyingPoolsComponent } from './features/admin/admin-buying-pools/admin-buying-pools.component';
+import { AdminBuyingRequestsComponent } from './features/admin/admin-buying-requests/admin-buying-requests.component';
+import { AdminSettlementsComponent } from './features/admin/admin-settlements/admin-settlements.component';
+
+// Member 5 - Shipments
+import { ShipmentListComponent } from './features/shipments/shipment-list/shipment-list.component';
+import { ShipmentDetailsComponent } from './features/shipments/shipment-details/shipment-details.component';
+import { TrackingComponent } from './features/shipments/tracking/tracking.component';
+
+// Member 5 - Settlements
+import { SettlementListComponent } from './features/settlements/settlement-list/settlement-list.component';
+import { SettlementDetailsComponent } from './features/settlements/settlement-details/settlement-details.component';
+
+// Member 5 - Disputes
+import { DisputeListComponent } from './features/disputes/dispute-list/dispute-list.component';
+import { DisputeDetailsComponent } from './features/disputes/dispute-details/dispute-details.component';
+import { CreateDisputeComponent } from './features/disputes/create-dispute/create-dispute.component';
+
+// Member 5 - Reviews
+import { CreateReviewComponent } from './features/reviews/create-review/create-review.component';
+
+// Member 5 - Notifications
+import { NotificationCenterComponent } from './features/notifications/notification-center/notification-center.component';
 
 export const routes: Routes = [
   // Public Landing / Home Page
@@ -71,7 +95,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardHomeComponent },
-      
+
       // User Profile Routes
       { path: 'profile', component: MyProfileComponent },
       { path: 'profile/edit', component: EditProfileComponent },
@@ -83,17 +107,107 @@ export const routes: Routes = [
       { path: 'supplier/rejected', component: RejectedComponent },
 
       // Admin Routes
-      { 
-        path: 'admin/users', 
+      {
+        path: 'admin/dashboard',
+        component: AdminDashboardComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN] }
+      },
+      {
+        path: 'admin/users',
         component: UsersManagementComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN] }
       },
-      { 
-        path: 'admin/suppliers', 
+      {
+        path: 'admin/suppliers',
         component: SuppliersManagementComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN] }
+      },
+      {
+        path: 'admin/buying-pools',
+        component: AdminBuyingPoolsComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN] }
+      },
+      {
+        path: 'admin/buying-requests',
+        component: AdminBuyingRequestsComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN] }
+      },
+      {
+        path: 'admin/settlements',
+        component: AdminSettlementsComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN] }
+      },
+
+      // Shipments Routes (SHIPPING_PARTNER, SUPPLIER, ADMIN)
+      {
+        path: 'shipments',
+        component: ShipmentListComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.SHIPPING_PARTNER, UserRole.SUPPLIER, UserRole.ADMIN] }
+      },
+      {
+        path: 'shipments/track/:trackingNumber',
+        component: TrackingComponent
+      },
+      {
+        path: 'shipments/:id',
+        component: ShipmentDetailsComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.SHIPPING_PARTNER, UserRole.SUPPLIER, UserRole.ADMIN] }
+      },
+
+      // Settlements Routes (SHIPPING_PARTNER, SUPPLIER, ADMIN)
+      {
+        path: 'settlements',
+        component: SettlementListComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.SHIPPING_PARTNER, UserRole.SUPPLIER, UserRole.ADMIN] }
+      },
+      {
+        path: 'settlements/:id',
+        component: SettlementDetailsComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.SHIPPING_PARTNER, UserRole.SUPPLIER, UserRole.ADMIN] }
+      },
+
+      // Disputes Routes (BUYER, ADMIN)
+      {
+        path: 'disputes',
+        component: DisputeListComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.BUYER, UserRole.ADMIN] }
+      },
+      {
+        path: 'disputes/create/:orderId',
+        component: CreateDisputeComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.BUYER] }
+      },
+      {
+        path: 'disputes/:id',
+        component: DisputeDetailsComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.BUYER, UserRole.ADMIN] }
+      },
+
+      // Reviews Routes
+      {
+        path: 'orders/:orderId/review',
+        component: CreateReviewComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.BUYER, UserRole.SUPPLIER] }
+      },
+
+      // Notifications Route (all authenticated users)
+      {
+        path: 'notifications',
+        component: NotificationCenterComponent
       }
     ]
   },

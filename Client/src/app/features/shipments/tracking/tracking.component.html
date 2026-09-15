@@ -1,1 +1,71 @@
-﻿<!-- tracking template -->
+<div class="container-fluid py-4" dir="rtl">
+  <div class="row justify-content-center">
+    <div class="col-md-9">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4 text-center">
+          <h4 class="fw-bold mb-3">تتبع الشحنة</h4>
+          <p class="text-muted mb-4">أدخل رقم التتبع لمتابعة حالة الشحنة لحظة بلحظة</p>
+          <div class="d-flex justify-content-center">
+            <div class="input-group max-w-500">
+              <input type="text" class="form-control form-control-lg" placeholder="رقم الشحنة / التتبع..." [(ngModel)]="searchNumber" (keyup.enter)="trackShipment()">
+              <button class="btn btn-primary px-4" (click)="trackShipment()" [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                تتبع
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+      <div *ngIf="shipment" class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="mb-1">شحنة رقم: {{ shipment.trackingNumber }}</h5>
+            <small class="text-muted">تاريخ الإنشاء: {{ shipment.createdAt | date:'short' }}</small>
+          </div>
+          <span class="badge text-bg-primary fs-6">{{ shipment.status }}</span>
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Timeline visual -->
+          <div class="position-relative m-4">
+            <div class="progress" style="height: 4px;">
+              <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;"></div>
+            </div>
+            <div class="d-flex justify-content-between position-relative mt-n3">
+              <div *ngFor="let step of timelineSteps" class="text-center" style="width: 15%;">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                     [ngClass]="isStepActive(step.key) ? 'bg-primary text-white' : 'bg-light text-muted'"
+                     style="width: 40px; height: 40px;">
+                  <i class="bi" [ngClass]="step.icon"></i>
+                </div>
+                <div class="small fw-semibold" [class.text-primary]="isStepActive(step.key)">{{ step.label }}</div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded">
+                <h6 class="fw-bold mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i> عنوان التسليم</h6>
+                <p class="mb-1">{{ shipment.deliveryAddress?.street }}</p>
+                <p class="mb-0 text-muted">{{ shipment.deliveryAddress?.city }} - {{ shipment.deliveryAddress?.country }}</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded">
+                <h6 class="fw-bold mb-2"><i class="bi bi-cash-stack text-success me-1"></i> الدفع عند الاستلام (COD)</h6>
+                <h5 class="text-success fw-bold mb-0">{{ shipment.codAmount | number }} ج.م</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

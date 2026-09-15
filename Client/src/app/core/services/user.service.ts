@@ -11,7 +11,7 @@ import { ApiResponse } from '../models/api-response.model';
 export class UserService {
   private apiUrl = `${environment.apiUrl}/users`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Current logged in user profile
   getMe(): Observable<ApiResponse<User>> {
@@ -30,6 +30,14 @@ export class UserService {
 
   getUserById(id: string): Observable<ApiResponse<User>> {
     return this.http.get<ApiResponse<User>>(`${this.apiUrl}/${id}`);
+  }
+
+  createUser(userData: any): Observable<ApiResponse<User>> {
+    return this.http.post<ApiResponse<User>>(this.apiUrl, userData);
+  }
+
+  updateUser(id: string, userData: any): Observable<ApiResponse<User>> {
+    return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/${id}`, userData);
   }
 
   deactivateUser(id: string): Observable<ApiResponse<User>> {

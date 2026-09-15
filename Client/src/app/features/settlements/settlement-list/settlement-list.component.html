@@ -1,1 +1,80 @@
-﻿<!-- settlement-list template -->
+<div class="container-fluid py-4" dir="rtl">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">التسويات المالية ومستحقات الدفع عند الاستلام</h2>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row text-center">
+        <div class="col-md-4">
+          <h5 class="text-muted">إجمالي التسويات (المكتملة)</h5>
+          <!-- You can calculate this if needed or fetch from backend stats -->
+          <h3 class="text-success fw-bold">--- ج.م</h3>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-muted">التسويات قيد الانتظار</h5>
+          <h3 class="text-warning fw-bold">--- ج.م</h3>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-muted">التسويات المعلقة</h5>
+          <h3 class="text-danger fw-bold">--- ج.م</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 text-center">
+          <thead class="table-light">
+            <tr>
+              <th>رقم الطلب</th>
+              <th>إجمالي الطلب</th>
+              <th>العمولة</th>
+              <th>المستحق للمورد</th>
+              <th>تاريخ الإنشاء</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td colspan="7" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">جاري التحميل...</span>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!isLoading && settlements.length === 0">
+              <td colspan="7" class="text-center py-4 text-muted">
+                لا توجد تسويات مالية حالياً
+              </td>
+            </tr>
+            <tr *ngFor="let settlement of settlements">
+              <td><strong>{{ settlement.order?._id || 'غير متوفر' | slice:-6 }}</strong></td>
+              <td>{{ settlement.productAmount }} ج.م</td>
+              <td class="text-danger">-{{ settlement.commissionAmount }} ج.م</td>
+              <td class="text-success fw-bold">{{ settlement.supplierAmount }} ج.م</td>
+              <td>{{ settlement.createdAt | date:'shortDate' }}</td>
+              <td>
+                <span [class]="getStatusBadgeClass(settlement.status)">
+                  {{ getStatusLabel(settlement.status) }}
+                </span>
+              </td>
+              <td>
+                <a [routerLink]="['/settlements', settlement._id]" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-eye"></i> التفاصيل
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

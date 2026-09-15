@@ -118,7 +118,7 @@
   <ng-container *ngIf="!isPendingSupplier && !isRejectedSupplier">
     <div class="row g-3 mb-4">
       <div class="col-6 col-lg-3" *ngFor="let stat of supplierKpiStats">
-        <div class="kpi-card">
+        <div class="kpi-card h-100">
           <div class="kpi-icon-box">
             <i class="bi" [ngClass]="stat.icon"></i>
           </div>
@@ -129,105 +129,76 @@
         </div>
       </div>
     </div>
-
+    
+    <!-- Dashboard Details: Orders and Finances -->
     <div class="row g-4">
-      <!-- Open Buying Requests to Bid On -->
-      <div class="col-lg-7">
-        <div class="safqa-card h-100">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <h5 class="fw-bold mb-1 text-neutral">طلبات شراء ومناقصات متاحة للتسعير</h5>
-              <p class="text-muted small mb-0">فرص توريد جديدة معلنة من المشترين بانتظار عروض أسعارك</p>
-            </div>
-            <a routerLink="/buying-requests" class="view-all-link">
-              <span>تصفح الكل</span>
-              <i class="bi bi-arrow-left"></i>
-            </a>
+      <!-- Recent Orders Table -->
+      <div class="col-xl-8">
+        <div class="safqa-card h-100 p-0 border-0">
+          <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-list-check me-2 text-safqa-primary"></i> أحدث الطلبات</h5>
+            <a href="javascript:void(0)" class="text-safqa-primary small text-decoration-none">عرض الكل</a>
           </div>
-
-          <div class="pools-list">
-            <div class="pool-item" *ngFor="let rfq of openRfqs">
-              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                <div>
-                  <span class="pool-category">{{ rfq.category }} • {{ rfq.buyer }}</span>
-                  <h6 class="pool-title mb-0">{{ rfq.title }}</h6>
-                </div>
-                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small">
-                  {{ rfq.status }}
-                </span>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center small text-muted pt-2 border-top mt-2">
-                <span>
-                  <i class="bi bi-tag me-1"></i>
-                  <strong>{{ rfq.bidsCount }}</strong> عروض مقدمة
-                </span>
-                <div class="d-flex align-items-center gap-3">
-                  <span class="pool-time text-warning-emphasis fw-bold">
-                    <i class="bi bi-clock"></i> {{ rfq.deadline }}
-                  </span>
-                  <a routerLink="/buying-requests" class="btn btn-sm btn-safqa-primary py-1 px-3">
-                    <span>تقديم عرض</span>
-                    <i class="bi bi-send ms-1"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light text-muted">
+                <tr>
+                  <th class="ps-4">رقم الطلب</th>
+                  <th>العميل</th>
+                  <th>تاريخ الطلب</th>
+                  <th>الكمية</th>
+                  <th>الإجمالي</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of recentOrders">
+                  <td class="ps-4 fw-bold">#ORD-{{ order._id?.substring(0, 6) || 'N/A' }}</td>
+                  <td>{{ order.buyer?.name || order.buyer?.companyName || 'عميل' }}</td>
+                  <td>{{ order.createdAt | date:'longDate':'':'ar' }}</td>
+                  <td>-</td>
+                  <td class="fw-bold">{{ order.totalAmount }} ج.م</td>
+                  <td>
+                    <span class="badge border rounded-pill px-3"
+                          [ngClass]="{
+                            'bg-success-subtle text-success border-success-subtle': order.status === 'DELIVERED',
+                            'bg-warning-subtle text-warning border-warning-subtle': order.status === 'PENDING',
+                            'bg-primary-subtle text-primary border-primary-subtle': order.status === 'SHIPPED',
+                            'bg-danger-subtle text-danger border-danger-subtle': order.status === 'CANCELLED'
+                          }">
+                      {{ order.status }}
+                    </span>
+                  </td>
+                </tr>
+                <tr *ngIf="recentOrders.length === 0">
+                  <td colspan="6" class="text-center py-4 text-muted">لا توجد طلبات حديثة</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-
-      <!-- Supplier Shortcuts & Tools -->
-      <div class="col-lg-5">
-        <div class="safqa-card h-100 d-flex flex-column justify-content-between">
-          <div>
-            <h5 class="fw-bold mb-1 text-neutral">لوحة تحكم المورد</h5>
-            <p class="text-muted small mb-3">إدارة عروض الأسعار، متابعة الصفقات، وملف المنشأة</p>
-
-            <div class="shortcuts-list mb-4">
-              <a routerLink="/buying-requests" class="shortcut-item">
-                <div class="shortcut-icon bg-green-soft">
-                  <i class="bi bi-file-earmark-spreadsheet text-safqa-primary"></i>
-                </div>
-                <div class="shortcut-content">
-                  <span class="shortcut-title">تصفح طلبات الشراء والمناقصات</span>
-                  <span class="shortcut-desc">تقديم عروض أسعار جديدة وتلبية الطلبات</span>
-                </div>
-                <i class="bi bi-chevron-left shortcut-arrow"></i>
-              </a>
-
-              <a routerLink="/supplier/complete-profile" class="shortcut-item">
-                <div class="shortcut-icon bg-blue-soft">
-                  <i class="bi bi-building-check text-primary"></i>
-                </div>
-                <div class="shortcut-content">
-                  <span class="shortcut-title">ملف المنشأة والسجل التجاري</span>
-                  <span class="shortcut-desc">بيانات الاعتماد والوثائق الرسمية للمورد</span>
-                </div>
-                <i class="bi bi-chevron-left shortcut-arrow"></i>
-              </a>
-
-              <a routerLink="/profile" class="shortcut-item">
-                <div class="shortcut-icon bg-slate-soft">
-                  <i class="bi bi-person-gear text-slate"></i>
-                </div>
-                <div class="shortcut-content">
-                  <span class="shortcut-title">الملف الشخصي والحساب</span>
-                  <span class="shortcut-desc">إدارة بيانات حسابك وتفضيلات الأمان</span>
-                </div>
-                <i class="bi bi-chevron-left shortcut-arrow"></i>
-              </a>
+      
+      <!-- Financial Overview & Profits -->
+      <div class="col-xl-4">
+        <div class="safqa-card h-100 p-4 border-0">
+          <h5 class="fw-bold mb-4 text-dark"><i class="bi bi-graph-up-arrow me-2 text-success"></i> ملخص الأرباح</h5>
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <p class="text-muted mb-1 small">إجمالي الأرباح</p>
+              <h3 class="fw-bold text-dark mb-0">{{ totalProfit.toLocaleString('en-US') }} <span class="fs-6 text-muted">ج.م</span></h3>
             </div>
           </div>
-
-          <div class="escrow-note">
-            <div class="escrow-icon">
-              <i class="bi bi-shield-check"></i>
-            </div>
-            <div class="escrow-text">
-              <strong>ضمان مستحقات المورد:</strong> المبالغ محجوزة ومؤمنة بحساب الضمان (Escrow) ويتم صرفها فور تسليم الشحنة للعميل.
-            </div>
+          
+          <hr class="text-muted opacity-25 my-4">
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted"><i class="bi bi-wallet2 me-2"></i> الرصيد المتاح للسحب:</span>
+            <span class="fw-bold">{{ totalProfit.toLocaleString('en-US') }} ج.م</span>
           </div>
+          
+          <button class="btn btn-safqa-outline w-100 rounded-pill mt-2">سحب الأرباح</button>
         </div>
       </div>
     </div>
