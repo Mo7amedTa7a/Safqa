@@ -1,1 +1,338 @@
-﻿/* deal-list styles */
+﻿/* =========================
+   Deal Page
+========================= */
+
+.deal-page {
+  min-height: 100vh;
+  background-color: #f7f7fc;
+  color: #0f172a;
+}
+
+
+/* =========================
+   Page Header
+========================= */
+
+.page-header {
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: 28px 32px;
+  border: 1px solid #e5e7eb;
+}
+
+.page-label {
+  display: inline-block;
+  color: #0f5132;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.page-subtitle {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+
+/* =========================
+   Loading
+========================= */
+
+.loading-container {
+  min-height: 300px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  color: #64748b;
+}
+
+
+/* =========================
+   Error
+========================= */
+
+.custom-alert-error {
+  background-color: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+
+/* =========================
+   Empty State
+========================= */
+
+.empty-state {
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: 70px 20px;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+  background-color: #e8f3ed;
+
+  font-size: 28px;
+}
+
+.empty-state h4 {
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.empty-state p {
+  color: #64748b;
+  margin: 0;
+}
+
+
+/* =========================
+   Deal Card
+========================= */
+
+.deal-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+
+  padding: 24px;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.deal-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 10px 30px rgba(15, 81, 50, 0.08);
+}
+
+
+/* =========================
+   Card Header
+========================= */
+
+.deal-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.deal-label {
+  display: block;
+  color: #94a3b8;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.supplier-name {
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+
+/* =========================
+   Status
+========================= */
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.status-active {
+  background-color: #e8f5ee;
+  color: #0f5132;
+}
+
+.status-completed {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+
+/* =========================
+   Divider
+========================= */
+
+.deal-divider {
+  height: 1px;
+  background-color: #eef0f4;
+  margin: 20px 0;
+}
+
+
+/* =========================
+   Info Boxes
+========================= */
+
+.info-box {
+  background-color: #f3f5ff;
+  border-radius: 14px;
+  padding: 18px;
+  min-height: 115px;
+}
+
+.price-box {
+  background-color: #eef8f3;
+}
+
+.info-label {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.info-value {
+  display: inline-block;
+  color: #0f172a;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.price-box .info-value {
+  color: #0f5132;
+}
+
+.info-unit {
+  color: #64748b;
+  font-size: 13px;
+  margin-right: 5px;
+}
+
+
+/* =========================
+   Deal Details
+========================= */
+
+.deal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 14px;
+}
+
+.detail-label {
+  color: #64748b;
+}
+
+.detail-value {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.deal-id {
+  font-size: 12px;
+  color: #64748b;
+}
+
+
+/* =========================
+   Card Footer
+========================= */
+
+.deal-card-footer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-primary-custom {
+  background-color: #0f5132;
+  border-color: #0f5132;
+
+  color: #ffffff;
+
+  border-radius: 9px;
+
+  padding: 10px 18px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+  background-color: #0b4027;
+  border-color: #0b4027;
+  color: #ffffff;
+}
+
+.arrow {
+  margin-right: 8px;
+}
+
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 576px) {
+
+  .page-header {
+    padding: 22px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .deal-card {
+    padding: 18px;
+  }
+
+  .supplier-name {
+    font-size: 18px;
+  }
+
+  .info-value {
+    font-size: 21px;
+  }
+
+  .deal-card-header {
+    align-items: flex-start;
+  }
+
+}

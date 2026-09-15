@@ -34,6 +34,11 @@ import { SuppliersManagementComponent } from './features/admin/suppliers-managem
 
 // Deals
 import { DealListComponent } from './features/deals/deal-list/deal-list.component';
+import { DealDetailsComponent } from './features/deals/deal-details/deal-details.component';
+
+//Orders
+import { OrderListComponent } from './features/orders/order-list/order-list.component';
+import { OrderDetailsComponent } from './features/orders/order-details/order-details.component';
 
 export const routes: Routes = [
   // Public Landing / Home Page
@@ -87,6 +92,17 @@ export const routes: Routes = [
 
       // Deals
       { path: 'deals', component: DealListComponent },
+      {
+        path: 'deals/:id', component: DealDetailsComponent
+      },
+
+      //Orders
+      {
+        path: 'orders', component: OrderListComponent
+      },
+      {
+        path: 'orders/:id', component: OrderDetailsComponent
+      },
 
       // Admin Routes
       {

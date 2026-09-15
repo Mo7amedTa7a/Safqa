@@ -1,9 +1,10 @@
 // BuyingPool Service
 // - Belongs to: Member 3
 // - findOrCreatePool(product, variant): find OPEN pool or create new one with 3-day expiry
-// - getPoolById(id): get pool with members and offers
-// - closePool(poolId): set status CLOSED, trigger Deal creation (notify Member 4)
-// - calculateTotalQuantity(poolId): sum all PoolMember quantities
+// - createBuyingPool: create/find pool and add the buying request as a pool member
+// - getPoolById(id): get pool
+// - closePool(poolId): close pool
+
 import BuyingRequest from "../buyingRequests/buyingRequest.model.js";
 import BuyingPool from "./buyingPool.model.js";
 import PoolMember from "../poolMembers/poolMember.model.js";
@@ -28,37 +29,61 @@ const createBuyingPool = async (buyingRequestId, buyerId) => {
         throw new Error("Buying request cannot be added to a pool");
     }
 
-
-    const pool = await BuyingPool.findOne({
+    let pool = await BuyingPool.findOne({
         product: request.product,
-        variant:request.variant,
-
+        variant: request.variant,
         status: "OPEN"
     });
 
-    if (pool) {
-        return pool;
+    if (!pool) {
+
+        const startAt = new Date();
+
+        const closeAt = new Date(
+            startAt.getTime() + 3 * 24 * 60 * 60 * 1000
+        );
+
+        pool = await BuyingPool.create({
+            product: request.product,
+            createdBy: request.buyer,
+            variant: request.variant,
+            totalQuantity: 0,
+            memberCount: 0,
+            startAt: startAt,
+            closeAt: closeAt,
+            status: "OPEN"
+        });
     }
 
-    const startAt = new Date();
-
-    const closeAt = new Date(
-        startAt.getTime() + 3 * 24 * 60 * 60 * 1000
-    );
-
-    const newPool = await BuyingPool.create({
-        product: request.product,
-        createdBy: request.buyer,
-        variant:request.variant,
-        totalQuantity: request.quantity,
-        memberCount: 1,
-        startAt: startAt,
-        closeAt: closeAt,
-        status: "OPEN"
+    const existingMember = await PoolMember.findOne({
+        pool: pool._id,
+        buyer: buyerId,
+        buyingRequest: request._id
     });
 
-    return newPool;
+    if (existingMember) {
+        throw new Error("You are already a member of this pool");
+    }
+
+    const newMember = await PoolMember.create({
+        pool: pool._id,
+        buyer: buyerId,
+        buyingRequest: request._id,
+        quantity: request.quantity,
+        status: "ACTIVE"
+    });
+
+    pool.totalQuantity += request.quantity;
+    pool.memberCount += 1;
+
+    await pool.save();
+
+    return {
+        pool,
+        member: newMember
+    };
 };
+
 
 /////////////////////////////////////////////////////////
 const getpool = async () => {
@@ -75,35 +100,42 @@ const getpool = async () => {
 /////////////////////////////////////////////////////
 
 const getPoolById = async (poolid) => {
-    const person = await BuyingPool.findById(poolid)
-    if (!person) {
-        throw new Error("not exist pool")
-    }
-    return person
 
-}
+    const person = await BuyingPool.findById(poolid);
+
+    if (!person) {
+        throw new Error("not exist pool");
+    }
+
+    return person;
+};
+
+
 ///////////////////////////////////////
 
 const closePool = async (poolId) => {
 
-  const pool = await BuyingPool.findById(poolId);
+    const pool = await BuyingPool.findById(poolId);
 
-  if (!pool) {
-    throw new Error("The pool does not exist");
-  }
+    if (!pool) {
+        throw new Error("The pool does not exist");
+    }
 
-  if (pool.status !== "OPEN") {
-    throw new Error("The pool is not open");
-  }
+    if (pool.status !== "OPEN") {
+        throw new Error("The pool is not open");
+    }
 
-  pool.status = "CLOSED";
+    pool.status = "CLOSED";
 
-  await pool.save();
+    await pool.save();
 
-  return pool;
+    return pool;
 };
 
 
-
-
-export { createBuyingPool, getpool, getPoolById, closePool };
+export {
+    createBuyingPool,
+    getpool,
+    getPoolById,
+    closePool
+};

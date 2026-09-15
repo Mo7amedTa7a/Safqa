@@ -2,11 +2,12 @@
 import { CommonModule } from '@angular/common';
 import { DealService } from '../services/deal.service';
 import { Deal } from '../models/deal.model';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-deal-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './deal-list.component.html',
   styleUrl: './deal-list.component.css',
 })
