@@ -24,7 +24,7 @@ const createBuyingPool = async (buyingRequestId, buyerId) => {
         throw new Error("This buying request is not for group purchase");
     }
 
-    if (request.status !== "PENDING") {
+    if (request.status !== "OPEN") {
         throw new Error("Buying request cannot be added to a pool");
     }
 
