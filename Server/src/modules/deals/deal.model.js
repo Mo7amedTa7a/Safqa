@@ -6,7 +6,12 @@ const dealSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: 'BuyingPool',
         required: false,
-    },
+        },
+    buyingRequest: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BuyingRequest',
+        required: false,
+        },
     selectedOffer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'SupplierOffer',

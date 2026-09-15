@@ -1,6 +1,7 @@
 import express from 'express';
 
 import {
+  createOrderController,
   getOrdersController,
   getOrderByIdController,
   updateOrderStatusController,
@@ -9,11 +10,35 @@ import {
 } from './order.controller.js';
 
 import authMiddleware from '../../middlewares/auth.middleware.js';
+
 import authorize from '../../middlewares/role.middleware.js';
+
 import validate from '../../middlewares/validate.middleware.js';
-import { updateOrderStatusValidation } from './order.validation.js';
+
+import {
+  updateOrderStatusValidation,
+  createOrderValidation,
+} from './order.validation.js';
 
 const router = express.Router();
+
+
+// ==========================================
+// CREATE ORDER FROM DEAL
+// ==========================================
+
+router.post(
+  '/:dealId/create',
+  authMiddleware,
+  authorize('BUYER'),
+  validate(createOrderValidation),
+  createOrderController
+);
+
+
+// ==========================================
+// GET ALL ORDERS
+// ==========================================
 
 router.get(
   '/',
@@ -22,12 +47,22 @@ router.get(
   getOrdersController
 );
 
+
+// ==========================================
+// GET ORDER BY ID
+// ==========================================
+
 router.get(
   '/:id',
   authMiddleware,
   authorize('BUYER', 'SUPPLIER', 'ADMIN'),
   getOrderByIdController
 );
+
+
+// ==========================================
+// UPDATE ORDER STATUS
+// ==========================================
 
 router.patch(
   '/:id/status',
@@ -37,12 +72,22 @@ router.patch(
   updateOrderStatusController
 );
 
+
+// ==========================================
+// READY FOR PICKUP
+// ==========================================
+
 router.patch(
   '/:id/ready-for-pickup',
   authMiddleware,
   authorize('SUPPLIER'),
   readyForPickupController
 );
+
+
+// ==========================================
+// CANCEL ORDER
+// ==========================================
 
 router.patch(
   '/:id/cancel',

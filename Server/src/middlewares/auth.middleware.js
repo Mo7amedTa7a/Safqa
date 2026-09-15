@@ -29,6 +29,8 @@ const protect = (req, res, next) => {
             process.env.JWT_SECRET
         )
 
+        console.log("AUTH USER:", decoded);
+
         //store authenticated user data
         req.user = decoded
         next()
