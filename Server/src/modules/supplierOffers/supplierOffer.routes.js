@@ -16,12 +16,6 @@ router.post("/:id/offers", protect, authorize("SUPPLIER"), validate(createOfferV
 router.patch("/:offerId", protect, authorize("SUPPLIER"), validate(createOfferValidation), updateOffercontrol);
 router.patch("/:id/withdraw", protect, authorize("SUPPLIER"), withdrawOffercontrol);
 router.get("/:id/offers", protect, authorize("SUPPLIER"), getOffersForPoolcontrol);
-router.get(
-  "/:id",
-  protect,
-  authorize("SUPPLIER"),
-  getOfferByIdcontrol
-);
 
 router.get(
   "/my",
@@ -29,4 +23,13 @@ router.get(
   authorize("SUPPLIER"),
   getMyOfferscontrol
 );
+
+
+router.get(
+  "/:id",
+  protect,
+  authorize("SUPPLIER"),
+  getOfferByIdcontrol
+);
+
 export default router;
