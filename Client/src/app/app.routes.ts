@@ -36,6 +36,18 @@ import { AdminBuyingPoolsComponent } from './features/admin/admin-buying-pools/a
 import { AdminBuyingRequestsComponent } from './features/admin/admin-buying-requests/admin-buying-requests.component';
 import { AdminSettlementsComponent } from './features/admin/admin-settlements/admin-settlements.component';
 
+// Member 2 - Products & Categories
+import { ProductListComponent } from './features/products/product-list/product-list.component';
+import { ProductDetailsComponent } from './features/products/product-details/product-details.component';
+import { CategoryListComponent } from './features/products/category-list/category-list.component';
+import { ProductManagementComponent } from './features/products/product-management/product-management.component';
+
+// Member 2 - Buying Requests
+import { MyRequestsComponent } from './features/buying-requests/my-requests/my-requests.component';
+import { BuyingRequestCreateComponent } from './features/buying-requests/create-request/buying-request-create.component';
+import { BuyingRequestEditComponent } from './features/buying-requests/edit-request/buying-request-edit.component';
+import { BuyingRequestDetailsComponent } from './features/buying-requests/request-details/buying-request-details.component';
+
 // Member 5 - Shipments
 import { ShipmentListComponent } from './features/shipments/shipment-list/shipment-list.component';
 import { ShipmentDetailsComponent } from './features/shipments/shipment-details/shipment-details.component';
@@ -95,6 +107,23 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardHomeComponent },
+
+      // Products Routes
+      { path: 'products', component: ProductListComponent },
+      { path: 'products/:id', component: ProductDetailsComponent },
+      { path: 'categories', component: CategoryListComponent },
+      {
+        path: 'admin/products',
+        component: ProductManagementComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN, UserRole.SUPPLIER] }
+      },
+
+      // Buying Requests Routes
+      { path: 'buying-requests', component: MyRequestsComponent },
+      { path: 'buying-requests/create', component: BuyingRequestCreateComponent },
+      { path: 'buying-requests/:id/edit', component: BuyingRequestEditComponent },
+      { path: 'buying-requests/:id', component: BuyingRequestDetailsComponent },
 
       // User Profile Routes
       { path: 'profile', component: MyProfileComponent },

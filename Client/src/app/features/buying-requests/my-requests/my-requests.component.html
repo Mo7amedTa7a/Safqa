@@ -1,1 +1,59 @@
-﻿<!-- my-requests template -->
+<div class="requests-page" dir="rtl">
+  <div class="heading">
+    <div>
+      <span>المشتري</span>
+      <h1>طلباتي</h1>
+      <p>تابع وأدر طلبات الشراء الخاصة بك.</p>
+    </div>
+    <a routerLink="/products" class="primary">إنشاء طلب جديد</a>
+  </div>
+
+  <div class="toolbar">
+    <select [(ngModel)]="selectedStatus" (change)="loadRequests()">
+      <option *ngFor="let status of statuses" [value]="status">
+        {{ status ? statusLabel(status) : 'كل الحالات' }}
+      </option>
+    </select>
+  </div>
+
+  <div *ngIf="loading" class="state">جاري تحميل الطلبات...</div>
+  <div *ngIf="errorMessage" class="state error">{{ errorMessage }}</div>
+
+  <div *ngIf="!loading && !errorMessage" class="table-card">
+    <div class="table-head">
+      <span>المنتج</span>
+      <span>الكمية</span>
+      <span>النوع</span>
+      <span>الحالة</span>
+      <span>التاريخ</span>
+      <span>الإجراء</span>
+    </div>
+
+    <div *ngFor="let request of filteredRequests" class="table-row">
+      <div class="product">
+        <img
+          *ngIf="productImage(request)"
+          [src]="imageUrl(productImage(request))"
+          [alt]="productName(request)">
+        <span>{{ productName(request) }}</span>
+      </div>
+
+      <span>{{ request.quantity }}</span>
+      <span>{{ request.purchaseType === 'DIRECT' ? 'مباشر' : 'جماعي' }}</span>
+
+      <span class="status" [class.cancelled]="request.status === 'CANCELLED'">
+        {{ statusLabel(request.status) }}
+      </span>
+
+      <span>{{ request.createdAt | date:'yyyy/MM/dd' }}</span>
+
+      <a [routerLink]="['/buying-requests', request._id]" class="view">
+        عرض التفاصيل
+      </a>
+    </div>
+
+    <div *ngIf="filteredRequests.length === 0" class="empty">
+      لا توجد طلبات في هذه الحالة.
+    </div>
+  </div>
+</div>

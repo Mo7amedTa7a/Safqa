@@ -1,0 +1,79 @@
+<div class="request-page" dir="rtl">
+  <div class="top">
+    <a routerLink="/products">← العودة للمنتجات</a>
+  </div>
+
+  <section class="card">
+    <div class="heading">
+      <span>طلب شراء</span>
+      <h1>إنشاء طلب شراء</h1>
+      <p>أدخل الكمية والموقع وطريقة الشراء.</p>
+    </div>
+
+    <div *ngIf="loading" class="state">جاري تحميل المنتج...</div>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+    <form *ngIf="product && !loading" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="product-summary">
+        <div>
+          <span>المنتج</span>
+          <strong>{{ product.name }}</strong>
+          <small>{{ product.category }}</small>
+        </div>
+        <div class="variant-summary">
+          <label>المواصفة</label>
+          <select formControlName="variant">
+            <option *ngFor="let variant of product.variants" [value]="variant._id">
+              {{ variant.sku }} — {{ variant.price | currency:'EGP':'symbol':'1.0-0' }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          الكمية *
+          <input type="number" formControlName="quantity" min="1">
+          <small *ngIf="form.controls.quantity.touched && form.controls.quantity.invalid">
+            الكمية يجب أن تكون 1 أو أكثر.
+          </small>
+        </label>
+
+        <label>
+          الموقع *
+          <input type="text" formControlName="location" placeholder="مثال: القاهرة، مصر">
+          <small *ngIf="form.controls.location.touched && form.controls.location.invalid">
+            أدخل موقع التسليم.
+          </small>
+        </label>
+      </div>
+
+      <div class="purchase-type">
+        <h3>طريقة الشراء *</h3>
+
+        <label [class.selected]="form.controls.purchaseType.value === 'DIRECT'">
+          <input type="radio" formControlName="purchaseType" value="DIRECT">
+          <span>
+            <strong>شراء مباشر</strong>
+            <small>شراء مباشر من المورد.</small>
+          </span>
+        </label>
+
+        <label [class.selected]="form.controls.purchaseType.value === 'GROUP'">
+          <input type="radio" formControlName="purchaseType" value="GROUP">
+          <span>
+            <strong>شراء جماعي</strong>
+            <small>الطلب يمكن أن يدخل لاحقًا في مسار الـPools.</small>
+          </span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <a routerLink="/products" class="cancel">إلغاء</a>
+        <button type="submit" [disabled]="submitting">
+          {{ submitting ? 'جاري الإنشاء...' : 'إنشاء الطلب' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

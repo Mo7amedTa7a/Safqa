@@ -1,1 +1,23 @@
-﻿<!-- category-list template -->
+<div class="categories-page" dir="rtl">
+  <div class="heading">
+    <span>المتجر</span>
+    <h1>التصنيفات</h1>
+    <p>اختر تصنيفًا لعرض المنتجات المرتبطة به.</p>
+  </div>
+
+  <div *ngIf="loading" class="state">جاري تحميل التصنيفات...</div>
+  <div *ngIf="errorMessage" class="state error">{{ errorMessage }}</div>
+
+  <div *ngIf="!loading && !errorMessage" class="grid">
+    <a
+      *ngFor="let category of categories"
+      [routerLink]="['/products']"
+      [queryParams]="{ category: category.name }"
+      class="category-card">
+      <div class="icon">▦</div>
+      <h3>{{ category.name }}</h3>
+      <p>{{ category.description || 'استعرض المنتجات في هذا التصنيف.' }}</p>
+      <span>عرض المنتجات ←</span>
+    </a>
+  </div>
+</div>

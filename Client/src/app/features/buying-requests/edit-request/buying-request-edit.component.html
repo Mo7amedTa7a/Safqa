@@ -1,0 +1,36 @@
+<div class="edit-page" dir="rtl">
+  <div class="top"><a routerLink="/buying-requests">← العودة لطلباتي</a></div>
+
+  <section class="card">
+    <span class="eyebrow">طلب شراء</span>
+    <h1>تعديل الطلب</h1>
+
+    <div *ngIf="loading" class="state">جاري تحميل الطلب...</div>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+    <form *ngIf="request && !loading && !errorMessage" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="locked">
+        <span>المنتج</span>
+        <strong>{{ productName() }}</strong>
+        <small>المنتج والمواصفة ثابتان أثناء التعديل.</small>
+      </div>
+
+      <label>
+        الكمية *
+        <input type="number" formControlName="quantity" min="1">
+      </label>
+
+      <label>
+        الموقع *
+        <input type="text" formControlName="location">
+      </label>
+
+      <div class="actions">
+        <a [routerLink]="['/buying-requests', request._id]" class="cancel-link">إلغاء</a>
+        <button type="submit" [disabled]="submitting">
+          {{ submitting ? 'جاري الحفظ...' : 'حفظ التعديل' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

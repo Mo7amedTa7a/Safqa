@@ -1,0 +1,57 @@
+<div class="details-page" dir="rtl">
+  <div class="top">
+    <a routerLink="/buying-requests">← العودة لطلباتي</a>
+  </div>
+
+  <div *ngIf="loading" class="state">جاري تحميل الطلب...</div>
+  <div *ngIf="errorMessage" class="state error">{{ errorMessage }}</div>
+
+  <section *ngIf="request && !loading" class="layout">
+    <div class="card">
+      <div class="request-header">
+        <div>
+          <span>طلب شراء</span>
+          <h1>{{ productName() }}</h1>
+          <p>{{ variantText() }}</p>
+        </div>
+        <strong class="status">{{ statusLabel(request.status) }}</strong>
+      </div>
+
+      <div class="info-grid">
+        <div><span>الكمية</span><strong>{{ request.quantity }}</strong></div>
+        <div><span>طريقة الشراء</span><strong>{{ request.purchaseType === 'DIRECT' ? 'مباشر' : 'جماعي' }}</strong></div>
+        <div><span>الموقع</span><strong>{{ request.location }}</strong></div>
+        <div><span>تاريخ الإنشاء</span><strong>{{ request.createdAt | date:'yyyy/MM/dd HH:mm' }}</strong></div>
+      </div>
+
+      <div class="actions" *ngIf="request.status === 'OPEN'">
+        <a [routerLink]="['/buying-requests', request._id, 'edit']" class="edit">تعديل الطلب</a>
+        <button (click)="cancel()" [disabled]="actionLoading" class="cancel">
+          {{ actionLoading ? 'جاري الإلغاء...' : 'إلغاء الطلب' }}
+        </button>
+      </div>
+    </div>
+
+    <aside class="card timeline">
+      <h2>حالة الطلب</h2>
+      <div class="step" [class.current]="request.status === 'OPEN'">
+        <b>تم إنشاء الطلب</b><small>OPEN</small>
+      </div>
+      <div class="step" [class.current]="request.status === 'PENDING'">
+        <b>قيد المراجعة</b><small>PENDING</small>
+      </div>
+      <div class="step" [class.current]="request.status === 'POOLED'">
+        <b>ضمن التجمع</b><small>POOLED</small>
+      </div>
+      <div class="step" [class.current]="request.status === 'CLOSED'">
+        <b>مغلق</b><small>CLOSED</small>
+      </div>
+      <div class="step" [class.current]="request.status === 'FULFILLED'">
+        <b>تم التنفيذ</b><small>FULFILLED</small>
+      </div>
+      <div class="step" [class.current]="request.status === 'COMPLETED'">
+        <b>مكتمل</b><small>COMPLETED</small>
+      </div>
+    </aside>
+  </section>
+</div>
