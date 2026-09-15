@@ -1,0 +1,34 @@
+﻿<div class="deal-list-container">
+  <h2>قائمة الصفقات</h2>
+
+  <div *ngIf="isLoading">
+    <p>جاري التحميل...</p>
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage">
+    <p class="error">{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && deals.length === 0">
+    <p>لا توجد صفقات حالياً</p>
+  </div>
+
+  <table *ngIf="!isLoading && !errorMessage && deals.length > 0">
+    <thead>
+      <tr>
+        <th>المورد</th>
+        <th>الكمية</th>
+        <th>السعر</th>
+        <th>الحالة</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let deal of deals">
+        <td>{{ deal.supplier.name }}</td>
+        <td>{{ deal.finalQuantity }}</td>
+        <td>{{ deal.effectiveUnitPrice }}</td>
+        <td>{{ deal.status }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
