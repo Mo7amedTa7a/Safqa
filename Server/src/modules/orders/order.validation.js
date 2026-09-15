@@ -1,9 +1,9 @@
-﻿// Order Validation (express-validator)
+// Order Validation (express-validator)
 // - Belongs to: Member 4
 // - validateUpdateStatus: status must be one of valid enum values
 
 
-const Joi = require('joi');
+import Joi from 'joi';
 
 const updateOrderStatusValidation = Joi.object({
   status: Joi.string()
@@ -18,6 +18,6 @@ const updateOrderStatusValidation = Joi.object({
     .required(),
 });
 
-module.exports = {
+export {
   updateOrderStatusValidation,
 };

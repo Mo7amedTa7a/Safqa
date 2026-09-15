@@ -1,14 +1,14 @@
-﻿const asyncHandler = require('../../utils/asyncHandler');
-const AppError = require('../../utils/AppError');
-const { sendSuccess } = require('../../utils/apiResponse');
+import asyncHandler from '../../utils/asyncHandler.js';
+import AppError from '../../utils/AppError.js';
+import { sendSuccess } from '../../utils/apiResponse.js';
 
-const {
+import {
   getOrders,
   getOrderById,
   updateOrderStatus,
   markOrderReadyForPickup,
   cancelOrder,
-} = require('./order.service');
+} from './order.service.js';
 
 const getOrdersController = asyncHandler(async (req, res) => {
   const orders = await getOrders(req.user);
@@ -35,7 +35,7 @@ const cancelOrderController = asyncHandler(async (req, res) => {
   return sendSuccess(res, 200, 'Order cancelled successfully', order);
 });
 
-module.exports = {
+export {
   getOrdersController,
   getOrderByIdController,
   updateOrderStatusController,

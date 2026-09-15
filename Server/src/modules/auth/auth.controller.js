@@ -1,6 +1,54 @@
-﻿// Auth Controller
+// Auth Controller
 // - Belongs to: Member 1
-// - register: POST /api/v1/auth/register
-// - login:    POST /api/v1/auth/login
-// - logout:   POST /api/v1/auth/logout
+// - register: POST /api/auth/register
+// - login:    POST /api/auth/login
+// - logout:   POST /api/auth/logout
 // - Uses asyncHandler to forward errors to global error handler
+
+import { sendSuccess } from "../../utils/apiResponse.js";
+import asyncHandler from "../../utils/asyncHandler.js";
+import authService from "./auth.service.js";
+import { getFileUrl } from "../../middlewares/upload.middleware.js";
+
+export const register = asyncHandler(async (req, res) => {
+    if (req.file) {
+        req.body.profileImage = getFileUrl(req, req.file);
+    }
+    const { user, token } = await authService.register(req.body);
+
+    //remove password
+    user.password = undefined
+
+    return sendSuccess(res, 201, "User Registered Successfully", { token, user })
+})
+
+export const login = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+
+    const { user, token } = await authService.login(email, password);
+    user.password = undefined
+    return sendSuccess(res, 200, "Login successful", { token, user })
+})
+
+export const logout = asyncHandler(async (req, res) => {
+    await authService.logout();
+
+    return sendSuccess(
+        res,
+        200,
+        "Logout successful"
+    );
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const result = await authService.forgotPassword(email);
+    return sendSuccess(res, 200, result.message);
+});
+
+export const resetPassword = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+    const result = await authService.resetPassword(token, password);
+    return sendSuccess(res, 200, result.message);
+});

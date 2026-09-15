@@ -1,10 +1,10 @@
-﻿const AppError = require('../../utils/AppError');
-const SupplierOffer = require('../supplierOffers/supplierOffer.model');
-const BuyingPool = require('../buyingPools/buyingPool.model');
-const PoolMember = require('../poolMembers/poolMember.model');
-const BuyingRequest = require('../buyingRequests/buyingRequest.model');
-const Deal = require('./deal.model');
-const Order = require('./order.model');
+import AppError from '../../utils/AppError.js';
+import SupplierOffer from '../supplierOffers/supplierOffer.model.js';
+import BuyingRequest from '../buyingRequests/buyingRequest.model.js';
+import BuyingPool from '../buyingPools/buyingPool.model.js';
+import PoolMember from '../poolMembers/poolMember.model.js';
+import Deal from './deal.model.js';
+import Order from '../orders/order.model.js';
 
 function getEffectivePrice(pricingTiers, finalQuantity) {
   const sortedTiers = [...pricingTiers].sort((a, b) => a.minQty - b.minQty);
@@ -216,10 +216,10 @@ async function updateDealStatus(dealId, status) {
   return deal;
 }
 
-module.exports = {
-  selectBestOffer,
-  getEffectivePrice,
-  rankEligibleOffers,
+export { 
+  selectBestOffer, 
+  getEffectivePrice, 
+  rankEligibleOffers, 
   createDealFromPool,
   createDealFromRequest,
   getDeals,

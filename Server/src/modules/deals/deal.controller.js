@@ -1,14 +1,15 @@
-﻿const asyncHandler = require('../../utils/asyncHandler');
-const AppError = require('../../utils/AppError');
-const { sendSuccess } = require('../../utils/apiResponse');
+import asyncHandler from '../../utils/asyncHandler.js';
+import AppError from '../../utils/AppError.js';
+import { sendSuccess } from '../../utils/apiResponse.js';
 
-const {
+import {
   getDeals,
   getDealById,
   updateDealStatus,
   createDealFromPool,
-  createDealFromRequest,
-} = require('./deal.service');
+  createDealFromRequest
+} from './deal.service.js';
+
 
 const getDealsController = asyncHandler(async (req, res) => {
   const deals = await getDeals();
@@ -40,7 +41,7 @@ const selectDirectOfferController = asyncHandler(async (req, res) => {
   return sendSuccess(res, 201, 'Deal created successfully', result);
 });
 
-module.exports = {
+export {
   getDealsController,
   getDealByIdController,
   updateDealStatusController,

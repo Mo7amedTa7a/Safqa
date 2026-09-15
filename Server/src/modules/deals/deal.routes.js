@@ -1,35 +1,35 @@
-﻿const express = require('express');
+import express from 'express';
 
-const {
+import {
     getDealsController,
     getDealByIdController,
     updateDealStatusController
-} = require('./deal.controller');
+} from './deal.controller.js';
 
-const authMiddleware = require('../../middlewares/auth.middleware');
-const { restrictTo } = require('../../middlewares/role.middleware');
+import authMiddleware from '../../middlewares/auth.middleware.js';
+import authorize from '../../middlewares/role.middleware.js';
 
 const router = express.Router();
 
 router.get(
     '/',
     authMiddleware,
-    restrictTo('ADMIN'),
+    authorize('ADMIN'),
     getDealsController
 );
 
 router.get(
     '/:id',
     authMiddleware,
-    restrictTo('ADMIN', 'SUPPLIER'),
+    authorize('ADMIN', 'SUPPLIER'),
     getDealByIdController
 );
 
 router.patch(
     '/:id/status',
     authMiddleware,
-    restrictTo('ADMIN', 'SUPPLIER'),
+    authorize('ADMIN', 'SUPPLIER'),
     updateDealStatusController
 );
 
-module.exports = router;
+export default router;

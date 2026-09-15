@@ -1,15 +1,16 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express';
 
-const { selectDirectOfferController } = require('./deal.controller');
-const authMiddleware = require('../../middlewares/auth.middleware');
-const { restrictTo } = require('../../middlewares/role.middleware');
+import { selectDirectOfferController } from './deal.controller.js';
+import authMiddleware from '../../middlewares/auth.middleware.js';
+import authorize from '../../middlewares/role.middleware.js';
+
+const router = express.Router();
 
 router.post(
   '/:requestId/select-offer',
   authMiddleware,
-  restrictTo('BUYER'),
+  authorize('BUYER'),
   selectDirectOfferController
 );
 
-module.exports = router;
+export default router;

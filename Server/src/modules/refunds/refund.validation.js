@@ -1,3 +1,12 @@
-﻿// Refund Validation (express-validator)
+// Refund Validation
 // - Belongs to: Member 5
-// - validateCreateRefund: orderId, amount required
+
+import Joi from "joi";
+
+const updateRefundStatusValidation = Joi.object({
+  status: Joi.string()
+    .valid("PROCESSING", "REFUNDED", "FAILED")
+    .required(),
+});
+
+export { updateRefundStatusValidation };

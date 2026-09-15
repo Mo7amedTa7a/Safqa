@@ -1,5 +1,5 @@
-﻿const AppError = require('../../utils/AppError');
-const Order = require('./order.model');
+import AppError from '../../utils/AppError.js';
+import Order from './order.model.js';
 
 async function getOrders(user) {
   let filter = {};
@@ -108,7 +108,7 @@ async function cancelOrder(orderId, user) {
   return order;
 }
 
-module.exports = {
+export {
   getOrders,
   getOrderById,
   updateOrderStatus,

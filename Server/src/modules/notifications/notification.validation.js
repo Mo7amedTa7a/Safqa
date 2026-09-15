@@ -1,3 +1,8 @@
-﻿// Notification Validation (express-validator)
+// Notification Validation
 // - Belongs to: Member 5
-// - validateNotificationId: must be valid MongoDB ObjectId
+
+import Joi from "joi";
+
+// Internal creation service only, no body validation needed for reads.
+
+export {};

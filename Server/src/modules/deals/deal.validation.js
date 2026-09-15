@@ -1,4 +1,4 @@
-﻿const Joi = require('joi');
+import Joi from 'joi';
 
 const selectOfferParamsValidation = Joi.object({
   poolId: Joi.string().required(),
@@ -10,7 +10,7 @@ const updateDealStatusValidation = Joi.object({
     .required(),
 });
 
-module.exports = {
+export {
   selectOfferParamsValidation,
   updateDealStatusValidation,
 };
