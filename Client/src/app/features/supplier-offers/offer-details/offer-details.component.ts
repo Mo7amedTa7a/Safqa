@@ -1,7 +1,4 @@
 ﻿// Member 3 - Offer Details
-// GET /api/supplier-offers/:id
-// السعر، MOQ، pricingTiers، deliveryDays، warranty، terms
-// Member 3 - Offer Details
 //
 // GET /api/supplier-offers/:id
 //
@@ -24,10 +21,9 @@ import { SupplierOffer } from '../models/supplier-offer.model';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './offer-details.component.html',
-  styleUrl: './offer-details.component.css'
+  styleUrl: './offer-details.component.css',
 })
 export class OfferDetailsComponent implements OnInit {
-
   private route = inject(ActivatedRoute);
   private supplierOfferService = inject(SupplierOfferService);
 
@@ -38,48 +34,38 @@ export class OfferDetailsComponent implements OnInit {
   errorMessage = '';
 
   ngOnInit(): void {
-
-    this.offerId =
-      this.route.snapshot.paramMap.get('id') ?? '';
+    // Get the real offer id from URL
+    this.offerId = this.route.snapshot.paramMap.get('id') ?? '';
 
     if (!this.offerId) {
       this.errorMessage = 'معرف العرض غير موجود';
+
       return;
     }
 
     this.getOfferDetails();
   }
 
-  getOfferDetails(): void {
 
+  getOfferDetails(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.supplierOfferService
-      .getOfferById(this.offerId)
-      .subscribe({
+    this.supplierOfferService.getOfferById(this.offerId).subscribe({
+      next: (response) => {
+        this.isLoading = false;
 
-        next: (response) => {
-
-          this.isLoading = false;
-
-          if (response.success) {
-            this.offer = response.data;
-          }
-
-        },
-
-        error: (error) => {
-
-          this.isLoading = false;
-
-          this.errorMessage =
-            error?.error?.message ||
-            'حدث خطأ أثناء تحميل تفاصيل العرض';
-
+        if (response.success) {
+          this.offer = response.data;
         }
+      },
 
-      });
+      error: (error) => {
+        this.isLoading = false;
+
+        this.errorMessage =
+          error?.error?.message || 'حدث خطأ أثناء تحميل تفاصيل العرض';
+      },
+    });
   }
-
 }
