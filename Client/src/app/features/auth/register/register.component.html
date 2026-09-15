@@ -1,0 +1,206 @@
+<div class="auth-card">
+  <!-- Auth Navigation Tabs -->
+  <div class="auth-tabs">
+    <a routerLink="/auth/register" class="auth-tab active">
+      <i class="bi bi-person-plus-fill"></i>
+      إنشاء حساب جديد
+    </a>
+    <a routerLink="/auth/login" class="auth-tab">
+      <i class="bi bi-box-arrow-in-left"></i>
+      تسجيل الدخول
+    </a>
+  </div>
+
+  <div class="auth-card-body">
+    <div class="auth-intro">
+      <h2 class="auth-title">إنشاء حساب جديد</h2>
+      <p class="auth-subtitle">
+        انضم إلى منصة صفقة واستفد من أفضل أسعار المشتريات الجماعية.
+      </p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div>{{ errorMessage }}</div>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Role Selection -->
+      <div class="mb-4">
+        <label class="form-label d-block mb-2">نوع الحساب</label>
+        <div class="row g-2">
+          <!-- Buyer -->
+          <div class="col-6">
+            <div
+              class="account-card"
+              [class.selected]="selectedRole === UserRole.BUYER"
+              (click)="selectRole(UserRole.BUYER)"
+            >
+              <div *ngIf="selectedRole === UserRole.BUYER" class="card-check">
+                <i class="bi bi-check"></i>
+              </div>
+              <div class="account-card-icon">
+                <i class="bi bi-cart3"></i>
+              </div>
+              <div class="account-card-title">مشتري / شركة</div>
+              <p class="account-card-desc">لشراء وتجميع الطلبات بأفضل أسعار الجملة</p>
+            </div>
+          </div>
+
+          <!-- Supplier -->
+          <div class="col-6">
+            <div
+              class="account-card"
+              [class.selected]="selectedRole === UserRole.SUPPLIER"
+              (click)="selectRole(UserRole.SUPPLIER)"
+            >
+              <div *ngIf="selectedRole === UserRole.SUPPLIER" class="card-check">
+                <i class="bi bi-check"></i>
+              </div>
+              <div class="account-card-icon">
+                <i class="bi bi-building"></i>
+              </div>
+              <div class="account-card-title">مورّد / مصنع</div>
+              <p class="account-card-desc">لعرض منتجاتك وتلبية طلبات الشراء الجماعية</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="mb-3">
+        <label class="form-label" for="regName">
+          {{ selectedRole === UserRole.SUPPLIER ? 'اسم الشركة / المنشأة' : 'الاسم الكامل' }}
+        </label>
+        <div class="input-icon-group">
+          <input
+            id="regName"
+            type="text"
+            class="form-control"
+            placeholder="أدخل الاسم هنا"
+            formControlName="name"
+            [class.is-invalid]="registerForm.get('name')?.touched && registerForm.get('name')?.invalid"
+          />
+          <span class="input-icon"><i class="bi bi-person"></i></span>
+        </div>
+        <div *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid" class="invalid-feedback d-block">
+          يرجى إدخال الاسم (3 أحرف على الأقل).
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label" for="regEmail">البريد الإلكتروني للعمل</label>
+        <div class="input-icon-group">
+          <input
+            id="regEmail"
+            type="email"
+            class="form-control"
+            placeholder="name@company.com"
+            formControlName="email"
+            [class.is-invalid]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+          />
+          <span class="input-icon"><i class="bi bi-at"></i></span>
+        </div>
+        <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="invalid-feedback d-block">
+          يرجى إدخال بريد إلكتروني صحيح.
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="mb-3">
+        <label class="form-label" for="regPhone">رقم الهاتف</label>
+        <div class="phone-input-group">
+          <span class="country-prefix">+20</span>
+          <input
+            id="regPhone"
+            type="tel"
+            class="form-control phone-control"
+            placeholder="1012345678"
+            formControlName="phone"
+            [class.is-invalid]="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid"
+          />
+        </div>
+        <div *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid" class="invalid-feedback d-block">
+          يرجى إدخال رقم هاتف صحيح (10 أو 11 رقم).
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label" for="regPassword">كلمة المرور</label>
+        <div class="input-icon-group">
+          <input
+            id="regPassword"
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            placeholder="8 خانات على الأقل"
+            formControlName="password"
+            [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+          />
+          <button type="button" class="btn-toggle-eye" (click)="showPassword = !showPassword">
+            <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+        <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="invalid-feedback d-block">
+          كلمة المرور يجب أن لا تقل عن 8 خانات.
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <label class="form-label" for="regConfirmPassword">تأكيد كلمة المرور</label>
+        <div class="input-icon-group">
+          <input
+            id="regConfirmPassword"
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            class="form-control"
+            placeholder="أعد كتابة كلمة المرور"
+            formControlName="confirmPassword"
+            [class.is-invalid]="(registerForm.get('confirmPassword')?.touched || registerForm.touched) && registerForm.errors?.['passwordMismatch']"
+          />
+          <button type="button" class="btn-toggle-eye" (click)="showConfirmPassword = !showConfirmPassword">
+            <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"></i>
+          </button>
+        </div>
+        <div *ngIf="(registerForm.get('confirmPassword')?.touched || registerForm.touched) && registerForm.errors?.['passwordMismatch']" class="invalid-feedback d-block">
+          كلمات المرور غير متطابقة.
+        </div>
+      </div>
+
+      <!-- Terms Checkbox -->
+      <div class="form-check mb-4">
+        <input
+          id="agreeTerms"
+          type="checkbox"
+          class="form-check-input"
+          formControlName="agreeTerms"
+          [class.is-invalid]="registerForm.get('agreeTerms')?.touched && registerForm.get('agreeTerms')?.invalid"
+        />
+        <label class="form-check-label text-muted" for="agreeTerms">
+          أوافق على <a href="#" class="text-safqa-primary">شروط الاستخدام</a> و <a href="#" class="text-safqa-primary">سياسة الخصوصية</a>.
+        </label>
+        <div *ngIf="registerForm.get('agreeTerms')?.touched && registerForm.get('agreeTerms')?.invalid" class="invalid-feedback d-block">
+          يجب الموافقة على الشروط والأحكام للمتابعة.
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn-safqa-primary w-100 py-2"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        <span>إنشاء حساب</span>
+        <i *ngIf="!isLoading" class="bi bi-arrow-left"></i>
+      </button>
+
+      <div class="auth-switch-prompt mt-4 text-center">
+        <span>لديك حساب بالفعل؟ </span>
+        <a routerLink="/auth/login" class="fw-bold text-safqa-primary">تسجيل الدخول</a>
+      </div>
+    </form>
+  </div>
+</div>

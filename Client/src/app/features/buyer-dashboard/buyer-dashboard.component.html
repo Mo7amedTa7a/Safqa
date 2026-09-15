@@ -1,0 +1,164 @@
+<div class="dashboard-page">
+  <header class="dash-header mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h1 class="dash-title mb-0">
+            أهلاً بك،
+            <span class="user-name">{{ currentUser?.name || 'زائرنا الكريم' }}</span>
+          </h1>
+          <span class="role-pill" *ngIf="currentUser">
+            {{ getRoleLabel(currentUser.role) }}
+          </span>
+        </div>
+        <p class="dash-subtitle mb-0">
+          نظرة عامة على نشاطك، وفرص الشراء الجماعي النشطة اليوم.
+        </p>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a routerLink="/buying-requests" class="btn-safqa-secondary">
+          <i class="bi bi-plus-lg"></i>
+          <span>طلب شراء جديد</span>
+        </a>
+        <a routerLink="/buying-pools" class="btn-safqa-primary">
+          <i class="bi bi-grid-fill"></i>
+          <span>تصفح التجمعات</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Buyer KPI Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3" *ngFor="let stat of buyerKpiStats">
+      <div class="kpi-card">
+        <div class="kpi-icon-box">
+          <i class="bi" [ngClass]="stat.icon"></i>
+        </div>
+        <div class="kpi-data">
+          <span class="kpi-value">{{ stat.value }}</span>
+          <span class="kpi-label">{{ stat.label }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buyer Main Columns -->
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="safqa-card h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h5 class="fw-bold mb-1 text-neutral">تجمعات شراء جماعي نشطة</h5>
+            <p class="text-muted small mb-0">صفقات يكتمل نصابها قريباً مع تخفيضات مباشرة</p>
+          </div>
+          <a routerLink="/buying-pools" class="view-all-link">
+            <span>عرض الكل</span>
+            <i class="bi bi-arrow-left"></i>
+          </a>
+        </div>
+
+        <div class="pools-list">
+          <div class="pool-item" *ngFor="let pool of activePools">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <div>
+                <span class="pool-category">{{ pool.category }}</span>
+                <h6 class="pool-title mb-0">{{ pool.title }}</h6>
+              </div>
+              <span class="badge-discount">{{ pool.discount }}</span>
+            </div>
+
+            <div class="pool-progress-wrap mb-2">
+              <div class="progress" style="height: 6px;">
+                <div 
+                  class="progress-bar bg-safqa-primary" 
+                  role="progressbar" 
+                  [style.width.%]="pool.progressPercent"
+                  [attr.aria-valuenow]="pool.progressPercent" 
+                  aria-valuemin="0" 
+                  aria-valuemax="100"
+                ></div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center small text-muted">
+              <span>
+                <strong>{{ pool.currentUnits }}</strong> من {{ pool.targetUnits }}
+              </span>
+              <span class="pool-time">
+                <i class="bi bi-clock"></i>
+                {{ pool.timeLeft }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: Quick Shortcuts & Account Info -->
+    <div class="col-lg-5">
+      <div class="safqa-card h-100 d-flex flex-column justify-content-between">
+        <div>
+          <h5 class="fw-bold mb-1 text-neutral">روابط سريعة</h5>
+          <p class="text-muted small mb-3">الوصول السريع إلى خدمات ومتابعة معاملاتك</p>
+
+          <div class="shortcuts-list mb-4">
+            <a routerLink="/buying-requests" class="shortcut-item">
+              <div class="shortcut-icon bg-green-soft">
+                <i class="bi bi-file-earmark-text text-safqa-primary"></i>
+              </div>
+              <div class="shortcut-content">
+                <span class="shortcut-title">طلبات الشراء الخاصة بك</span>
+                <span class="shortcut-desc">متابعة العروض المقدمة وحالة طلباتك</span>
+              </div>
+              <i class="bi bi-chevron-left shortcut-arrow"></i>
+            </a>
+
+            <a routerLink="/buying-pools" class="shortcut-item">
+              <div class="shortcut-icon bg-amber-soft">
+                <i class="bi bi-people-fill text-safqa-secondary"></i>
+              </div>
+              <div class="shortcut-content">
+                <span class="shortcut-title">تجمعات الشراء المنضم لها</span>
+                <span class="shortcut-desc">متابعة اكتمال الحصص والشحن</span>
+              </div>
+              <i class="bi bi-chevron-left shortcut-arrow"></i>
+            </a>
+
+            <a routerLink="/profile" class="shortcut-item">
+              <div class="shortcut-icon bg-slate-soft">
+                <i class="bi bi-person-gear text-slate"></i>
+              </div>
+              <div class="shortcut-content">
+                <span class="shortcut-title">الملف الشخصي والبيانات</span>
+                <span class="shortcut-desc">إدارة بيانات حسابك وتفضيلاتك</span>
+              </div>
+              <i class="bi bi-chevron-left shortcut-arrow"></i>
+            </a>
+
+            <a *ngIf="currentUser?.role === UserRole.ADMIN" routerLink="/admin/users" class="shortcut-item">
+              <div class="shortcut-icon bg-purple-soft">
+                <i class="bi bi-shield-lock text-danger"></i>
+              </div>
+              <div class="shortcut-content">
+                <span class="shortcut-title">لوحة الإدارة والتحكم</span>
+                <span class="shortcut-desc">إدارة المستخدمين والعمليات</span>
+              </div>
+              <i class="bi bi-chevron-left shortcut-arrow"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="escrow-note">
+          <div class="escrow-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <div class="escrow-text">
+            <strong>حماية الصفقات (Escrow):</strong> المدفوعات محمية ومجمدة بحساب الضمان حتى استلام الشحنة وفحصها 48 ساعة.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

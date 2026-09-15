@@ -1,0 +1,29 @@
+.pending-card {
+  max-width: 680px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+.status-icon-circle {
+  width: 72px;
+  height: 72px;
+  background: #FEF3C7;
+  color: #D97706;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.status-icon-circle.status-approved {
+  background: #E8F5E9;
+  color: #0F5132;
+}
+
+.status-icon-circle.status-rejected {
+  background: #FEE2E2;
+  color: #DC2626;
+}

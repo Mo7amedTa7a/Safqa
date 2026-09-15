@@ -1,0 +1,307 @@
+/* Safqa Design System - Member 1 Foundation */
+:root {
+  /* Brand Colors from Design Tokens Reference */
+  --safqa-primary: #0F5132;
+  --safqa-primary-hover: #0a3622;
+  --safqa-primary-light: #e8f5e9;
+  --safqa-secondary: #D97706;
+  --safqa-secondary-hover: #b45309;
+  --safqa-secondary-light: #fef3c7;
+  --safqa-tertiary: #059669;
+  --safqa-tertiary-hover: #047857;
+  --safqa-neutral: #0F172A;
+  --safqa-neutral-muted: #64748B;
+  --safqa-border: #E2E8F0;
+  --safqa-bg-page: #F8FAFC;
+  --safqa-card-bg: #FFFFFF;
+  --safqa-danger: #DC2626;
+  --safqa-danger-light: #FEE2E2;
+
+  /* Typography */
+  --safqa-font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--safqa-font-family);
+  background-color: var(--safqa-bg-page);
+  color: var(--safqa-neutral);
+  direction: rtl;
+  text-align: right;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  color: var(--safqa-neutral);
+  margin-top: 0;
+}
+
+p {
+  color: var(--safqa-neutral-muted);
+}
+
+/* Buttons System */
+.btn-safqa-primary {
+  background-color: var(--safqa-primary);
+  color: #ffffff;
+  border: 1px solid var(--safqa-primary);
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-safqa-primary:hover,
+.btn-safqa-primary:focus {
+  background-color: var(--safqa-primary-hover);
+  border-color: var(--safqa-primary-hover);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 81, 50, 0.25);
+}
+
+.btn-safqa-secondary {
+  background-color: var(--safqa-secondary);
+  color: #ffffff;
+  border: 1px solid var(--safqa-secondary);
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-safqa-secondary:hover,
+.btn-safqa-secondary:focus {
+  background-color: var(--safqa-secondary-hover);
+  border-color: var(--safqa-secondary-hover);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+}
+
+.btn-safqa-inverted {
+  background-color: var(--safqa-neutral);
+  color: #ffffff;
+  border: 1px solid var(--safqa-neutral);
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-safqa-inverted:hover,
+.btn-safqa-inverted:focus {
+  background-color: #1E293B;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-safqa-outline {
+  background-color: transparent;
+  color: var(--safqa-neutral);
+  border: 1px solid var(--safqa-border);
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-safqa-outline:hover {
+  background-color: #F1F5F9;
+  border-color: #CBD5E1;
+  color: var(--safqa-neutral);
+}
+
+/* Card Styling */
+.safqa-card {
+  background-color: var(--safqa-card-bg);
+  border: 1px solid var(--safqa-border);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  padding: 1.5rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.safqa-card:hover {
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+/* Form Controls */
+.form-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--safqa-neutral);
+  margin-bottom: 0.4rem;
+}
+
+.form-control,
+.form-select {
+  font-family: var(--safqa-font-family);
+  border-radius: 8px;
+  border: 1px solid var(--safqa-border);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #ffffff;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--safqa-primary);
+  box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.15);
+  outline: none;
+}
+
+/* Badges */
+.badge-safqa-primary {
+  background-color: var(--safqa-primary-light);
+  color: var(--safqa-primary);
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-safqa-secondary {
+  background-color: var(--safqa-secondary-light);
+  color: var(--safqa-secondary);
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-safqa-success {
+  background-color: #D1FAE5;
+  color: #065F46;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.badge-safqa-danger {
+  background-color: var(--safqa-danger-light);
+  color: var(--safqa-danger);
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* ==========================================================================
+   Unified Safqa Brand Logo Component
+   ========================================================================== */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.brand-logo:hover {
+  opacity: 0.9;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--safqa-primary, #0F5132), var(--safqa-tertiary, #059669));
+  color: #FFFFFF;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 12px rgba(15, 81, 50, 0.18);
+  flex-shrink: 0;
+}
+
+.brand-icon.small {
+  width: 36px;
+  height: 36px;
+  font-size: 1.05rem;
+  border-radius: 10px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--safqa-primary, #0F5132);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.brand-tag {
+  font-size: 0.72rem;
+  color: #64748B;
+  font-weight: 500;
+  margin-top: 2px;
+}

@@ -1,0 +1,89 @@
+<div class="auth-card">
+  <!-- Auth Navigation Tabs -->
+  <div class="auth-tabs">
+    <a routerLink="/auth/register" class="auth-tab">
+      <i class="bi bi-person-plus-fill"></i>
+      إنشاء حساب جديد
+    </a>
+    <a routerLink="/auth/login" class="auth-tab active">
+      <i class="bi bi-box-arrow-in-left"></i>
+      تسجيل الدخول
+    </a>
+  </div>
+
+  <div class="auth-card-body">
+    <div class="auth-intro">
+      <h2 class="auth-title">تسجيل الدخول</h2>
+      <p class="auth-subtitle">
+        أدخل بيانات حسابك للمتابعة والوصول إلى صفقاتك.
+      </p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div>{{ errorMessage }}</div>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label" for="loginEmail">البريد الإلكتروني</label>
+        <div class="input-icon-group">
+          <input
+            id="loginEmail"
+            type="email"
+            class="form-control"
+            placeholder="name@company.com"
+            formControlName="email"
+            [class.is-invalid]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+          />
+          <span class="input-icon"><i class="bi bi-at"></i></span>
+        </div>
+        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="invalid-feedback d-block">
+          يرجى إدخال بريد إلكتروني صحيح.
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="form-label mb-0" for="loginPassword">كلمة المرور</label>
+          <a routerLink="/auth/forgot-password" class="forgot-link">نسيت كلمة المرور؟</a>
+        </div>
+        <div class="input-icon-group">
+          <input
+            id="loginPassword"
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            placeholder="••••••••"
+            formControlName="password"
+            [class.is-invalid]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+          />
+          <button type="button" class="btn-toggle-eye" (click)="togglePasswordVisibility()">
+            <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+        <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="invalid-feedback d-block">
+          يرجى إدخال كلمة المرور (6 خانات على الأقل).
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn-safqa-primary w-100 py-2 mt-2"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        <span>تسجيل الدخول</span>
+        <i *ngIf="!isLoading" class="bi bi-arrow-left"></i>
+      </button>
+
+      <div class="auth-switch-prompt mt-4 text-center">
+        <span>ليس لديك حساب بعد؟ </span>
+        <a routerLink="/auth/register" class="fw-bold text-safqa-primary">إنشاء حساب جديد</a>
+      </div>
+    </form>
+  </div>
+</div>
