@@ -32,13 +32,14 @@ export const createSupplierProfileSchema = Joi.object({
     website: Joi.string()
         .trim()
         .uri()
+        .allow('', null)
         .optional(),
 
     yearsInBusiness: Joi.number()
         .integer()
         .min(0)
         .optional()
-});
+}).unknown(true);
 
 export const rejectSupplierProfileSchema = Joi.object({
     rejectionReason: Joi.string()

@@ -1,4 +1,4 @@
-﻿export enum UserRole {
+export enum UserRole {
   BUYER = 'BUYER',
   SUPPLIER = 'SUPPLIER',
   SHIPPING_PARTNER = 'SHIPPING_PARTNER',
@@ -11,6 +11,7 @@ export interface User {
   email: string;
   role: UserRole;
   phone?: string;
+  profileImage?: string;
   address?: {
     street?: string;
     city?: string;

@@ -1,1 +1,99 @@
-﻿<!-- pending-review template -->
+<div class="pending-card text-center p-5 mx-auto">
+  <!-- Case 1: Approved -->
+  <div *ngIf="!isLoading && profile?.verificationStatus === 'APPROVED'">
+    <div class="status-icon-circle status-approved mx-auto mb-3">
+      <i class="bi bi-patch-check-fill"></i>
+    </div>
+    <h3 class="fw-bold mb-2 text-success">تهانينا! تم اعتماد منشأتك كمورد معتمد</h3>
+    <p class="text-muted mb-4 lead fs-6">
+      تمت مراجعة بيانات السجل التجاري والموافقة على حسابك بنجاح من قِبل إدارة صفقة. يمكنك الآن البدء في تقديم عروض الأسعار وتلبية طلبات التوريد.
+    </p>
+    <div class="d-flex justify-content-center gap-2">
+      <a routerLink="/dashboard" class="btn-safqa-primary">
+        <i class="bi bi-speedometer2"></i>
+        الانتقال إلى لوحة التحكم
+      </a>
+      <a routerLink="/buying-requests" class="btn-safqa-outline">
+        <i class="bi bi-grid-fill"></i>
+        تصفح طلبات الشراء
+      </a>
+    </div>
+  </div>
+
+  <!-- Case 2: Rejected -->
+  <div *ngIf="!isLoading && profile?.verificationStatus === 'REJECTED'">
+    <div class="status-icon-circle status-rejected mx-auto mb-3">
+      <i class="bi bi-x-circle-fill"></i>
+    </div>
+    <h3 class="fw-bold mb-2 text-danger">تم رفض طلب التسجيل كمورد</h3>
+    <p class="text-muted mb-3 lead fs-6">
+      نعتذر منك، لم يتم اعتماد المنشأة للأسباب التالية:
+    </p>
+    <div class="rejection-box p-3 rounded-3 border border-danger-subtle bg-danger-subtle text-danger-emphasis text-end mb-4">
+      <div class="fw-bold mb-1"><i class="bi bi-exclamation-octagon-fill me-1"></i> سبب الرفض:</div>
+      <p class="mb-0 small">
+        {{ profile?.rejectionReason || 'البيانات المقدمة غير مطابقة للسجل التجاري أو صورة البطاقة الضريبية غير واضحة. يرجى مراجعة البيانات وإعادة الإرسال.' }}
+      </p>
+    </div>
+    <div class="d-flex justify-content-center gap-2">
+      <a routerLink="/supplier/complete-profile" class="btn-safqa-primary">
+        <i class="bi bi-arrow-repeat"></i>
+        تعديل البيانات وإعادة التقديم
+      </a>
+      <a routerLink="/profile" class="btn-safqa-outline">
+        <i class="bi bi-person"></i>
+        الملف الشخصي
+      </a>
+    </div>
+  </div>
+
+  <!-- Case 3: Pending Review (Default) -->
+  <div *ngIf="isLoading || !profile || profile?.verificationStatus === 'PENDING'">
+    <div class="status-icon-circle mx-auto mb-3">
+      <i class="bi bi-hourglass-split"></i>
+    </div>
+    <h3 class="fw-bold mb-2">طلبك قيد المراجعة والتدقيق</h3>
+    <p class="text-muted mb-4 lead fs-6">
+      شكراً لانضمامك إلى شبكة موردي صفقة! يقوم فريق الامتثال ومراجعة السجلات التجارية بفحص بياناتك وتأكيد مطابقة المواصفات. يستغرق ذلك عادة من 24 إلى 48 ساعة عمل.
+    </p>
+
+    <div class="review-steps p-4 rounded-3 border bg-light text-end mb-4">
+      <div class="step-item mb-3 d-flex align-items-center gap-3">
+        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+        <div>
+          <div class="fw-bold">تم إرسال الملف التجاري بنجاح</div>
+          <div class="text-muted small">تم تسجيل السجل التجاري والبطاقة الضريبية.</div>
+        </div>
+      </div>
+      <div class="step-item mb-3 d-flex align-items-center gap-3">
+        <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+        <div>
+          <div class="fw-bold text-warning-emphasis">جاري مراجعة الأوراق والتحقق من السجل</div>
+          <div class="text-muted small">يقوم مسؤولو صفقة بالتحقق من صحة المستندات.</div>
+        </div>
+      </div>
+      <div class="step-item d-flex align-items-center gap-3 opacity-50">
+        <i class="bi bi-circle text-muted fs-5"></i>
+        <div>
+          <div class="fw-bold">تفعيل الحساب والبدء في تقديم العطاءات</div>
+          <div class="text-muted small">ستصلك رسالة وإشعار فور الاعتماد النهائي.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-2 flex-wrap">
+      <a routerLink="/dashboard" class="btn-safqa-primary">
+        <i class="bi bi-speedometer2"></i>
+        لوحة التحكم
+      </a>
+      <a routerLink="/supplier/complete-profile" class="btn-safqa-outline">
+        <i class="bi bi-building-check"></i>
+        ملف المورد المسجل
+      </a>
+      <a routerLink="/profile" class="btn-safqa-outline">
+        <i class="bi bi-person"></i>
+        الملف الشخصي
+      </a>
+    </div>
+  </div>
+</div>

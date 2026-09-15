@@ -1,1 +1,115 @@
-﻿<!-- users-management template -->
+<div class="admin-page">
+  <!-- Page Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h3 class="fw-bold mb-1">إدارة مستخدمي المنصة</h3>
+      <p class="text-muted small mb-0">عرض وحصر جميع حسابات المشترين والموردين وشركاء الشحن وإدارتها بأمان.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-light text-dark border px-3 py-2">
+        إجمالي المسجلين: {{ users.length }} مستخدم
+      </span>
+    </div>
+  </div>
+
+  <!-- Filters & Search Toolbar -->
+  <div class="safqa-card mb-4 p-3">
+    <div class="row g-3">
+      <!-- Search Input -->
+      <div class="col-md-7">
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+          <input
+            type="text"
+            class="form-control border-start-0"
+            placeholder="ابحث بالاسم، البريد الإلكتروني، أو رقم الهاتف..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="applyFilter()"
+          />
+        </div>
+      </div>
+
+      <!-- Role Filter Tabs -->
+      <div class="col-md-5">
+        <select class="form-select" [(ngModel)]="selectedRoleFilter" (ngModelChange)="applyFilter()">
+          <option value="ALL">جميع الأدوار والأنشطة</option>
+          <option [value]="UserRole.BUYER">المشترون (Buyers)</option>
+          <option [value]="UserRole.SUPPLIER">الموردون (Suppliers)</option>
+          <option [value]="UserRole.SHIPPING_PARTNER">شركاء الشحن (Logistics)</option>
+          <option [value]="UserRole.ADMIN">المسؤولون (Admins)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="safqa-card p-0 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-4">المستخدم</th>
+            <th>نوع الحساب</th>
+            <th>رقم الهاتف</th>
+            <th>التقييم</th>
+            <th>الحالة</th>
+            <th class="text-center pe-4">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of filteredUsers">
+            <td class="ps-4">
+              <div class="d-flex align-items-center gap-2">
+                <div class="user-avatar-sm">
+                  {{ u.name.charAt(0).toUpperCase() }}
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{ u.name }}</div>
+                  <div class="text-muted small">{{ u.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getRoleBadge(u.role)">
+                {{ getRoleName(u.role) }}
+              </span>
+            </td>
+            <td class="text-muted small">{{ u.phone || '—' }}</td>
+            <td>
+              <span class="text-warning small"><i class="bi bi-star-fill"></i> {{ u.rating || 5.0 }}</span>
+            </td>
+            <td>
+              <span class="badge" [class.bg-success-subtle]="u.isActive !== false" [class.text-success]="u.isActive !== false" [class.bg-danger-subtle]="u.isActive === false" [class.text-danger]="u.isActive === false">
+                {{ u.isActive !== false ? 'نشط' : 'معطل' }}
+              </span>
+            </td>
+            <td class="text-center pe-4">
+              <button 
+                class="btn btn-sm" 
+                [class.btn-outline-danger]="u.isActive !== false"
+                [class.btn-outline-success]="u.isActive === false"
+                (click)="toggleDeactivate(u)"
+              >
+                <i class="bi" [class.bi-slash-circle]="u.isActive !== false" [class.bi-check-circle]="u.isActive === false"></i>
+                <span class="ms-1">{{ u.isActive !== false ? 'تجميد الحساب' : 'تفعيل الحساب' }}</span>
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredUsers.length === 0 && !isLoading">
+            <td colspan="6" class="text-center py-5 text-muted">
+              <i class="bi bi-people fs-1 d-block mb-2 text-secondary"></i>
+              لم يتم العثور على مستخدمين يطابقون خيارات البحث والفلترة.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-success" role="status"></div>
+    <p class="text-muted mt-2">جاري تحميل بيانات المستخدمين...</p>
+  </div>
+</div>

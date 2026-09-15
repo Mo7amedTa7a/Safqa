@@ -43,7 +43,19 @@ const register = async (userData) => {
         address,
         profileImage
     })
-    return user
+
+    const token = jwt.sign(
+        {
+            id: user._id,
+            role: user.role
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: process.env.JWT_EXPIRES_IN || "7d"
+        }
+    );
+
+    return { user, token }
 }
 
 const login = async (email, password) => {

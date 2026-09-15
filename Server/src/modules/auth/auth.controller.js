@@ -8,17 +8,18 @@
 import { sendSuccess } from "../../utils/apiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 import authService from "./auth.service.js";
+import { getFileUrl } from "../../middlewares/upload.middleware.js";
 
 export const register = asyncHandler(async (req, res) => {
     if (req.file) {
-        req.body.profileImage = req.file.path;
+        req.body.profileImage = getFileUrl(req, req.file);
     }
-    const user = await authService.register(req.body);
+    const { user, token } = await authService.register(req.body);
 
     //remove password
     user.password = undefined
 
-    return sendSuccess(res, 201, "User Registered Successfully", user)
+    return sendSuccess(res, 201, "User Registered Successfully", { token, user })
 })
 
 export const login = asyncHandler(async (req, res) => {

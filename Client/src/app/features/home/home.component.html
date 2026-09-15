@@ -1,0 +1,790 @@
+<div class="landing-page">
+  <!-- Top Navigation Header -->
+  <header class="home-header">
+    <div class="container-xl header-inner">
+      <!-- Brand Logo -->
+      <a routerLink="/" class="brand-logo" (click)="scrollToSection('hero')">
+        <div class="brand-icon">
+          <i class="bi bi-layers-fill"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">صفقة</span>
+          <span class="brand-tag">للمشتريات والتوريد</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="desktop-nav d-none d-lg-flex">
+        <a (click)="scrollToSection('hero')" class="nav-link">الرئيسية</a>
+        <a (click)="scrollToSection('about')" class="nav-link">ما هي صفقة؟</a>
+        <a (click)="scrollToSection('how-it-works')" class="nav-link">كيف تعمل؟</a>
+        <a (click)="scrollToSection('buying-methods')" class="nav-link">طرق الشراء</a>
+        <a (click)="scrollToSection('why-safqa')" class="nav-link">المميزات</a>
+        <a (click)="scrollToSection('suppliers')" class="nav-link">للموردين</a>
+      </nav>
+
+      <!-- User Auth Actions -->
+      <div class="header-actions d-none d-sm-flex">
+        <!-- If Guest (Not Logged In) -->
+        <ng-container *ngIf="!currentUser">
+          <a routerLink="/auth/login" class="btn-safqa-outline py-2 px-3">تسجيل الدخول</a>
+          <a routerLink="/auth/register" class="btn-safqa-primary py-2 px-4">
+            <span>ابدأ الآن مجانا</span>
+            <i class="bi bi-arrow-left"></i>
+          </a>
+        </ng-container>
+
+        <!-- If Logged In -->
+        <ng-container *ngIf="currentUser">
+          <div class="user-logged-box">
+            <span class="user-pill">
+              <i class="bi bi-person-check-fill text-success"></i>
+              <span class="user-name">{{ currentUser.name }}</span>
+            </span>
+            <a routerLink="/dashboard" class="btn-safqa-primary py-2 px-3">
+              <span>لوحة التحكم</span>
+              <i class="bi bi-grid-fill"></i>
+            </a>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button 
+        type="button" 
+        class="mobile-toggle d-lg-none" 
+        (click)="toggleMobileMenu()"
+        aria-label="القائمة"
+      >
+        <i class="bi" [ngClass]="isMobileMenuOpen ? 'bi-x-lg' : 'bi-list'"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer / Menu -->
+    <div class="mobile-menu" *ngIf="isMobileMenuOpen">
+      <nav class="mobile-nav-links">
+        <a (click)="scrollToSection('hero')" class="mobile-nav-item">
+          <i class="bi bi-house"></i>
+          <span>الرئيسية</span>
+        </a>
+        <a (click)="scrollToSection('about')" class="mobile-nav-item">
+          <i class="bi bi-info-circle"></i>
+          <span>ما هي صفقة؟</span>
+        </a>
+        <a (click)="scrollToSection('how-it-works')" class="mobile-nav-item">
+          <i class="bi bi-arrow-repeat"></i>
+          <span>كيف تعمل؟</span>
+        </a>
+        <a (click)="scrollToSection('buying-methods')" class="mobile-nav-item">
+          <i class="bi bi-grid"></i>
+          <span>طرق الشراء</span>
+        </a>
+        <a (click)="scrollToSection('why-safqa')" class="mobile-nav-item">
+          <i class="bi bi-shield-check"></i>
+          <span>المميزات</span>
+        </a>
+        <a (click)="scrollToSection('suppliers')" class="mobile-nav-item">
+          <i class="bi bi-building"></i>
+          <span>للموردين</span>
+        </a>
+      </nav>
+
+      <div class="mobile-actions mt-3">
+        <ng-container *ngIf="!currentUser">
+          <a routerLink="/auth/login" (click)="closeMobileMenu()" class="btn-safqa-outline w-100 mb-2 text-center py-2">
+            تسجيل الدخول
+          </a>
+          <a routerLink="/auth/register" (click)="closeMobileMenu()" class="btn-safqa-primary w-100 text-center py-2">
+            ابدأ الآن مجانا
+          </a>
+        </ng-container>
+        <ng-container *ngIf="currentUser">
+          <a routerLink="/dashboard" (click)="closeMobileMenu()" class="btn-safqa-primary w-100 mb-2 text-center py-2">
+            الانتقال للوحة التحكم
+          </a>
+          <button (click)="logout()" class="btn btn-outline-danger w-100 text-center py-2">
+            تسجيل الخروج
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero-section">
+    <div class="container-xl">
+      <div class="row align-items-center g-4 g-lg-5">
+        <!-- Hero Text & CTAs (Right Column in RTL) -->
+        <div class="col-lg-7">
+          <div class="hero-badge">
+            <span>أول منصة للمشتريات الجماعية والتوريد الذكي</span>
+          </div>
+
+          <h1 class="hero-title">
+            قوتك الشرائية أكبر <br>
+            <span class="highlight-green">لما تشتري مع غيرك</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            وفّر حتى 35% من تكاليف التوريد عبر تجميع طلبات الشراء والمنافسة المباشرة بين كبار الموردين المعتمدين.
+          </p>
+
+          <div class="hero-actions">
+            <ng-container *ngIf="!currentUser">
+              <a routerLink="/auth/register" class="btn-safqa-primary hero-btn-main">
+                <span>ابدأ التوفير الآن</span>
+                <i class="bi bi-arrow-left"></i>
+              </a>
+              <a (click)="scrollToSection('how-it-works')" class="btn-safqa-outline hero-btn-sub">
+                <i class="bi bi-play-circle"></i>
+                <span>كيف تعمل المنصة؟</span>
+              </a>
+            </ng-container>
+
+            <ng-container *ngIf="currentUser">
+              <a routerLink="/dashboard" class="btn-safqa-primary hero-btn-main">
+                <span>الذهاب للوحة التحكم</span>
+                <i class="bi bi-grid-fill"></i>
+              </a>
+              <a (click)="scrollToSection('buying-methods')" class="btn-safqa-outline hero-btn-sub">
+                <span>استكشف طرق الشراء</span>
+              </a>
+            </ng-container>
+          </div>
+
+          <!-- Quick Stats Row -->
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-number">35%</div>
+              <div class="stat-label">متوسط وفر التوريد</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-number">48 ساعة</div>
+              <div class="stat-label">إغلاق الصفقات</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-number">100%</div>
+              <div class="stat-label">موردون معتمدون</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Interactive Visual Card (Left Column in RTL) -->
+        <div class="col-lg-5">
+          <div class="hero-card-preview shadow-sm">
+            <div class="preview-header">
+              <div class="preview-tag">
+                <i class="bi bi-diagram-3-fill"></i>
+                <span>آلية التكتل الذكي في صفقة</span>
+              </div>
+              <span class="preview-live-badge">مباشر</span>
+            </div>
+
+            <div class="deal-steps-flow">
+              <!-- Step 1 -->
+              <div class="flow-card active">
+                <div class="flow-icon">
+                  <span>1</span>
+                </div>
+                <div class="flow-info">
+                  <div class="flow-title">طلب التوريد</div>
+                  <div class="flow-desc">تحديد المنتجات والمواصفات والكمية المطلوبة بدقة</div>
+                </div>
+              </div>
+
+              <!-- Connector -->
+              <div class="flow-arrow"><i class="bi bi-arrow-down"></i></div>
+
+              <!-- Step 2 -->
+              <div class="flow-card active-pulse">
+                <div class="flow-icon">
+                  <span>2</span>
+                </div>
+                <div class="flow-info">
+                  <div class="flow-title">تجميع الطلب مع مشترين آخرين</div>
+                  <div class="flow-desc">تكتل ذكي للوصول للحد الأدنى لأسعار المصانع</div>
+                </div>
+              </div>
+
+              <!-- Connector -->
+              <div class="flow-arrow"><i class="bi bi-arrow-down"></i></div>
+
+              <!-- Step 3 -->
+              <div class="flow-card">
+                <div class="flow-icon orange">
+                  <span>3</span>
+                </div>
+                <div class="flow-info">
+                  <div class="flow-title">تنافس عروض الموردين</div>
+                  <div class="flow-desc">مناقصة عكسية فورية بين الموردين لتقديم أقل سعر</div>
+                </div>
+              </div>
+
+              <!-- Connector -->
+              <div class="flow-arrow"><i class="bi bi-arrow-down"></i></div>
+
+              <!-- Step 4 -->
+              <div class="flow-card success-banner">
+                <div class="flow-icon green">
+                  <i class="bi bi-check-lg"></i>
+                </div>
+                <div class="flow-info">
+                  <div class="flow-title">أفضل سعر وتوريد مضمون</div>
+                  <div class="flow-desc">توفير حتى 35% مع حماية كاملة للمدفوعات</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: What is Safqa? -->
+  <section id="about" class="section-padding bg-light-soft">
+    <div class="container-xl">
+      <div class="section-header text-center">
+        <span class="section-pill">نموذج الاستثمار والادخار</span>
+        <h2 class="section-title">ما هي منصة صفقة؟</h2>
+        <p class="section-subtitle">
+          شبكة مشتريات ذكية تجمع الشركات وأصحاب الأعمال للحصول على أسعار الجملة بسهولة وأمان.
+        </p>
+      </div>
+
+      <div class="row g-4 mt-2">
+        <!-- Feature 1 -->
+        <div class="col-md-4">
+          <div class="feature-box h-100">
+            <div class="feature-icon bg-emerald-soft">
+              <i class="bi bi-shield-lock-fill text-emerald"></i>
+            </div>
+            <h3 class="feature-title">بدون عمولات خفية</h3>
+            <p class="feature-text">
+              شفافية مطلقة في التسعير بدون أي رسوم إدارية غير معلنة أو تكاليف غير واضحة.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="col-md-4">
+          <div class="feature-box h-100">
+            <div class="feature-icon bg-amber-soft">
+              <i class="bi bi-tag-fill text-secondary-safqa"></i>
+            </div>
+            <h3 class="feature-title">شفافية الأسعار</h3>
+            <p class="feature-text">
+              تنافس معلن بين الموردين يمنحك نظرة شاملة على عروض الأسعار ومقارنتها لاختيار الأنسب.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="col-md-4">
+          <div class="feature-box h-100">
+            <div class="feature-icon bg-green-soft">
+              <i class="bi bi-truck text-primary-safqa"></i>
+            </div>
+            <h3 class="feature-title">تسليم موثوق ومحمي</h3>
+            <p class="feature-text">
+              فحص شامل لمطابقة المواصفات مع حماية كاملة لمدفوعاتك حتى استلام الشحنة والتأكد منها.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: How It Works? -->
+  <section id="how-it-works" class="section-padding">
+    <div class="container-xl">
+      <div class="section-header text-center">
+        <span class="section-pill">خطوات بسيطة وواضحة</span>
+        <h2 class="section-title">كيف تعمل صفقة؟</h2>
+        <p class="section-subtitle">
+          أربع خطوات سريعة تأخذك من مرحلة الاحتياج إلى استلام شحنتك بأمان وبأفضل سعر.
+        </p>
+      </div>
+
+      <div class="row g-4 mt-2">
+        <!-- Step 1 -->
+        <div class="col-sm-6 col-lg-3">
+          <div class="step-card h-100">
+            <div class="step-badge">1</div>
+            <div class="step-icon-wrap">
+              <i class="bi bi-file-earmark-text"></i>
+            </div>
+            <h3 class="step-title">حدد احتياجك</h3>
+            <p class="step-text">اختر المنتجات والمواصفات والكمية التي تحتاجها لمنشأتك بكل دقة.</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="col-sm-6 col-lg-3">
+          <div class="step-card h-100">
+            <div class="step-badge">2</div>
+            <div class="step-icon-wrap">
+              <i class="bi bi-people"></i>
+            </div>
+            <h3 class="step-title">انضم لمجموعة شراء</h3>
+            <p class="step-text">يندمج طلبك مع مشترين آخرين للوصول للحد الأدنى لأسعار الجملة الكبرى.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="col-sm-6 col-lg-3">
+          <div class="step-card h-100">
+            <div class="step-badge">3</div>
+            <div class="step-icon-wrap">
+              <i class="bi bi-award"></i>
+            </div>
+            <h3 class="step-title">تنافس الموردين</h3>
+            <p class="step-text">يتنافس الموردون المعتمدون لتقديم أقل سعر توريد وأفضل شروط فحص.</p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="col-sm-6 col-lg-3">
+          <div class="step-card h-100">
+            <div class="step-badge">4</div>
+            <div class="step-icon-wrap">
+              <i class="bi bi-box-seam-fill"></i>
+            </div>
+            <h3 class="step-title">استلام وتوفير مضمون</h3>
+            <p class="step-text">استلم شحنتك المعتمدة بعد الفحص مع مهلة 48 ساعة للتأكد من المطابقة.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Buying Methods Comparison -->
+  <section id="buying-methods" class="section-padding bg-light-soft">
+    <div class="container-xl">
+      <div class="section-header text-center">
+        <span class="section-pill">خيارات مرنة</span>
+        <h2 class="section-title">اختر طريقة الشراء المناسبة لك</h2>
+        <p class="section-subtitle">
+          سواء كنت بحاجة إلى طلب فوري خاص أو تبحث عن أعلى نسبة توفير من خلال الشراء الجماعي.
+        </p>
+      </div>
+
+      <div class="row g-4 mt-2 justify-content-center">
+        <!-- Method 1: Group Purchasing (Featured) -->
+        <div class="col-lg-6">
+          <div class="method-card featured-card h-100">
+            <div class="featured-ribbon">
+              <i class="bi bi-stars"></i>
+              <span>الأعلى توفيراً حتى 35%</span>
+            </div>
+
+            <div class="method-header">
+              <div class="method-icon-circle green">
+                <i class="bi bi-collection-fill"></i>
+              </div>
+              <div>
+                <h3 class="method-name">الشراء الجماعي (تكتل صفقة)</h3>
+                <p class="method-tagline">تجميع الكميات مع مشترين آخرين للوصول لأسعار المصانع</p>
+              </div>
+            </div>
+
+            <!-- Pool Progress Indicator Preview -->
+            <div class="pool-preview-box">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="preview-cat"><i class="bi bi-box-fill text-muted"></i> توريد زيوت ومواد غذائية</span>
+                <span class="preview-pct text-success fw-bold">اكتمل 80%</span>
+              </div>
+              <div class="progress progress-safqa">
+                <div class="progress-bar bg-success" style="width: 80%"></div>
+              </div>
+              <div class="d-flex justify-content-between mt-2 small text-muted">
+                <span>المشاركون: 14 شركة</span>
+                <span>المتبقي للإغلاق: 18 ساعة</span>
+              </div>
+            </div>
+
+            <ul class="method-features">
+              <li>
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <span>خصومات كبار المشترين حتى 35%</span>
+              </li>
+              <li>
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <span>فحص ومطابقة جودة من جهة معتمدة</span>
+              </li>
+              <li>
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <span>فواتير ضريبية رسمية مجمعة للمنشأة</span>
+              </li>
+            </ul>
+
+            <div class="method-action mt-auto pt-3">
+              <a [routerLink]="currentUser ? '/dashboard' : '/auth/register'" class="btn-safqa-primary w-100 text-center py-2">
+                <span>استكشف مجموعات الشراء النشطة</span>
+                <i class="bi bi-arrow-left"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Method 2: Direct Purchasing -->
+        <div class="col-lg-6">
+          <div class="method-card h-100">
+            <div class="direct-ribbon">
+              <span>توريد فوري</span>
+            </div>
+
+            <div class="method-header">
+              <div class="method-icon-circle slate">
+                <i class="bi bi-lightning-charge-fill"></i>
+              </div>
+              <div>
+                <h3 class="method-name">الشراء المباشر</h3>
+                <p class="method-tagline">طلب خاص وسريع لاحتياجات منشأتك الفردية</p>
+              </div>
+            </div>
+
+            <div class="direct-preview-box">
+              <div class="direct-info-item">
+                <i class="bi bi-speedometer2 text-muted"></i>
+                <span>تنفيذ فوري دون انتظار اكتمال التكتل</span>
+              </div>
+              <div class="direct-info-item">
+                <i class="bi bi-sliders text-muted"></i>
+                <span>تحديد كامل لكافة المواصفات والكميات الخاصة</span>
+              </div>
+            </div>
+
+            <ul class="method-features">
+              <li>
+                <i class="bi bi-check-circle-fill text-primary-safqa"></i>
+                <span>سرعة استلام العروض خلال ساعات قليلة</span>
+              </li>
+              <li>
+                <i class="bi bi-check-circle-fill text-primary-safqa"></i>
+                <span>مفاوضة مباشرة وتوريد مخصص لشركتك فقط</span>
+              </li>
+              <li>
+                <i class="bi bi-check-circle-fill text-primary-safqa"></i>
+                <span>نفس معايير الأمان وحماية المدفوعات</span>
+              </li>
+            </ul>
+
+            <div class="method-action mt-auto pt-3">
+              <a [routerLink]="currentUser ? '/dashboard' : '/auth/login'" class="btn-safqa-outline w-100 text-center py-2">
+                <span>طلب توريد خاص بشركتك</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Why Safqa? (Grid + Warehouse Visual) -->
+  <section id="why-safqa" class="section-padding">
+    <div class="container-xl">
+      <div class="row align-items-center g-4 g-lg-5">
+        <!-- 4 Key Value Cards (Right Column in RTL) -->
+        <div class="col-lg-6">
+          <div class="section-header text-start mb-4">
+            <span class="section-pill">مزايا حصرية للمشترين</span>
+            <h2 class="section-title">ليه أصحاب الأعمال والمشترين يختارون صفقة؟</h2>
+            <p class="section-subtitle text-start">
+              نظام متكامل يضمن لك أمان التعاملات، أفضل الأسعار، وسهولة تامة في إدارة التوريدات.
+            </p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <div class="why-card">
+                <div class="why-icon">
+                  <i class="bi bi-currency-dollar"></i>
+                </div>
+                <h4 class="why-title">أسعار جملة حقيقية</h4>
+                <p class="why-desc">توفير مباشر عبر تجميع الطلبات وكسر هوامش الوسطاء.</p>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="why-card">
+                <div class="why-icon">
+                  <i class="bi bi-bar-chart-line"></i>
+                </div>
+                <h4 class="why-title">مقارنة عروض سهلة</h4>
+                <p class="why-desc">استعراض ومقارنة دقيقة لكل عرض سعر بضغطة زر واحدة.</p>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="why-card">
+                <div class="why-icon">
+                  <i class="bi bi-patch-check"></i>
+                </div>
+                <h4 class="why-title">موردون معتمدون مسبقاً</h4>
+                <p class="why-desc">تدقيق كامل للسجلات التجارية وشهادات الجودة والتراخيص.</p>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="why-card">
+                <div class="why-icon">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <h4 class="why-title">حماية استلام 48 ساعة</h4>
+                <p class="why-desc">مهلة كافية لفحص ومطابقة الشحنة قبل تحويل أموال الصفقة.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warehouse Image Visual (Left Column in RTL) -->
+        <div class="col-lg-6">
+          <div class="why-visual-wrap shadow-sm">
+            <img 
+              src="/assets/images/warehouse.jpg" 
+              alt="مستودعات وتوريدات صفقة" 
+              class="why-image"
+              loading="lazy"
+            />
+            <div class="why-visual-overlay">
+              <div class="overlay-badge">
+                <i class="bi bi-box-seam text-success"></i>
+                <span>شبكة لوجستية معتمدة تغطي كافة المحافظات</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Suppliers Invitation (Dark Sleek Card) -->
+  <section id="suppliers" class="section-padding pt-0">
+    <div class="container-xl">
+      <div class="supplier-banner">
+        <div class="row align-items-center g-4">
+          <!-- Supplier Image -->
+          <div class="col-lg-5">
+            <div class="supplier-img-wrap">
+              <img 
+                src="/assets/images/deal-meeting.jpg" 
+                alt="شركاء وموردي صفقة" 
+                class="supplier-image"
+                loading="lazy"
+              />
+              <div class="supplier-stat-card">
+                <div class="stat-big">14.8 مليون ج.م</div>
+                <div class="stat-sub">حجم الصفقات المنجزة عبر المنصة</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Supplier Text & Action -->
+          <div class="col-lg-7 text-white">
+            <div class="supplier-tag">
+              <i class="bi bi-briefcase-fill"></i>
+              <span>بوابة الموردين والمصانع</span>
+            </div>
+
+            <h2 class="supplier-heading">
+              وصل إلى مشترين لديهم احتياج حقيقي بدل البحث العشوائي
+            </h2>
+
+            <p class="supplier-desc">
+              توقف عن إهدار الميزانيات التسويقية غير المجدية. انضم لمنصة صفقة واحصل على طلبات توريد مؤكدة ومباشرة مع ضمانات سداد رسمية.
+            </p>
+
+            <div class="supplier-features-row">
+              <div class="sup-feat">
+                <i class="bi bi-receipt-cutoff"></i>
+                <span>طلبات شراء جاهزة</span>
+              </div>
+              <div class="sup-feat">
+                <i class="bi bi-wallet2"></i>
+                <span>ضمان التحصيل والمدفوعات</span>
+              </div>
+              <div class="sup-feat">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>نمو مبيعاتك بنسبة أسرع</span>
+              </div>
+            </div>
+
+            <div class="supplier-cta-row mt-4">
+              <a routerLink="/auth/register" class="btn btn-supplier-join">
+                <span>انضم كمورد معتمد</span>
+                <i class="bi bi-arrow-left"></i>
+              </a>
+              <span class="supplier-note">
+                <i class="bi bi-check2-all text-success"></i>
+                <span>تسجيل مجاني وفحص سريع للسجل التجاري</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Trust & Security Standards -->
+  <section id="trust" class="section-padding bg-light-soft">
+    <div class="container-xl">
+      <div class="section-header text-center">
+        <span class="section-pill">ثقة ومصداقية</span>
+        <h2 class="section-title">معايير الثقة والأمان على صفقة</h2>
+        <p class="section-subtitle">
+          نضمن حماية حقوق ومصالح المشتري والمورد في كل مرحلة من مراحل التعامل.
+        </p>
+      </div>
+
+      <div class="row g-3 g-md-4 mt-2">
+        <!-- Trust 1 -->
+        <div class="col-6 col-md-4 col-lg">
+          <div class="trust-card text-center h-100">
+            <div class="trust-icon bg-green-soft">
+              <i class="bi bi-shield-check text-primary-safqa"></i>
+            </div>
+            <h4 class="trust-name">دفع آمن ومحمي</h4>
+            <p class="trust-desc">حجز الأموال في حساب وسيط حتى استلام وفحص البضاعة.</p>
+          </div>
+        </div>
+
+        <!-- Trust 2 -->
+        <div class="col-6 col-md-4 col-lg">
+          <div class="trust-card text-center h-100">
+            <div class="trust-icon bg-amber-soft">
+              <i class="bi bi-file-earmark-lock text-secondary-safqa"></i>
+            </div>
+            <h4 class="trust-name">عقود موثقة</h4>
+            <p class="trust-desc">شروط توريد واضحة وملزمة قانونياً لحفظ حقوق الطرفين.</p>
+          </div>
+        </div>
+
+        <!-- Trust 3 -->
+        <div class="col-6 col-md-4 col-lg">
+          <div class="trust-card text-center h-100">
+            <div class="trust-icon bg-emerald-soft">
+              <i class="bi bi-clock-history text-emerald"></i>
+            </div>
+            <h4 class="trust-name">حماية 48 ساعة</h4>
+            <p class="trust-desc">مهلة لفحص الشحنة والتأكد من مطابقة الجودة للمواصفات.</p>
+          </div>
+        </div>
+
+        <!-- Trust 4 -->
+        <div class="col-6 col-md-4 col-lg">
+          <div class="trust-card text-center h-100">
+            <div class="trust-icon bg-blue-soft">
+              <i class="bi bi-arrow-left-right text-primary"></i>
+            </div>
+            <h4 class="trust-name">إرجاع واستبدال</h4>
+            <p class="trust-desc">آلية واضحة للتعامل مع أي تلفيات أو بنود غير مطابقة.</p>
+          </div>
+        </div>
+
+        <!-- Trust 5 -->
+        <div class="col-6 col-md-4 col-lg">
+          <div class="trust-card text-center h-100">
+            <div class="trust-icon bg-purple-soft">
+              <i class="bi bi-headset text-dark"></i>
+            </div>
+            <h4 class="trust-name">فريق دعم مستمر</h4>
+            <p class="trust-desc">متابعة ومساعدة فورية من فريق خدمة عملاء متخصص.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Bottom Final CTA -->
+  <section class="section-padding">
+    <div class="container-xl">
+      <div class="final-cta-card">
+        <div class="cta-inner text-center">
+          <div class="cta-icon-circle">
+            <i class="bi bi-cart-check-fill"></i>
+          </div>
+
+          <h2 class="cta-heading">
+            جاهز تعمل أول طلب شراء وتوفر في تكاليفك؟
+          </h2>
+
+          <p class="cta-sub">
+            انضم الآن إلى مئات الشركات وأصحاب الأعمال الذين يستفيدون من قوة الشراء الجماعي الموحد عبر صفقة.
+          </p>
+
+          <div class="cta-buttons">
+            <ng-container *ngIf="!currentUser">
+              <a routerLink="/auth/register" class="btn btn-cta-primary">
+                <span>أنشئ حسابك مجانا</span>
+                <i class="bi bi-arrow-left"></i>
+              </a>
+              <a (click)="scrollToSection('buying-methods')" class="btn btn-cta-secondary">
+                <i class="bi bi-grid-3x3-gap"></i>
+                <span>استكشف الصفقات والمجموعات</span>
+              </a>
+            </ng-container>
+
+            <ng-container *ngIf="currentUser">
+              <a routerLink="/dashboard" class="btn btn-cta-primary">
+                <span>الانتقال للوحة التحكم</span>
+                <i class="bi bi-speedometer2"></i>
+              </a>
+            </ng-container>
+          </div>
+
+          <div class="cta-assurances">
+            <span><i class="bi bi-check-circle-fill text-success"></i> تسجيل مجاني خلال دقيقة</span>
+            <span><i class="bi bi-check-circle-fill text-success"></i> بدون أي بطاقات ائتمانية</span>
+            <span><i class="bi bi-check-circle-fill text-success"></i> دعم فني مخصص لمنشأتك</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Minimal Clean Footer -->
+  <footer class="home-footer">
+    <div class="container-xl">
+      <div class="footer-top">
+        <div class="row g-4 align-items-center">
+          <div class="col-md-6">
+            <div class="footer-brand">
+              <div class="brand-icon small">
+                <i class="bi bi-layers-fill"></i>
+              </div>
+              <span class="brand-name">صفقة</span>
+            </div>
+            <p class="footer-tagline">
+              المنصة الرائدة للمشتريات الجماعية والتوريد الذكي للشركات والمصانع في الشرق الأوسط.
+            </p>
+          </div>
+
+          <div class="col-md-6">
+            <div class="footer-links-row">
+              <a (click)="scrollToSection('about')">عن صفقة</a>
+              <a (click)="scrollToSection('how-it-works')">كيف تعمل</a>
+              <a (click)="scrollToSection('buying-methods')">طرق الشراء</a>
+              <a (click)="scrollToSection('suppliers')">للموردين</a>
+              <a routerLink="/auth/login">تسجيل الدخول</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+          <div class="copyright-text">
+            جميع الحقوق محفوظة لمنصة صفقة 2026.
+          </div>
+          <div class="footer-sub-links">
+            <a href="javascript:void(0)">الشروط والأحكام</a>
+            <span>•</span>
+            <a href="javascript:void(0)">سياسة الخصوصية والأمان</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

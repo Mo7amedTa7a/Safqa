@@ -9,6 +9,7 @@ import express from 'express'
 import { deactivateUser, getAllUsers, getMe, getUserById, updateMe } from './user.controller.js'
 import protect from '../../middlewares/auth.middleware.js'
 import validate from '../../middlewares/validate.middleware.js'
+import upload from '../../middlewares/upload.middleware.js'
 import { updateProfileSchema } from './user.validation.js'
 import authorize from '../../middlewares/role.middleware.js'
 const router = express.Router()
@@ -21,6 +22,7 @@ router.get("/me",
 router.patch(
     "/me",
     protect,
+    upload.single('profileImage'),
     validate(updateProfileSchema),
     updateMe
 );
