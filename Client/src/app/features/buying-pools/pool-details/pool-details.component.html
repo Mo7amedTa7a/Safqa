@@ -1,0 +1,114 @@
+﻿<!-- pool-details template -->
+<div class="container py-4" dir="rtl">
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border" role="status"></div>
+      <p class="mt-3">جاري تحميل تفاصيل الـ Pool...</p>
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (!isLoading && !errorMessage && pool) {
+
+    <div class="mb-4">
+      <h2>تفاصيل طلب الشراء الجماعي</h2>
+      <p class="text-muted">
+        تفاصيل الـ Pool والكمية المطلوبة
+      </p>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+          <h4 class="mb-0">
+            Buying Pool
+          </h4>
+
+          <span
+            class="badge"
+            [class.bg-success]="pool.status === 'OPEN'"
+            [class.bg-secondary]="pool.status === 'CLOSED'"
+          >
+            {{ pool.status }}
+          </span>
+
+        </div>
+
+        <div class="row g-4">
+
+          <div class="col-md-6">
+            <small class="text-muted d-block">
+              Product ID
+            </small>
+
+            <strong>
+              {{ pool.product }}
+            </strong>
+          </div>
+
+          <div class="col-md-6">
+            <small class="text-muted d-block">
+              Variant ID
+            </small>
+
+            <strong>
+              {{ pool.variant }}
+            </strong>
+          </div>
+
+          <div class="col-md-6">
+            <small class="text-muted d-block">
+              الكمية المطلوبة
+            </small>
+
+            <strong>
+              {{ pool.totalQuantity }}
+            </strong>
+          </div>
+
+          <div class="col-md-6">
+            <small class="text-muted d-block">
+              عدد المشاركين
+            </small>
+
+            <strong>
+              {{ pool.memberCount }}
+            </strong>
+          </div>
+
+          <div class="col-md-6">
+            <small class="text-muted d-block">
+              بداية الـ Pool
+            </small>
+
+            <strong>
+              {{ pool.startAt | date:'dd/MM/yyyy HH:mm' }}
+            </strong>
+          </div>
+
+          <div class="col-md-6">
+            <small class="text-muted d-block">
+              انتهاء الـ Pool
+            </small>
+
+            <strong>
+              {{ pool.closeAt | date:'dd/MM/yyyy HH:mm' }}
+            </strong>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  }
+
+</div>

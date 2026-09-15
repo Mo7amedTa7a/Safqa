@@ -1,0 +1,164 @@
+﻿<div class="container py-4" dir="rtl">
+    <h1>POOL LIST TEST</h1>
+
+  <div class="mb-4">
+    <h2>طلبات الشراء الجماعي</h2>
+    <p class="text-muted">
+      تصفح طلبات الشراء الجماعي المفتوحة
+    </p>
+  </div>
+
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border" role="status"></div>
+      <p class="mt-3">جاري تحميل الطلبات...</p>
+    </div>
+  }
+
+
+  <!-- Error -->
+  @if (!isLoading && errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  }
+
+
+  <!-- Empty -->
+  @if (!isLoading && !errorMessage && pools.length === 0) {
+    <div class="text-center py-5">
+
+      <h4>لا توجد طلبات شراء جماعي</h4>
+
+      <p class="text-muted">
+        لا توجد Pools مفتوحة حاليًا.
+      </p>
+
+    </div>
+  }
+
+
+  <!-- Pools -->
+  @if (!isLoading && !errorMessage && pools.length > 0) {
+
+    <div class="row g-4">
+
+      @for (pool of pools; track pool._id) {
+
+        <div class="col-12 col-md-6 col-lg-4">
+
+          <div class="card h-100 shadow-sm">
+
+            <div class="card-body">
+
+              <!-- Header -->
+              <div class="d-flex justify-content-between align-items-start mb-3">
+
+                <div>
+                  <span class="badge bg-success">
+                    {{ pool.status }}
+                  </span>
+
+                  <h5 class="card-title mt-2 mb-0">
+                    Buying Pool
+                  </h5>
+                </div>
+
+              </div>
+
+
+              <!-- Pool information -->
+              <div class="mb-3">
+
+                <div class="mb-2">
+                  <small class="text-muted">
+                    Product ID
+                  </small>
+
+                  <div>
+                    {{ pool.product }}
+                  </div>
+                </div>
+
+
+                <div class="mb-2">
+                  <small class="text-muted">
+                    Variant ID
+                  </small>
+
+                  <div>
+                    {{ pool.variant }}
+                  </div>
+                </div>
+
+              </div>
+
+
+              <!-- Statistics -->
+              <div class="row text-center mb-3">
+
+                <div class="col-6">
+
+                  <small class="text-muted d-block">
+                    الكمية المطلوبة
+                  </small>
+
+                  <strong>
+                    {{ pool.totalQuantity }}
+                  </strong>
+
+                </div>
+
+
+                <div class="col-6">
+
+                  <small class="text-muted d-block">
+                    عدد المشاركين
+                  </small>
+
+                  <strong>
+                    {{ pool.memberCount }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <!-- Deadline -->
+              <div class="mb-3">
+
+                <small class="text-muted d-block">
+                  موعد انتهاء الـ Pool
+                </small>
+
+                <strong>
+                  {{ pool.closeAt | date:'dd/MM/yyyy HH:mm' }}
+                </strong>
+
+              </div>
+
+
+              <!-- Details -->
+              <a
+                class="btn btn-primary w-100"
+                [routerLink]="['/buying-pools', pool._id]"
+              >
+                عرض التفاصيل
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>
