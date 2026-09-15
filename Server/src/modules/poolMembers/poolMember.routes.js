@@ -1,21 +1,18 @@
-﻿// PoolMember Routes
+// PoolMember Routes
 // - Belongs to: Member 3
 // - All routes protected by auth middleware
-const express=require("express")
+import express from "express";
+import protect from "../../middlewares/auth.middleware.js";
+import authorize from "../../middlewares/role.middleware.js";
+import validate from "../../middlewares/validate.middleware.js";
+import { joinPoolcontrol, updateQuantitycontrol, leavePoolcontrol, getPoolMemberscontrol } from "./poolMember.controller.js";
+import { updateQuantityValidation } from "./poolMember.validation.js";
 
-const router=express.Router()
+const router = express.Router();
 
-import protect from "../../middlewares/auth.middleware"
-import apiLimit from "../../middlewares/role.middleware"
-import validate from "../../middlewares/validation.middleware"
+router.post("/:id/join", protect, authorize("BUYER"), joinPoolcontrol);
+router.patch("/:id/members/me", protect, authorize("BUYER"), validate(updateQuantityValidation), updateQuantitycontrol);
+router.delete("/:id/members/me", protect, authorize("BUYER"), leavePoolcontrol);
+router.get("/:id/members", protect, authorize("ADMIN"), getPoolMemberscontrol);
 
-const {joinPoolcontrol, updateQuantitycontrol,leavePoolcontrol,getPoolMemberscontrol } = require("./poolMember.controller");
-const  {updateQuantityValidation}=require("./poolMember.validation")
-
-router.post("/:id/join",protect,apiLimit("BUYER"),joinPoolcontrol)
-
-router.patch("/:id/members/me",protect,apiLimit("BUYER"),validate(updateQuantityValidation),updateQuantitycontrol)
-router.delete("/:id/members/me",protect,apiLimit("BUYER"),leavePoolcontrol)
-router.get("/:id/members",protect,apiLimit("ADMIN"),getPoolMemberscontrol);
-
-
+export default router;

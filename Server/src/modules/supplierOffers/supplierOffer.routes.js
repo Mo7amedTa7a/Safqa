@@ -1,31 +1,20 @@
-﻿// SupplierOffer Routes
+// SupplierOffer Routes
 // - Belongs to: Member 3
 // - POST / PATCH / DELETE: SUPPLIER only
 // - GET: ADMIN or SUPPLIER
 
-const express = require("express");
+import express from "express";
+import protect from "../../middlewares/auth.middleware.js";
+import authorize from "../../middlewares/role.middleware.js";
+import validate from "../../middlewares/validate.middleware.js";
+import { createOffercontrol, updateOffercontrol, withdrawOffercontrol, getOffersForPoolcontrol } from "./supplierOffer.controller.js";
+import { createOfferValidation } from "./supplierOffer.validation.js";
 
 const router = express.Router();
 
-const { createOffercontrol,updateOffercontrol,withdrawOffercontrol ,getOffersForPoolcontrol} = require("./supplierOffer.controller");
+router.post("/:id/offers", protect, authorize("SUPPLIER"), validate(createOfferValidation), createOffercontrol);
+router.patch("/:offerId", protect, authorize("SUPPLIER"), validate(createOfferValidation), updateOffercontrol);
+router.patch("/:id/withdraw", protect, authorize("SUPPLIER"), withdrawOffercontrol);
+router.get("/:id/offers", protect, authorize("SUPPLIER"), getOffersForPoolcontrol);
 
-const { createOfferValidation } = require("./supplierOffer.validation");
-
-const protect = require("../auth/auth.middleware");
-const apiLimit = require("../middleware/apiLimit");
-const validate = require("../middleware/validation.middleware");
-
-
-router.post("/:id/offers", protect,apiLimit("SUPPLIER"),validate(createOfferValidation),createOffercontrol);
-
-router.patch("/:offerId",protect,apiLimit("SUPPLIER"),validate(createOfferValidation),updateOffercontrol);
-router.patch("/:id/withdraw",protect,apiLimit("SUPPLIER"),withdrawOffercontrol);
-
-router.get("/:id/offers",protect,apiLimit("SUPPLIER"),getOffersForPoolcontrol);
-
-
-
-
-
-
-module.exports = router;
+export default router;

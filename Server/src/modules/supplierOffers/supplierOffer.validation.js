@@ -1,8 +1,8 @@
-﻿// SupplierOffer Validation (express-validator)
+// SupplierOffer Validation (express-validator)
 // - Belongs to: Member 3
 // - validateCreateOffer: pool required, moq >= 1, pricingTiers array, deliveryDays >= 1
 
-const Joi = require("joi");
+import Joi from "joi";
 
 const createOfferValidation = Joi.object({
 
@@ -40,6 +40,4 @@ const createOfferValidation = Joi.object({
 
 });
 
-
-
-module.exports = {createOfferValidation};
+export { createOfferValidation };

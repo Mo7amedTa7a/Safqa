@@ -1,4 +1,4 @@
-﻿// Auth Validation (express-validator)
+// Auth Validation (express-validator)
 // - Belongs to: Member 1
 // - validateRegister: name required, email valid, password min 8 chars, role valid
 // - validateLogin: email valid, password required
@@ -41,3 +41,16 @@ export const loginSchema = joi.object({
     password: joi.string()
         .required()
 })
+
+export const forgotPasswordSchema = joi.object({
+    email: joi.string()
+        .trim()
+        .email()
+        .required(),
+});
+
+export const resetPasswordSchema = joi.object({
+    password: joi.string()
+        .min(8)
+        .required(),
+});

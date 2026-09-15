@@ -1,0 +1,208 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.auth-card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 5px;
+  gap: 6px;
+  margin-bottom: 2rem;
+}
+
+.auth-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #64748B;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.auth-tab:hover {
+  color: #0F172A;
+}
+
+.auth-tab.active {
+  background: #FFFFFF;
+  color: #0F5132;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.auth-card-body {
+  padding: 0;
+}
+
+.auth-intro {
+  margin-bottom: 1.75rem;
+  text-align: right;
+}
+
+.auth-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 0.4rem;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: #64748B;
+  margin: 0;
+}
+
+/* Account Selection Cards */
+.account-card {
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 1.1rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #FFFFFF;
+  position: relative;
+  text-align: right;
+  height: 100%;
+}
+
+.account-card:hover {
+  border-color: #CBD5E1;
+  background-color: #F8FAFC;
+}
+
+.account-card.selected {
+  border-color: #0F5132;
+  background-color: #F0FDF4;
+}
+
+.card-check {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  width: 22px;
+  height: 22px;
+  background: #0F5132;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.account-card-icon {
+  font-size: 1.5rem;
+  color: #0F5132;
+  margin-bottom: 0.4rem;
+}
+
+.account-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 0.25rem;
+}
+
+.account-card-desc {
+  font-size: 0.775rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Inputs */
+.input-icon-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-group .form-control {
+  padding-left: 2.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.85rem;
+  color: #94A3B8;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.btn-toggle-eye {
+  position: absolute;
+  left: 0.75rem;
+  background: none;
+  border: none;
+  color: #94A3B8;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+.btn-toggle-eye:hover {
+  color: #0F5132;
+}
+
+/* Phone input with Egypt prefix */
+.phone-input-group {
+  display: flex;
+  direction: ltr;
+}
+
+.country-prefix {
+  background-color: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #334155;
+  display: flex;
+  align-items: center;
+}
+
+.phone-control {
+  border-radius: 0 8px 8px 0 !important;
+  text-align: left;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.text-safqa-primary {
+  color: #0F5132;
+  text-decoration: none;
+}
+
+.text-safqa-primary:hover {
+  text-decoration: underline;
+}
+
+.auth-switch-prompt {
+  font-size: 0.95rem;
+  color: #64748B;
+}

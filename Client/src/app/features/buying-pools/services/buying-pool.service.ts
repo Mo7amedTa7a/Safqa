@@ -6,6 +6,7 @@
 // updateQuantity(poolId)  → PATCH  /api/buying-pools/:poolId/members/me
 // leavePool(poolId)       → DELETE /api/buying-pools/:poolId/members/me
 // closePool(poolId)       → PATCH  /api/buying-pools/:poolId/close  [Admin]
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';

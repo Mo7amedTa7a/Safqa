@@ -1,11 +1,11 @@
-﻿// PoolMember Model
+// PoolMember Model
 // - Belongs to: Member 3
 // - Fields: pool (ref: BuyingPool), buyer (ref: User), buyingRequest (ref), quantity
 // - status: ACTIVE | WITHDRAWN
 // - Unique index on pool + buyer (one buyer per pool)
 
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const PoolMember_schema = new mongoose.Schema(
   {
@@ -51,5 +51,4 @@ PoolMember_schema.index(
 
 const PoolMember = mongoose.model("PoolMember", PoolMember_schema);
 
-module.exports = PoolMember;
-
+export default PoolMember;

@@ -1,3 +1,16 @@
-﻿// Deal Validation (express-validator)
-// - Belongs to: Member 4
-// - validateDealId: id must be valid MongoDB ObjectId
+import Joi from 'joi';
+
+const selectOfferParamsValidation = Joi.object({
+  poolId: Joi.string().required(),
+});
+
+const updateDealStatusValidation = Joi.object({
+  status: Joi.string()
+    .valid('ACTIVE', 'COMPLETED', 'CANCELLED')
+    .required(),
+});
+
+export {
+  selectOfferParamsValidation,
+  updateDealStatusValidation,
+};

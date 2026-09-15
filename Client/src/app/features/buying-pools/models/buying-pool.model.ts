@@ -2,6 +2,7 @@
 // _id, product, variant, createdBy, totalQuantity, memberCount
 // status: 'OPEN' | 'CLOSED'
 // startAt, closeAt, createdAt
+
 export interface BuyingPool {
   _id: string;
   product: string;

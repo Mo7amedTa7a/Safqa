@@ -1,6 +1,7 @@
 ﻿// Member 3 - Pool List
 // GET /api/buying-pools
 // OPEN pools: product, totalQuantity, memberCount, deadline countdown
+
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';

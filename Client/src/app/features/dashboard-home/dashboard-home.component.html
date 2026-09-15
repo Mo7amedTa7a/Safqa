@@ -1,0 +1,7 @@
+<ng-container *ngIf="currentUser">
+  <!-- Show Supplier Dashboard for suppliers -->
+  <app-supplier-dashboard *ngIf="currentUser.role === UserRole.SUPPLIER"></app-supplier-dashboard>
+
+  <!-- Show Buyer Dashboard for buyers and admins -->
+  <app-buyer-dashboard *ngIf="currentUser.role !== UserRole.SUPPLIER"></app-buyer-dashboard>
+</ng-container>

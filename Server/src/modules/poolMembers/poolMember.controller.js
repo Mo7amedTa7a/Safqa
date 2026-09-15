@@ -1,36 +1,30 @@
-﻿// PoolMember Controller
+// PoolMember Controller
 // - Belongs to: Member 3
 // - POST  /join       → joinPool (BUYER)
 // - PATCH /:id        → updateQuantity (BUYER)
 // - DELETE /:id       → leavePool (BUYER)
 // - GET   /pool/:id   → getPoolMembers (ADMIN | SUPPLIER)
 
-const {joinPool,updateQuantity,leavePool,getPoolMembersbyid}=require("./poolMember.service")
+import { joinPool, updateQuantity, leavePool, getPoolMembersbyid } from "./poolMember.service.js";
 
 
 
-const joinPoolcontrol=async(req,res,next)=>{
-  try{
-    const {id}=req.params
+const joinPoolcontrol = async (req, res, next) => {
+  try {
+    const { id } = req.params
     
-    const buyerId=req.user.id
-    const result=await joinPool(id,buyerId)
+    const buyerId = req.user.id
+    const result = await joinPool(id, buyerId)
 
     res.status(200).json({
-      success:true,
-      data:result
+      success: true,
+      data: result
     })
 
-  }catch(err){
+  } catch (err) {
     next(err)
-
-
-
-
   }
 }
-
-
 
 
 
@@ -104,6 +98,4 @@ const getPoolMemberscontrol = async (req, res, next) => {
 
 
 
-
-
-module.exports={updateQuantitycontrol,leavePoolcontrol,getPoolMemberscontrol,joinPoolcontrol}
+export { updateQuantitycontrol, leavePoolcontrol, getPoolMemberscontrol, joinPoolcontrol };

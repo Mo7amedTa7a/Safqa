@@ -1,0 +1,201 @@
+<div class="onboarding-container">
+  <div class="safqa-card">
+    <!-- Header: Dynamic based on verificationStatus -->
+    <div class="onboarding-header text-center mb-4">
+      <div class="icon-circle mx-auto mb-2" [class.bg-amber-soft]="verificationStatus === 'PENDING'" [class.text-warning]="verificationStatus === 'PENDING'">
+        <i class="bi" [ngClass]="{
+          'bi-hourglass-split': verificationStatus === 'PENDING',
+          'bi-patch-check-fill': verificationStatus === 'APPROVED',
+          'bi-exclamation-triangle-fill': verificationStatus === 'REJECTED',
+          'bi-building-gear': !verificationStatus
+        }"></i>
+      </div>
+      <h3 class="fw-bold mb-1">
+        <span *ngIf="verificationStatus === 'PENDING'">بيانات ملف المنشأة (قيد المراجعة)</span>
+        <span *ngIf="verificationStatus === 'APPROVED'">ملف المنشأة المعتمد</span>
+        <span *ngIf="verificationStatus === 'REJECTED'">تعديل بيانات ملف المنشأة</span>
+        <span *ngIf="!verificationStatus">استكمال بيانات ملف المورد المعتمد</span>
+      </h3>
+      <p class="text-muted small mb-0">
+        بيانات المنشأة التجارية، السجل التجاري، والبطاقة الضريبية الخاصة بحسابك كمورد في منصة صفقة.
+      </p>
+    </div>
+
+    <!-- Official PENDING Status Banner -->
+    <div *ngIf="verificationStatus === 'PENDING'" class="alert alert-warning border-warning d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4 p-3 rounded-3 shadow-sm">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-hourglass-split fs-2 text-warning"></i>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="fw-bold text-dark fs-6">حالة الحساب:</span>
+            <span class="badge bg-warning text-dark px-3 py-1 fs-6">
+              قيد المراجعة والتدقيق (PENDING)
+            </span>
+          </div>
+          <div class="small text-secondary">
+            بياناتك المسجلة أدناه قيد التدقيق حالياً من قِبل إدارة منصة صفقة. يمكنك استعراضها وتعديلها في أي وقت.
+          </div>
+        </div>
+      </div>
+      <a routerLink="/dashboard" class="btn btn-sm btn-outline-dark text-nowrap">
+        <i class="bi bi-speedometer2 me-1"></i> لوحة التحكم
+      </a>
+    </div>
+
+    <!-- Official APPROVED Status Banner -->
+    <div *ngIf="verificationStatus === 'APPROVED'" class="alert alert-success border-success d-flex align-items-center justify-content-between gap-3 mb-4 p-3 rounded-3 shadow-sm">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-patch-check-fill fs-2 text-success"></i>
+        <div>
+          <div class="fw-bold text-success fs-6 mb-1">حساب مورد معتمد وموثق رسمي (APPROVED)</div>
+          <div class="small text-muted">تمت مراجعة واعتماد السجل التجاري والبطاقة الضريبية بنجاح من قِبل إدارة صفقة.</div>
+        </div>
+      </div>
+      <span class="badge bg-success px-3 py-2">معتمد</span>
+    </div>
+
+    <!-- Official REJECTED Status Banner -->
+    <div *ngIf="verificationStatus === 'REJECTED'" class="alert alert-danger border-danger d-flex align-items-center justify-content-between gap-3 mb-4 p-3 rounded-3 shadow-sm">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-x-circle-fill fs-2 text-danger"></i>
+        <div>
+          <div class="fw-bold text-danger fs-6 mb-1">طلب التسجيل مرفوض (REJECTED)</div>
+          <div class="small text-danger-emphasis">
+            <strong>السبب:</strong> {{ rejectionNotice || 'يرجى تصحيح البيانات وإعادة الإرسال.' }}
+          </div>
+        </div>
+      </div>
+      <span class="badge bg-danger px-3 py-2">مرفوض</span>
+    </div>
+
+    <!-- Feedback alerts -->
+    <div *ngIf="successMessage" class="alert alert-success d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div>{{ successMessage }}</div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div>{{ errorMessage }}</div>
+    </div>
+
+    <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="row g-3">
+        <!-- Company Name -->
+        <div class="col-md-6">
+          <label class="form-label" for="companyName">اسم الشركة أو المنشأة التجارية *</label>
+          <input
+            id="companyName"
+            type="text"
+            class="form-control"
+            placeholder="مثال: شركة النيل للتوريدات العامة"
+            formControlName="companyName"
+            [class.is-invalid]="supplierForm.get('companyName')?.touched && supplierForm.get('companyName')?.invalid"
+          />
+        </div>
+
+        <!-- Business Phone -->
+        <div class="col-md-6">
+          <label class="form-label" for="businessPhone">رقم هاتف المنشأة للتواصل *</label>
+          <input
+            id="businessPhone"
+            type="tel"
+            class="form-control"
+            placeholder="01012345678"
+            formControlName="businessPhone"
+            [class.is-invalid]="supplierForm.get('businessPhone')?.touched && supplierForm.get('businessPhone')?.invalid"
+          />
+        </div>
+
+        <!-- Commercial Registration -->
+        <div class="col-md-6">
+          <label class="form-label" for="commercialRegistrationNumber">رقم السجل التجاري (CR) *</label>
+          <input
+            id="commercialRegistrationNumber"
+            type="text"
+            class="form-control"
+            placeholder="مثال: 123456"
+            formControlName="commercialRegistrationNumber"
+            [class.is-invalid]="supplierForm.get('commercialRegistrationNumber')?.touched && supplierForm.get('commercialRegistrationNumber')?.invalid"
+          />
+        </div>
+
+        <!-- Tax Identification Number -->
+        <div class="col-md-6">
+          <label class="form-label" for="taxIdentificationNumber">رقم البطاقة الضريبية (TIN) *</label>
+          <input
+            id="taxIdentificationNumber"
+            type="text"
+            class="form-control"
+            placeholder="مثال: 987-654-321"
+            formControlName="taxIdentificationNumber"
+            [class.is-invalid]="supplierForm.get('taxIdentificationNumber')?.touched && supplierForm.get('taxIdentificationNumber')?.invalid"
+          />
+        </div>
+
+        <!-- Business Address -->
+        <div class="col-12">
+          <label class="form-label" for="businessAddress">عنوان المقر أو المستودع الرئيسي *</label>
+          <input
+            id="businessAddress"
+            type="text"
+            class="form-control"
+            placeholder="مثال: المنطقة الصناعية - السادس من أكتوبر، الجيزة"
+            formControlName="businessAddress"
+            [class.is-invalid]="supplierForm.get('businessAddress')?.touched && supplierForm.get('businessAddress')?.invalid"
+          />
+        </div>
+
+        <!-- Company Description -->
+        <div class="col-12">
+          <label class="form-label" for="companyDescription">نبذة عن النشاط والمنتجات المتاحة للتوريد *</label>
+          <textarea
+            id="companyDescription"
+            rows="3"
+            class="form-control"
+            placeholder="أذكر مجالات التوريد وتخصصك وقدرتك التوريدية..."
+            formControlName="companyDescription"
+            [class.is-invalid]="supplierForm.get('companyDescription')?.touched && supplierForm.get('companyDescription')?.invalid"
+          ></textarea>
+        </div>
+
+        <!-- Website & Years in business -->
+        <div class="col-md-6">
+          <label class="form-label" for="website">الموقع الإلكتروني أو صفحة النشاط (اختياري)</label>
+          <input
+            id="website"
+            type="url"
+            class="form-control"
+            placeholder="https://company.com"
+            formControlName="website"
+          />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="yearsInBusiness">سنوات الخبرة والعمل في السوق</label>
+          <input
+            id="yearsInBusiness"
+            type="number"
+            class="form-control"
+            formControlName="yearsInBusiness"
+            min="0"
+          />
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top flex-wrap gap-2">
+        <a routerLink="/dashboard" class="btn-safqa-outline px-3 py-2">
+          <i class="bi bi-arrow-right"></i>
+          <span>العودة للوحة التحكم</span>
+        </a>
+
+        <button type="submit" class="btn-safqa-primary px-4 py-2" [disabled]="isLoading">
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          <span *ngIf="existingProfile">حفظ وتحديث بيانات المنشأة</span>
+          <span *ngIf="!existingProfile">إرسال البيانات للمراجعة والاعتماد</span>
+          <i *ngIf="!isLoading" class="bi bi-check2"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

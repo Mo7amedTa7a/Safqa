@@ -1,5 +1,5 @@
 ﻿// Role Authorization Middleware
-// - Factory function: restrictTo(...roles)
+// - Factory function: authorize(...roles)
 // - Check if req.user.role is included in the allowed roles
 // - Allowed roles: BUYER, SUPPLIER, ADMIN, SHIPPING_PARTNER
 // - Return 403 Forbidden if role is not permitted
@@ -10,7 +10,7 @@ import AppError from "../utils/AppError.js"
 
 const authorize = (...allowedRoles) => {
     return (req, res, next) => {
-        if (allowedRoles.includes(req.user.role)) {
+        if (!allowedRoles.includes(req.user.role)) {
             return next(new AppError("You are not authorized to perform this action", 403))
         }
         next()

@@ -1,89 +1,92 @@
 // Product Model
 // - Belongs to: Member 2
-// - Fields: name, description, category, images[], variants[]
+// - Fields: name, description, category, images[], variants[], supplier, status
 // - Variant sub-schema: sku, attributes (size/color...), price, stock
 // - Index on category and name for search queries
-const mongoose = require("mongoose");
 
+import mongoose from "mongoose";
 
 const variantSchema = new mongoose.Schema(
     {
         sku: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            trim: true,
+            uppercase: true,
         },
-
         attributes: {
             type: Map,
             of: String,
-            default: {}
+            default: {},
         },
-
         price: {
             type: Number,
             required: true,
-            min: 0
+            min: 0,
         },
-
         stock: {
             type: Number,
             required: true,
-            min: 0
-        }
+            default: 0,
+            min: 0,
+        },
     },
-    {
-        _id: true
-    }
+    { _id: true }
 );
-
-
 
 const productSchema = new mongoose.Schema(
     {
         name: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            minlength: 2,
+            maxlength: 150,
         },
-
         description: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            maxlength: 2000,
         },
-
         category: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            index: true,
         },
-
-        images: [
-            {
-                type: String
-            }
-        ],
-
-        variants: [variantSchema]
+        images: {
+            type: [String],
+            default: [],
+        },
+        variants: {
+            type: [variantSchema],
+            required: true,
+            validate: {
+                validator: (variants) => variants.length > 0,
+                message: "Product must contain at least one variant",
+            },
+        },
+        supplier: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+            index: true,
+        },
+        status: {
+            type: String,
+            enum: ["ACTIVE", "INACTIVE"],
+            default: "ACTIVE",
+            index: true,
+        },
     },
-    {
-        timestamps: true
-    }
+    { timestamps: true }
 );
 
+productSchema.index({ category: 1, name: 1 });
 
 
-productSchema.index({
-    category: 1,
-    name: 1
-});
+const Product = mongoose.model("Product", productSchema);
 
-
-const Product = mongoose.model(
-    "Product",
-    productSchema
-);
-
-
-module.exports = Product;
+export default Product;

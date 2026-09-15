@@ -1,11 +1,11 @@
-﻿// BuyingPool Model
+// BuyingPool Model
 // - Belongs to: Member 3
 // - Fields: product (ref), variant, totalQuantity, status, expiresAt (3-day window)
 // - status: OPEN | CLOSED | EXPIRED
 // - Index on product + variant + status
 
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const BuyingPoolSchema = new mongoose.Schema(
   {
@@ -70,4 +70,4 @@ BuyingPoolSchema.index({
 
 const BuyingPool = mongoose.model("BuyingPool", BuyingPoolSchema);
 
-module.exports = BuyingPool;
+export default BuyingPool;

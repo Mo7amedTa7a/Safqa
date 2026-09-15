@@ -1,0 +1,133 @@
+<aside class="safqa-sidebar" [class.open]="isOpen">
+  <!-- Top Brand Logo -->
+  <div class="sidebar-header d-flex align-items-center justify-content-between">
+    <a routerLink="/" class="brand-logo" title="الرئيسية" (click)="onNavClick()">
+      <div class="brand-icon small">
+        <i class="bi bi-layers-fill"></i>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">صفقة</span>
+        <span class="brand-tag">للمشتريات والتوريد</span>
+      </div>
+    </a>
+
+    <!-- Close button for mobile screen -->
+    <button type="button" class="btn-close-sidebar d-lg-none" (click)="closeSidebar.emit()" title="إغلاق القائمة">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- Navigation Links -->
+  <div class="sidebar-nav">
+    <div class="nav-section-title">التداول والصفقات</div>
+    <ul class="nav-list">
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-grid-fill nav-icon"></i>
+          <span>لوحة العمليات</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/buying-pools" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-people-fill nav-icon"></i>
+          <span>تجمعات الشراء النشطة</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/buying-requests" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-file-earmark-diff nav-icon"></i>
+          <span>المناقصات العكسية (RFQ)</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/deals" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-file-earmark-text nav-icon"></i>
+          <span>العقود وأوامر التوريد</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-section-title">اللوجستيات والمالية</div>
+    <ul class="nav-list">
+      <li>
+        <a routerLink="/shipments" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-truck nav-icon"></i>
+          <span>تتبع الشحنات الذكية</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/settlements" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-wallet2 nav-icon"></i>
+          <span>محفظة الضمان المالي</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/reviews" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-bar-chart-line nav-icon"></i>
+          <span>تقارير وفر الحجم</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Admin Section -->
+    <div class="nav-section-title" *ngIf="currentUser?.role === UserRole.ADMIN">إدارة النظام (الأدمن)</div>
+    <ul class="nav-list" *ngIf="currentUser?.role === UserRole.ADMIN">
+      <li>
+        <a routerLink="/admin/users" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-people nav-icon"></i>
+          <span>إدارة المستخدمين</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/suppliers" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-patch-check nav-icon"></i>
+          <span>اعتماد الموردين</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Supplier Onboarding / Profile Action -->
+    <div class="nav-section-title" *ngIf="currentUser?.role === UserRole.SUPPLIER">خدمات المورد</div>
+    <ul class="nav-list" *ngIf="currentUser?.role === UserRole.SUPPLIER">
+      <li>
+        <a routerLink="/supplier/complete-profile" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-building-check nav-icon"></i>
+          <span>ملف المورد التجاري</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/supplier/pending-review" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-hourglass-split nav-icon"></i>
+          <span>حالة التحقق والاعتماد</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-section-title">الحساب الشخصي</div>
+    <ul class="nav-list">
+      <li>
+        <a routerLink="/profile" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <i class="bi bi-person-badge nav-icon"></i>
+          <span>الملف الشخصي</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Bottom User Card -->
+  <div class="sidebar-footer" *ngIf="currentUser">
+    <div class="user-card">
+      <div class="user-card-avatar">
+        <img *ngIf="currentUser.profileImage" [src]="currentUser.profileImage" alt="avatar" class="avatar-img-sidebar">
+        <span *ngIf="!currentUser.profileImage">{{ currentUser.name.charAt(0).toUpperCase() }}</span>
+      </div>
+      <div class="user-card-info">
+        <span class="user-card-name">{{ currentUser.name }}</span>
+        <span class="user-card-role">{{ currentUser.role }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="تسجيل الخروج">
+        <i class="bi bi-box-arrow-left"></i>
+      </button>
+    </div>
+  </div>
+</aside>

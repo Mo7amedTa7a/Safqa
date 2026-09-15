@@ -1,11 +1,11 @@
-﻿// SupplierOffer Controller
+// SupplierOffer Controller
 // - Belongs to: Member 3
 // - POST   /             → createOffer (SUPPLIER)
 // - PATCH  /:id          → updateOffer (SUPPLIER - owner)
 // - DELETE /:id/withdraw → withdrawOffer (SUPPLIER - owner)
 // - GET    /pool/:poolId → getOffersForPool (ADMIN | SUPPLIER)
 
-const { createOffer,updateOffer,withdrawOffer,getOffersForPool } = require("./supplierOffer.service");
+import { createOffer, updateOffer, withdrawOffer, getOffersForPool } from "./supplierOffer.service.js";
 
 const createOffercontrol = async (req, res, next) => {
 
@@ -17,7 +17,7 @@ const createOffercontrol = async (req, res, next) => {
 
     const data = req.body;
 
-    const offer = await createOffer(id,supplierId,data);
+    const offer = await createOffer(id, supplierId, data);
 
     res.status(201).json({
       success: true,
@@ -99,7 +99,4 @@ const getOffersForPoolcontrol = async (req, res, next) => {
 };
 
 
-module.exports = {createOffercontrol,updateOffercontrol,withdrawOffercontrol,getOffersForPoolcontrol};
-
-
-
+export { createOffercontrol, updateOffercontrol, withdrawOffercontrol, getOffersForPoolcontrol };

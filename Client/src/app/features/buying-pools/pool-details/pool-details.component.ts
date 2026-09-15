@@ -3,15 +3,17 @@
 // بيانات المنتج، الكمية، الأعضاء، countdown للـ closeAt
 // قائمة PoolMembers + Supplier Offers
 // BUYER: Join | Update Qty | Leave
+
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 import { BuyingPoolService } from '../services/buying-pool.service';
 import { BuyingPool } from '../models/buying-pool.model';
 
 @Component({
   selector: 'app-pool-details',
-  imports: [],
+  imports: [DatePipe],
   templateUrl: './pool-details.component.html',
   styleUrl: './pool-details.component.css'
 })
@@ -60,3 +62,4 @@ export class PoolDetailsComponent implements OnInit {
     });
   }
 }
+
