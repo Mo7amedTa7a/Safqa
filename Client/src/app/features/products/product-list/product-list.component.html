@@ -1,1 +1,72 @@
-﻿<!-- product-list template -->
+<div class="page-shell" dir="rtl">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">ص</div>
+      <span>صفقة</span>
+    </div>
+
+    <nav>
+      <a routerLink="/products" class="active">المنتجات</a>
+      <a routerLink="/categories">التصنيفات</a>
+      <a routerLink="/buying-requests">طلباتي</a>
+    </nav>
+
+    
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="search-top">ابحث عن منتجات أو تصنيفات...</div>
+      <div class="user">المشتري</div>
+    </header>
+
+    <section class="content">
+      <div class="heading">
+        <div>
+          <p class="eyebrow">المتجر</p>
+          <h1>المنتجات</h1>
+          <p>اكتشف المنتجات وأنشئ طلبات الشراء الخاصة بك.</p>
+        </div>
+        <a routerLink="/buying-requests/create" class="primary">إنشاء طلب شراء</a>
+      </div>
+
+      <div class="filters">
+        <input
+          [(ngModel)]="search"
+          (keyup.enter)="onSearch()"
+          placeholder="ابحث عن منتج..."
+        />
+
+        <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+          <option value="">كل التصنيفات</option>
+          <option *ngFor="let category of categories" [value]="category.name">
+            {{ category.name }}
+          </option>
+        </select>
+
+        <button type="button" (click)="clearFilters()">مسح</button>
+        <button type="button" class="primary small" (click)="onSearch()">بحث</button>
+      </div>
+
+      <div *ngIf="loading" class="state">جاري تحميل المنتجات...</div>
+      <div *ngIf="errorMessage" class="state error">{{ errorMessage }}</div>
+
+      <div *ngIf="!loading && !errorMessage && pagedProducts.length === 0" class="state">
+        لا توجد منتجات مطابقة للبحث.
+      </div>
+
+      <div *ngIf="!loading && pagedProducts.length" class="product-grid">
+        <app-product-card
+          *ngFor="let product of pagedProducts"
+          [product]="product">
+        </app-product-card>
+      </div>
+
+      <div *ngIf="totalPages > 1" class="pagination">
+        <button (click)="goToPage(page - 1)" [disabled]="page === 1">السابق</button>
+        <span>صفحة {{ page }} من {{ totalPages }}</span>
+        <button (click)="goToPage(page + 1)" [disabled]="page === totalPages">التالي</button>
+      </div>
+    </section>
+  </main>
+</div>

@@ -1,1 +1,52 @@
-﻿<!-- product-management template -->
+<div class="admin-page" dir="rtl">
+  <header>
+    <div>
+      <span>ADMIN</span>
+      <h1>إدارة المنتجات</h1>
+      <p>إضافة وتعديل وحذف المنتجات والـvariants.</p>
+    </div>
+  </header>
+
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <section class="layout">
+    <form class="card" [formGroup]="form" (ngSubmit)="save()">
+      <h2>{{ editingId ? 'تعديل المنتج' : 'إضافة منتج' }}</h2>
+
+      <label>اسم المنتج *<input formControlName="name"></label>
+      <label>الوصف *<textarea formControlName="description"></textarea></label>
+      <label>التصنيف *<input formControlName="category"></label>
+      <label>روابط الصور<input formControlName="images" placeholder="image1.jpg, image2.jpg"></label>
+
+      <label>
+        Variants JSON *
+        <textarea class="json" formControlName="variantsJson"></textarea>
+      </label>
+
+      <div class="actions">
+        <button type="button" class="secondary" (click)="reset()">مسح</button>
+        <button type="submit" [disabled]="saving">
+          {{ saving ? 'جاري الحفظ...' : 'حفظ' }}
+        </button>
+      </div>
+    </form>
+
+    <section class="card">
+      <h2>المنتجات الحالية</h2>
+
+      <div *ngIf="loading" class="state">جاري التحميل...</div>
+
+      <article *ngFor="let product of products" class="product-row">
+        <div>
+          <strong>{{ product.name }}</strong>
+          <small>{{ product.category }} • {{ product.variants.length }} variants</small>
+        </div>
+        <div class="row-actions">
+          <button (click)="edit(product)">تعديل</button>
+          <button class="danger" (click)="remove(product)">حذف</button>
+        </div>
+      </article>
+    </section>
+  </section>
+</div>

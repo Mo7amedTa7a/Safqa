@@ -1,1 +1,82 @@
-﻿<!-- product-details template -->
+<div class="details-page" dir="rtl">
+  <div class="top">
+    <a routerLink="/products">← العودة للمنتجات</a>
+  </div>
+
+  <div *ngIf="loading" class="state">جاري تحميل المنتج...</div>
+  <div *ngIf="errorMessage" class="state error">{{ errorMessage }}</div>
+
+  <section *ngIf="product && !loading" class="product-layout">
+    <div class="gallery card">
+      <div class="main-image">
+        <img
+          *ngIf="selectedImage"
+          [src]="getImageUrl(selectedImage)"
+          [alt]="product.name">
+        <span *ngIf="!selectedImage">لا توجد صورة</span>
+      </div>
+
+      <div class="thumbs">
+        <button
+          *ngFor="let image of product.images"
+          (click)="selectImage(image)"
+          [class.selected]="selectedImage === image">
+          <img [src]="getImageUrl(image)" [alt]="product.name">
+        </button>
+      </div>
+    </div>
+
+    <div class="info card">
+      <span class="category">{{ product.category }}</span>
+      <h1>{{ product.name }}</h1>
+      <p class="description">{{ product.description }}</p>
+
+      <div class="supplier" *ngIf="product.supplier && typeof product.supplier !== 'string'">
+        المورد: <strong>{{ product.supplier.name || 'غير محدد' }}</strong>
+      </div>
+
+      <div class="variant-box">
+        <h3>اختر المواصفات</h3>
+
+        <button
+          class="variant"
+          *ngFor="let variant of product.variants"
+          (click)="selectVariant(variant)"
+          [class.selected]="selectedVariant?._id === variant._id">
+          <span>{{ getAttributeText(variant) || variant.sku }}</span>
+          <strong>{{ variant.price | currency:'EGP':'symbol':'1.0-0' }}</strong>
+          <small>المخزون: {{ variant.stock }}</small>
+        </button>
+      </div>
+
+      <div class="selected-price" *ngIf="selectedVariant">
+        <span>السعر</span>
+        <strong>{{ selectedVariant.price | currency:'EGP':'symbol':'1.0-0' }}</strong>
+      </div>
+
+      <div class="actions" *ngIf="selectedVariant">
+        <a
+          class="primary"
+          [routerLink]="['/buying-requests/create']"
+          [queryParams]="{
+            product: product._id,
+            variant: selectedVariant._id,
+            purchaseType: 'DIRECT'
+          }">
+          إنشاء طلب مباشر
+        </a>
+
+        <a
+          class="secondary"
+          [routerLink]="['/buying-requests/create']"
+          [queryParams]="{
+            product: product._id,
+            variant: selectedVariant._id,
+            purchaseType: 'GROUP'
+          }">
+          إنشاء طلب جماعي
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

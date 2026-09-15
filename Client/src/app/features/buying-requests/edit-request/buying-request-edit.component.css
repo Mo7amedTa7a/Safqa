@@ -1,0 +1,7 @@
+:host{display:block;min-height:100vh;background:#F8FAFC}
+.edit-page{max-width:720px;margin:auto;padding:30px;color:#0F172A}.top{margin-bottom:18px}.top a{color:#0F5132;text-decoration:none;font-weight:700}
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:14px;padding:26px}.eyebrow{color:#059669;font-size:12px;font-weight:800}.card h1{margin:7px 0 25px}
+form{display:grid;gap:18px}label{display:grid;gap:7px;font-weight:700}input{padding:11px;border:1px solid #E2E8F0;border-radius:8px}input:focus{outline:none;border-color:#0F5132}
+.locked{padding:14px;background:#F8FAFC;border-radius:9px}.locked span,.locked small{display:block;color:#64748B;font-size:12px}.locked strong{display:block;margin:4px 0}
+.actions{display:flex;justify-content:flex-end;gap:10px}.actions button,.cancel-link{padding:11px 18px;border-radius:9px;font-weight:700;text-decoration:none}.actions button{border:0;background:#0F5132;color:#fff}.cancel-link{border:1px solid #E2E8F0;color:#475569}
+.error{padding:12px;background:#FEF2F2;color:#991B1B;border-radius:8px}.state{padding:30px;text-align:center;color:#64748B}
