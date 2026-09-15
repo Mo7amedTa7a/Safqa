@@ -41,7 +41,7 @@ import { AdminSettlementsComponent } from './features/admin/admin-settlements/ad
 import { ProductListComponent } from './features/products/product-list/product-list.component';
 import { ProductDetailsComponent } from './features/products/product-details/product-details.component';
 import { CategoryListComponent } from './features/products/category-list/category-list.component';
-import { ProductManagementComponent } from './features/products/product-management/product-management.component';
+import { AdminProductManagementComponent } from './features/products/product-management/product-management.component';
 
 // Member 2 - Buying Requests
 import { MyRequestsComponent } from './features/buying-requests/my-requests/my-requests.component';
@@ -135,7 +135,7 @@ export const routes: Routes = [
       { path: 'categories', component: CategoryListComponent },
       {
         path: 'admin/products',
-        component: ProductManagementComponent,
+        component: AdminProductManagementComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.SUPPLIER] }
       },
