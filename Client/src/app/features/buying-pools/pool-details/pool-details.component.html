@@ -1,1 +1,198 @@
-﻿<!-- pool-details template -->
+﻿@if (!isLoading && !errorMessage && pool) {
+
+  <!-- Pool Details -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h4 class="mb-0">
+          Buying Pool
+        </h4>
+
+        <span
+          class="badge"
+          [class.bg-success]="pool.status === 'OPEN'"
+          [class.bg-secondary]="pool.status === 'CLOSED'"
+        >
+          {{ pool.status }}
+        </span>
+
+      </div>
+
+      <div class="row g-4">
+
+        <div class="col-md-6">
+          <small class="text-muted d-block">
+            Product ID
+          </small>
+
+          <strong>
+            {{ pool.product }}
+          </strong>
+        </div>
+
+        <div class="col-md-6">
+          <small class="text-muted d-block">
+            Variant ID
+          </small>
+
+          <strong>
+            {{ pool.variant }}
+          </strong>
+        </div>
+
+        <div class="col-md-6">
+          <small class="text-muted d-block">
+            الكمية المطلوبة
+          </small>
+
+          <strong>
+            {{ pool.totalQuantity }}
+          </strong>
+        </div>
+
+        <div class="col-md-6">
+          <small class="text-muted d-block">
+            عدد المشاركين
+          </small>
+
+          <strong>
+            {{ pool.memberCount }}
+          </strong>
+        </div>
+
+        <div class="col-md-6">
+          <small class="text-muted d-block">
+            بداية الـ Pool
+          </small>
+
+          <strong>
+            {{ pool.startAt | date:'dd/MM/yyyy HH:mm' }}
+          </strong>
+        </div>
+
+        <div class="col-md-6">
+          <small class="text-muted d-block">
+            انتهاء الـ Pool
+          </small>
+
+          <strong>
+            {{ pool.closeAt | date:'dd/MM/yyyy HH:mm' }}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Update Quantity -->
+
+  <div class="card shadow-sm mt-4">
+    <div class="card-body">
+
+      <h5 class="card-title mb-3">
+        تحديث الكمية
+      </h5>
+
+      <div class="mb-3">
+
+        <label for="quantity" class="form-label">
+          الكمية
+        </label>
+
+        <input
+          id="quantity"
+          type="number"
+          class="form-control"
+          min="1"
+          [(ngModel)]="quantity"
+        >
+
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="updateQuantity()"
+        [disabled]="isUpdatingQuantity"
+      >
+
+        @if (isUpdatingQuantity) {
+          جاري التحديث...
+        } @else {
+          تحديث الكمية
+        }
+
+      </button>
+
+      @if (updateMessage) {
+        <div class="alert alert-info mt-3 mb-0">
+          {{ updateMessage }}
+        </div>
+      }
+
+    </div>
+  </div>
+
+
+  <!-- Leave Pool -->
+
+  <div class="card shadow-sm mt-4">
+    <div class="card-body">
+
+      <h5 class="card-title mb-3">
+        مغادرة التجمع
+      </h5>
+
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="leavePool()"
+        [disabled]="isLeavingPool"
+      >
+
+        @if (isLeavingPool) {
+          جاري المغادرة...
+        } @else {
+          مغادرة التجمع
+        }
+
+      </button>
+
+      @if (leaveMessage) {
+        <div class="alert alert-info mt-3 mb-0">
+          {{ leaveMessage }}
+        </div>
+      }
+
+    </div>
+  </div>
+
+
+  <!-- Create Supplier Offer -->
+
+  <div class="card shadow-sm mt-4">
+    <div class="card-body">
+
+      <h5 class="card-title mb-3">
+        إجراءات التجمع
+      </h5>
+
+      <a
+        class="btn btn-success"
+        [routerLink]="[
+          '/buying-pools',
+          pool._id,
+          'create-offer'
+        ]"
+      >
+        تقديم عرض
+      </a>
+
+    </div>
+  </div>
+
+}

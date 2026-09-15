@@ -1,206 +1,723 @@
-<div class="dashboard-page">
-  <header class="dash-header mb-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-      <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
-          <h1 class="dash-title mb-0">
-            أهلاً بك،
-            <span class="user-name">{{ currentUser?.name || 'موردنا الكريم' }}</span>
-          </h1>
-          <span class="role-pill" *ngIf="currentUser">
-            {{ getRoleLabel() }}
-          </span>
-        </div>
-        <p class="dash-subtitle mb-0">
-          <span *ngIf="isPendingSupplier">حسابك قيد التدقيق حالياً من قِبل إدارة صفقة.</span>
-          <span *ngIf="!isPendingSupplier">نظرة عامة على نشاطك، وفرص توريد نشطة اليوم.</span>
-        </p>
-      </div>
+<div class="dashboard-page"> 
+ 
+  <header class="dash-header mb-4"> 
+ 
+    <div 
+      class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" 
+    > 
+ 
+      <div> 
+ 
+        <div class="d-flex align-items-center gap-2 mb-1"> 
+ 
+          <h1 class="dash-title mb-0"> 
+            أهلاً بك، 
+            <span class="user-name"> 
+              {{ currentUser?.name || "موردنا الكريم" }} 
+            </span> 
+          </h1> 
+ 
+          <span 
+            class="role-pill" 
+            *ngIf="currentUser" 
+          > 
+            {{ getRoleLabel() }} 
+          </span> 
+ 
+        </div> 
+ 
+        <p class="dash-subtitle mb-0"> 
+ 
+          <span *ngIf="isPendingSupplier"> 
+            حسابك قيد التدقيق حالياً من قِبل إدارة صفقة. 
+          </span> 
+ 
+          <span *ngIf="!isPendingSupplier"> 
+            نظرة عامة على نشاطك، وفرص توريد نشطة اليوم. 
+          </span> 
+ 
+        </p> 
+ 
+      </div> 
+ 
+ 
+      <div 
+        class="d-flex align-items-center gap-2 flex-wrap" 
+        *ngIf="isPendingSupplier" 
+      > 
+ 
+        <a 
+          routerLink="/supplier/complete-profile" 
+          class="btn-safqa-primary" 
+        > 
+ 
+          <i class="bi bi-building-check"></i> 
+ 
+          <span> 
+            ملف المورد 
+          </span> 
+ 
+        </a> 
+ 
+ 
+        <a 
+          routerLink="/profile" 
+          class="btn-safqa-outline" 
+        > 
+ 
+          <i class="bi bi-person"></i> 
+ 
+          <span> 
+            الملف الشخصي 
+          </span> 
+ 
+        </a> 
+ 
+      </div> 
+ 
+    </div> 
+ 
+  </header> 
+ 
+ 
+  <!-- Supplier REJECTED Banner --> 
+ 
+  <div 
+    *ngIf="isRejectedSupplier" 
+    class="safqa-card border-danger-subtle bg-danger-subtle text-danger-emphasis mb-4 p-4 text-center" 
+  > 
+ 
+    <i 
+      class="bi bi-x-circle-fill text-danger fs-1 mb-2" 
+    ></i> 
+ 
+    <h4 class="fw-bold text-danger mb-2"> 
+      تم رفض طلب التسجيل والاعتماد كمورد 
+    </h4> 
+ 
+    <p class="small mb-3"> 
+ 
+      {{ 
+        rejectionReason || 
+          "البيانات المقدمة غير مطابقة. يرجى تعديلها وإعادة التقديم." 
+      }} 
+ 
+    </p> 
+ 
+    <a 
+      routerLink="/supplier/complete-profile" 
+      class="btn-safqa-primary" 
+    > 
+ 
+      <i class="bi bi-arrow-repeat"></i> 
+ 
+      تعديل بيانات ملف المورد 
+ 
+    </a> 
+ 
+  </div> 
+ 
+ 
+  <!-- Supplier PENDING Review Section --> 
+ 
+  <div 
+    *ngIf="isPendingSupplier" 
+    class="safqa-card pending-dashboard-card mb-4 p-4 p-md-5 text-center shadow-sm" 
+  > 
+ 
+    <div class="pending-icon-circle mx-auto mb-3"> 
+ 
+      <i class="bi bi-hourglass-split"></i> 
+ 
+    </div> 
+ 
+ 
+    <h2 class="fw-bold mb-2 text-dark"> 
+      طلبك قيد المراجعة والتدقيق 
+    </h2> 
+ 
+ 
+    <p 
+      class="text-muted mb-4 lead fs-6 mx-auto" 
+      style="max-width: 680px" 
+    > 
+ 
+      شكراً لانضمامك إلى شبكة موردي صفقة! يقوم فريق الامتثال ومراجعة السجلات 
+      التجارية بفحص بياناتك وتأكيد مطابقة المواصفات. يستغرق ذلك عادة من 24 إلى 
+      48 ساعة عمل. 
+ 
+    </p> 
+ 
+ 
+    <div 
+      class="review-steps-box p-4 rounded-3 text-end mx-auto mb-4" 
+      style="max-width: 680px" 
+    > 
+ 
+      <div 
+        class="step-row mb-3 d-flex align-items-center gap-3" 
+      > 
+ 
+        <i 
+          class="bi bi-check-circle-fill text-success fs-5 flex-shrink-0" 
+        ></i> 
+ 
+        <div> 
+ 
+          <div class="fw-bold text-dark"> 
+            تم إرسال الملف التجاري بنجاح 
+          </div> 
+ 
+          <div class="text-muted small"> 
+            تم تسجيل السجل التجاري والبطاقة الضريبية. 
+          </div> 
+ 
+        </div> 
+ 
+      </div> 
+ 
+ 
+      <div 
+        class="step-row mb-3 d-flex align-items-center gap-3" 
+      > 
+ 
+        <div 
+          class="spinner-border spinner-border-sm text-warning flex-shrink-0" 
+          role="status" 
+        ></div> 
+ 
+        <div> 
+ 
+          <div class="fw-bold text-warning-emphasis"> 
+            جاري مراجعة الأوراق والتحقق من السجل 
+          </div> 
+ 
+          <div class="text-muted small"> 
+            يقوم مسؤولو صفقة بالتحقق من صحة المستندات. 
+          </div> 
+ 
+        </div> 
+ 
+      </div> 
+ 
+ 
+      <div 
+        class="step-row d-flex align-items-center gap-3 opacity-50" 
+      > 
+ 
+        <i 
+          class="bi bi-circle text-muted fs-5 flex-shrink-0" 
+        ></i> 
+ 
+        <div> 
+ 
+          <div class="fw-bold text-secondary"> 
+            تفعيل الحساب والبدء في تقديم العطاءات 
+          </div> 
+ 
+          <div class="text-muted small"> 
+            ستصلك رسالة وإشعار فور الاعتماد النهائي. 
+          </div> 
+ 
+        </div> 
+ 
+      </div> 
+ 
+    </div> 
+ 
+ 
+    <div 
+      *ngIf="supplierProfile" 
+      class="submitted-preview p-3 rounded-3 border bg-white mx-auto mb-4 text-end" 
+      style="max-width: 680px" 
+    > 
+ 
+      <div 
+        class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" 
+      > 
+ 
+        <span class="small fw-bold text-dark"> 
+ 
+          <i class="bi bi-building me-1 text-success"></i> 
+ 
+          بيانات المنشأة المسجلة: 
+ 
+        </span> 
+ 
+        <span class="badge bg-warning text-dark px-2 py-1"> 
+          قيد التدقيق (PENDING) 
+        </span> 
+ 
+      </div> 
+ 
+ 
+      <div class="row g-2 small"> 
+ 
+        <div class="col-sm-6"> 
+ 
+          <span class="text-muted"> 
+            المنشأة: 
+          </span> 
+ 
+          <strong class="text-dark"> 
+            {{ supplierProfile.companyName }} 
+          </strong> 
+ 
+        </div> 
+ 
+ 
+        <div class="col-sm-6"> 
+ 
+          <span class="text-muted"> 
+            السجل التجاري: 
+          </span> 
+ 
+          <strong 
+            class="text-dark" 
+            dir="ltr" 
+          > 
+            {{ supplierProfile.commercialRegistrationNumber }} 
+          </strong> 
+ 
+        </div> 
+ 
+ 
+        <div class="col-sm-6"> 
+ 
+          <span class="text-muted"> 
+            الرقم الضريبي: 
+          </span> 
+ 
+          <strong 
+            class="text-dark" 
+            dir="ltr" 
+          > 
+            {{ supplierProfile.taxIdentificationNumber }} 
+          </strong> 
+ 
+        </div> 
+ 
+ 
+        <div class="col-sm-6"> 
+ 
+          <span class="text-muted"> 
+            هاتف التواصل: 
+          </span> 
+ 
+          <strong 
+            class="text-dark" 
+            dir="ltr" 
+          > 
+            {{ supplierProfile.businessPhone }} 
+          </strong> 
+ 
+        </div> 
+ 
+      </div> 
+ 
+    </div> 
+ 
+ 
+    <div class="d-flex justify-content-center gap-3 flex-wrap"> 
+ 
+      <a 
+        routerLink="/supplier/complete-profile" 
+        class="btn-safqa-primary px-4 py-2" 
+      > 
+ 
+        <i class="bi bi-pencil-square"></i> 
+ 
+        <span> 
+          استعراض وتعديل ملف المورد 
+        </span> 
+ 
+      </a> 
+ 
+ 
+      <a 
+        routerLink="/profile" 
+        class="btn-safqa-outline px-4 py-2" 
+      > 
+ 
+        <i class="bi bi-person"></i> 
+ 
+        <span> 
+          الملف الشخصي 
+        </span> 
+ 
+      </a> 
+ 
+    </div> 
+ 
+  </div> 
+ 
+ 
+  <!-- Approved Supplier Dashboard --> 
+ 
+  <ng-container 
+    *ngIf="!isPendingSupplier && !isRejectedSupplier" 
+  > 
+ 
+    <!-- KPI Stats --> 
+ 
+    <div class="row g-3 mb-4"> 
+ 
+      <div 
+        class="col-6 col-lg-3" 
+        *ngFor="let stat of supplierKpiStats" 
+      > 
+ 
+        <div class="kpi-card"> 
+ 
+          <div class="kpi-icon-box"> 
+ 
+            <i 
+              class="bi" 
+              [ngClass]="stat.icon" 
+            ></i> 
+ 
+          </div> 
+ 
+          <div class="kpi-data"> 
+ 
+            <span class="kpi-value"> 
+              {{ stat.value }} 
+            </span> 
+ 
+            <span class="kpi-label"> 
+              {{ stat.label }} 
+            </span> 
+ 
+          </div> 
+ 
+        </div> 
+ 
+      </div> 
+ 
+    </div> 
+ 
+ 
+    <div class="row g-4"> 
+ 
+      <!-- Open Buying Requests to Bid On --> 
+ 
+      <div class="col-lg-7"> 
+ 
+        <div class="safqa-card h-100"> 
+ 
+          <div 
+            class="d-flex justify-content-between align-items-center mb-3" 
+          > 
+ 
+            <div> 
+ 
+              <h5 class="fw-bold mb-1 text-neutral"> 
+                طلبات شراء ومناقصات متاحة للتسعير 
+              </h5> 
+ 
+              <p class="text-muted small mb-0"> 
+                فرص توريد جديدة معلنة من المشترين بانتظار عروض أسعارك 
+              </p> 
+ 
+            </div> 
+ 
+ 
+            <a 
+              routerLink="/buying-requests" 
+              class="view-all-link" 
+            > 
+ 
+              <span> 
+                تصفح الكل 
+              </span> 
+ 
+              <i class="bi bi-arrow-left"></i> 
+ 
+            </a> 
+ 
+          </div> 
+ 
+ 
+          <div class="pools-list"> 
+ 
+            <div 
+              class="pool-item" 
+              *ngFor="let rfq of openRfqs" 
+            > 
+ 
+              <div 
+                class="d-flex justify-content-between align-items-start gap-2 mb-2" 
+              > 
+ 
+                <div> 
+ 
+                  <span class="pool-category"> 
+                    {{ rfq.category }} • {{ rfq.buyer }} 
+                  </span> 
+ 
+                  <h6 class="pool-title mb-0"> 
+                    {{ rfq.title }} 
+                  </h6> 
+ 
+                </div> 
+ 
+ 
+                <span 
+                  class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small" 
+                > 
+                  {{ rfq.status }} 
+                </span> 
+ 
+              </div> 
+ 
+ 
+              <div 
+                class="d-flex justify-content-between align-items-center small text-muted pt-2 border-top mt-2" 
+              > 
+ 
+                <span> 
+ 
+                  <i class="bi bi-tag me-1"></i> 
+ 
+                  <strong> 
+                    {{ rfq.bidsCount }} 
+                  </strong> 
+ 
+                  عروض مقدمة 
+ 
+                </span> 
+ 
+ 
+                <div 
+                  class="d-flex align-items-center gap-3" 
+                > 
+ 
+                  <span 
+                    class="pool-time text-warning-emphasis fw-bold" 
+                  > 
+ 
+                    <i class="bi bi-clock"></i> 
+ 
+                    {{ rfq.deadline }} 
+ 
+                  </span> 
+ 
+ 
+                  <a 
+                    routerLink="/buying-requests" 
+                    class="btn btn-sm btn-safqa-primary py-1 px-3" 
+                  > 
+ 
+                    <span> 
+                      تقديم عرض 
+                    </span> 
+ 
+                    <i class="bi bi-send ms-1"></i> 
+ 
+                  </a> 
+ 
+                </div> 
+ 
+              </div> 
+ 
+            </div> 
+ 
+          </div> 
+ 
+        </div> 
+ 
+      </div> 
+ 
+ 
+      <!-- Supplier Shortcuts & Tools --> 
+ 
+      <div class="col-lg-5"> 
+ 
+        <div 
+          class="safqa-card h-100 d-flex flex-column justify-content-between" 
+        > 
+ 
+          <div> 
+ 
+            <h5 class="fw-bold mb-1 text-neutral"> 
+              لوحة تحكم المورد 
+            </h5> 
+ 
+            <p class="text-muted small mb-3"> 
+              إدارة عروض الأسعار، متابعة الصفقات، وملف المنشأة 
+            </p> 
+ 
+ 
+            <div class="shortcuts-list mb-4"> 
+ 
+ 
+              <!-- Member 3 - Available Pools [Supplier]
+                   GET /api/buying-pools
+                   OPEN pools → Supplier can submit an offer
+                   Non-OPEN pools → Show reason for blocking submission
+              --> 
+ 
+              <a 
+                routerLink="/supplier/available-pools" 
+                class="shortcut-item" 
+              > 
+ 
+                <div class="shortcut-icon bg-green-soft"> 
+ 
+                  <i 
+                    class="bi bi-c              <a
+                routerLink="/supplier/my-offers"
+                class="shortcut-item"
+              >
+                <div class="shortcut-icon bg-green-soft">
+                  <i class="bi bi-tags text-safqa-primary"></i>
+                </div>
+                <div class="shortcut-content">
+                  <span class="shortcut-title">عروضي</span>
+                  <span class="shortcut-desc">متابعة وإدارة عروض الأسعار التي قدمتها</span>
+                </div>
+                <i class="bi bi-chevron-left shortcut-arrow"></i>
+              </a>
 
-      <div class="d-flex align-items-center gap-2 flex-wrap" *ngIf="isPendingSupplier">
-        <a routerLink="/supplier/complete-profile" class="btn-safqa-primary">
-          <i class="bi bi-building-check"></i>
-          <span>ملف المورد</span>
-        </a>
-        <a routerLink="/profile" class="btn-safqa-outline">
-          <i class="bi bi-person"></i>
-          <span>الملف الشخصي</span>
-        </a>
-      </div>
-    </div>
-  </header>
+              <!-- Existing Buying Requests -->
+              <a
+                routerLink="/buying-requests"
+                class="shortcut-item"
+              >
+                <div class="shortcut-icon bg-green-soft">
+                  <i class="bi bi-file-earmark-spreadsheet text-safqa-primary"></i>
+                </div>
+                <div class="shortcut-content">
+                  <span class="shortcut-title">تصفح طلبات الشراء والمناقصات</span>
+                  <span class="shortcut-desc">تقديم عروض أسعار جديدة وتلبية الطلبات</span>
+                </div>
+                <i class="bi bi-chevron-left shortcut-arrow"></i>
+              </a>
 
-  <!-- Supplier REJECTED Banner -->
-  <div *ngIf="isRejectedSupplier" class="safqa-card border-danger-subtle bg-danger-subtle text-danger-emphasis mb-4 p-4 text-center">
-    <i class="bi bi-x-circle-fill text-danger fs-1 mb-2"></i>
-    <h4 class="fw-bold text-danger mb-2">تم رفض طلب التسجيل والاعتماد كمورد</h4>
-    <p class="small mb-3">{{ rejectionReason || 'البيانات المقدمة غير مطابقة. يرجى تعديلها وإعادة التقديم.' }}</p>
-    <a routerLink="/supplier/complete-profile" class="btn-safqa-primary">
-      <i class="bi bi-arrow-repeat"></i> تعديل بيانات ملف المورد
-    </a>
-  </div>
+              <!-- Supplier Profile -->
+              <a
+                routerLink="/supplier/complete-profile"
+                class="shortcut-item"
+              >
+                <div class="shortcut-icon bg-blue-soft">
+                  <i class="bi bi-building-check text-primary"></i>
+                </div>
+                <div class="shortcut-content">
+                  <span class="shortcut-title">ملف المنشأة والسجل التجاري</span>
+                  <span class="shortcut-desc">بيانات الاعتماد والوثائق الرسمية للمورد</span>
+                </div>
+                <i class="bi bi-chevron-left shortcut-arrow"></i>
+              </a>
 
-  <!-- Supplier PENDING Review Section -->
-  <div *ngIf="isPendingSupplier" class="safqa-card pending-dashboard-card mb-4 p-4 p-md-5 text-center shadow-sm">
-    <div class="pending-icon-circle mx-auto mb-3">
-      <i class="bi bi-hourglass-split"></i>
-    </div>
-
-    <h2 class="fw-bold mb-2 text-dark">طلبك قيد المراجعة والتدقيق</h2>
-    <p class="text-muted mb-4 lead fs-6 mx-auto" style="max-width: 680px;">
-      شكراً لانضمامك إلى شبكة موردي صفقة! يقوم فريق الامتثال ومراجعة السجلات التجارية بفحص بياناتك وتأكيد مطابقة المواصفات. يستغرق ذلك عادة من 24 إلى 48 ساعة عمل.
-    </p>
-
-    <div class="review-steps-box p-4 rounded-3 text-end mx-auto mb-4" style="max-width: 680px;">
-      <div class="step-row mb-3 d-flex align-items-center gap-3">
-        <i class="bi bi-check-circle-fill text-success fs-5 flex-shrink-0"></i>
-        <div>
-          <div class="fw-bold text-dark">تم إرسال الملف التجاري بنجاح</div>
-          <div class="text-muted small">تم تسجيل السجل التجاري والبطاقة الضريبية.</div>
-        </div>
-      </div>
-
-      <div class="step-row mb-3 d-flex align-items-center gap-3">
-        <div class="spinner-border spinner-border-sm text-warning flex-shrink-0" role="status"></div>
-        <div>
-          <div class="fw-bold text-warning-emphasis">جاري مراجعة الأوراق والتحقق من السجل</div>
-          <div class="text-muted small">يقوم مسؤولو صفقة بالتحقق من صحة المستندات.</div>
-        </div>
-      </div>
-
-      <div class="step-row d-flex align-items-center gap-3 opacity-50">
-        <i class="bi bi-circle text-muted fs-5 flex-shrink-0"></i>
-        <div>
-          <div class="fw-bold text-secondary">تفعيل الحساب والبدء في تقديم العطاءات</div>
-          <div class="text-muted small">ستصلك رسالة وإشعار فور الاعتماد النهائي.</div>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="supplierProfile" class="submitted-preview p-3 rounded-3 border bg-white mx-auto mb-4 text-end" style="max-width: 680px;">
-      <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-        <span class="small fw-bold text-dark"><i class="bi bi-building me-1 text-success"></i> بيانات المنشأة المسجلة:</span>
-        <span class="badge bg-warning text-dark px-2 py-1">قيد التدقيق (PENDING)</span>
-      </div>
-      <div class="row g-2 small">
-        <div class="col-sm-6">
-          <span class="text-muted">المنشأة: </span>
-          <strong class="text-dark">{{ supplierProfile.companyName }}</strong>
-        </div>
-        <div class="col-sm-6">
-          <span class="text-muted">السجل التجاري: </span>
-          <strong class="text-dark" dir="ltr">{{ supplierProfile.commercialRegistrationNumber }}</strong>
-        </div>
-        <div class="col-sm-6">
-          <span class="text-muted">الرقم الضريبي: </span>
-          <strong class="text-dark" dir="ltr">{{ supplierProfile.taxIdentificationNumber }}</strong>
-        </div>
-        <div class="col-sm-6">
-          <span class="text-muted">هاتف التواصل: </span>
-          <strong class="text-dark" dir="ltr">{{ supplierProfile.businessPhone }}</strong>
-        </div>
-      </div>
-    </div>
-
-    <div class="d-flex justify-content-center gap-3 flex-wrap">
-      <a routerLink="/supplier/complete-profile" class="btn-safqa-primary px-4 py-2">
-        <i class="bi bi-pencil-square"></i>
-        <span>استعراض وتعديل ملف المورد</span>
-      </a>
-      <a routerLink="/profile" class="btn-safqa-outline px-4 py-2">
-        <i class="bi bi-person"></i>
-        <span>الملف الشخصي</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Approved Supplier Dashboard -->
-  <ng-container *ngIf="!isPendingSupplier && !isRejectedSupplier">
-    <div class="row g-3 mb-4">
-      <div class="col-6 col-lg-3" *ngFor="let stat of supplierKpiStats">
-        <div class="kpi-card h-100">
-          <div class="kpi-icon-box">
-            <i class="bi" [ngClass]="stat.icon"></i>
-          </div>
-          <div class="kpi-data">
-            <span class="kpi-value">{{ stat.value }}</span>
-            <span class="kpi-label">{{ stat.label }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Dashboard Details: Orders and Finances -->
-    <div class="row g-4">
-      <!-- Recent Orders Table -->
-      <div class="col-xl-8">
-        <div class="safqa-card h-100 p-0 border-0">
-          <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
-            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-list-check me-2 text-safqa-primary"></i> أحدث الطلبات</h5>
-            <a href="javascript:void(0)" class="text-safqa-primary small text-decoration-none">عرض الكل</a>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light text-muted">
-                <tr>
-                  <th class="ps-4">رقم الطلب</th>
-                  <th>العميل</th>
-                  <th>تاريخ الطلب</th>
-                  <th>الكمية</th>
-                  <th>الإجمالي</th>
-                  <th>الحالة</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let order of recentOrders">
-                  <td class="ps-4 fw-bold">#ORD-{{ order._id?.substring(0, 6) || 'N/A' }}</td>
-                  <td>{{ order.buyer?.name || order.buyer?.companyName || 'عميل' }}</td>
-                  <td>{{ order.createdAt | date:'longDate':'':'ar' }}</td>
-                  <td>-</td>
-                  <td class="fw-bold">{{ order.totalAmount }} ج.م</td>
-                  <td>
-                    <span class="badge border rounded-pill px-3"
-                          [ngClass]="{
-                            'bg-success-subtle text-success border-success-subtle': order.status === 'DELIVERED',
-                            'bg-warning-subtle text-warning border-warning-subtle': order.status === 'PENDING',
-                            'bg-primary-subtle text-primary border-primary-subtle': order.status === 'SHIPPED',
-                            'bg-danger-subtle text-danger border-danger-subtle': order.status === 'CANCELLED'
-                          }">
-                      {{ order.status }}
-                    </span>
-                  </td>
-                </tr>
-                <tr *ngIf="recentOrders.length === 0">
-                  <td colspan="6" class="text-center py-4 text-muted">لا توجد طلبات حديثة</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Financial Overview & Profits -->
-      <div class="col-xl-4">
-        <div class="safqa-card h-100 p-4 border-0">
-          <h5 class="fw-bold mb-4 text-dark"><i class="bi bi-graph-up-arrow me-2 text-success"></i> ملخص الأرباح</h5>
-          
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <p class="text-muted mb-1 small">إجمالي الأرباح</p>
-              <h3 class="fw-bold text-dark mb-0">{{ totalProfit.toLocaleString('en-US') }} <span class="fs-6 text-muted">ج.م</span></h3>
+              <!-- Profile -->
+              <a
+                routerLink="/profile"
+                class="shortcut-item"
+              >
+                <div class="shortcut-icon bg-slate-soft">
+                  <i class="bi bi-person-gear text-slate"></i>
+                </div>
+                <div class="shortcut-content">
+                  <span class="shortcut-title">الملف الشخصي والحساب</span>
+                  <span class="shortcut-desc">إدارة بيانات حسابك وتفضيلات الأمان</span>
+                </div>
+                <i class="bi bi-chevron-left shortcut-arrow"></i>
+              </a>
             </div>
           </div>
-          
-          <hr class="text-muted opacity-25 my-4">
-          
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted"><i class="bi bi-wallet2 me-2"></i> الرصيد المتاح للسحب:</span>
-            <span class="fw-bold">{{ totalProfit.toLocaleString('en-US') }} ج.م</span>
+
+          <!-- Escrow Note -->
+          <div class="escrow-note">
+            <div class="escrow-icon">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="escrow-text">
+              <strong>ضمان مستحقات المورد:</strong>
+              المبالغ محجوزة ومؤمنة بحساب الضمان (Escrow) ويتم صرفها فور تسليم الشحنة للعميل.
+            </div>
           </div>
-          
-          <button class="btn btn-safqa-outline w-100 rounded-pill mt-2">سحب الأرباح</button>
         </div>
       </div>
     </div>
   </ng-container>
+</div>        class="bi bi-chevron-left shortcut-arrow" 
+                ></i> 
+ 
+              </a> 
+ 
+ 
+              <!-- Profile --> 
+ 
+              <a 
+                routerLink="/profile" 
+                class="shortcut-item" 
+              > 
+ 
+                <div class="shortcut-icon bg-slate-soft"> 
+ 
+                  <i 
+                    class="bi bi-person-gear text-slate" 
+                  ></i> 
+ 
+                </div> 
+ 
+ 
+                <div class="shortcut-content"> 
+ 
+                  <span class="shortcut-title"> 
+                    الملف الشخصي والحساب 
+                  </span> 
+ 
+                  <span class="shortcut-desc"> 
+                    إدارة بيانات حسابك وتفضيلات الأمان 
+                  </span> 
+ 
+                </div> 
+ 
+ 
+                <i 
+                  class="bi bi-chevron-left shortcut-arrow" 
+                ></i> 
+ 
+              </a> 
+ 
+ 
+            </div> 
+ 
+          </div> 
+ 
+ 
+          <!-- Escrow Note --> 
+ 
+          <div class="escrow-note"> 
+ 
+            <div class="escrow-icon"> 
+ 
+              <i class="bi bi-shield-check"></i> 
+ 
+            </div> 
+ 
+ 
+            <div class="escrow-text"> 
+ 
+              <strong> 
+                ضمان مستحقات المورد: 
+              </strong> 
+ 
+              المبالغ محجوزة ومؤمنة بحساب الضمان (Escrow) ويتم صرفها فور تسليم 
+              الشحنة للعميل. 
+ 
+            </div> 
+ 
+          </div> 
+ 
+        </div> 
+ 
+      </div> 
+ 
+    </div> 
+ 
+  </ng-container> 
+ 
 </div>
+>>>>>>> origin/member_3

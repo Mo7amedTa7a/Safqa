@@ -1,1 +1,250 @@
 ﻿<!-- edit-offer template -->
+<div class="container py-5" dir="rtl">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="mb-4">تعديل العرض</h3>
+
+      <!-- Loading Offer -->
+      @if (isLoadingOffer) {
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden"> جاري تحميل بيانات العرض... </span>
+          </div>
+
+          <p class="mt-3 text-muted">جاري تحميل بيانات العرض...</p>
+        </div>
+      }
+
+      @if (successMessage) {
+        <div class="alert alert-success">
+          {{ successMessage }}
+        </div>
+      }
+
+      @if (errorMessage) {
+        <div class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <!-- Form -->
+      @if (!isLoadingOffer && !errorMessage) {
+        <form [formGroup]="offerForm" (ngSubmit)="updateOffer()">
+          <!-- MOQ -->
+          <div class="mb-4">
+            <label for="moq" class="form-label"> الحد الأدنى للطلب </label>
+
+            <input
+              id="moq"
+              type="number"
+              class="form-control"
+              formControlName="moq"
+              min="1"
+            />
+
+            @if (
+              offerForm.get("moq")?.touched &&
+              offerForm.get("moq")?.hasError("required")
+            ) {
+              <div class="text-danger mt-1">الحد الأدنى للطلب مطلوب</div>
+            }
+
+            @if (
+              offerForm.get("moq")?.touched &&
+              offerForm.get("moq")?.hasError("min")
+            ) {
+              <div class="text-danger mt-1">
+                الحد الأدنى للطلب يجب أن يكون 1 أو أكثر
+              </div>
+            }
+          </div>
+
+          <!-- Pricing Tiers -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <label class="form-label mb-0"> مستويات الأسعار </label>
+
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                (click)="addPricingTier()"
+              >
+                + إضافة مستوى سعري
+              </button>
+            </div>
+
+            <div formArrayName="pricingTiers">
+              @for (tier of pricingTiers.controls; track $index) {
+                <div class="border rounded p-3 mb-3" [formGroupName]="$index">
+                  <div class="row g-3">
+                    <!-- Minimum Quantity -->
+                    <div class="col-md-5">
+                      <label class="form-label"> أقل كمية </label>
+
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="minQty"
+                        min="1"
+                      />
+
+                      @if (
+                        tier.get("minQty")?.touched &&
+                        tier.get("minQty")?.hasError("required")
+                      ) {
+                        <div class="text-danger mt-1">أقل كمية مطلوبة</div>
+                      }
+
+                      @if (
+                        tier.get("minQty")?.touched &&
+                        tier.get("minQty")?.hasError("min")
+                      ) {
+                        <div class="text-danger mt-1">
+                          الكمية يجب أن تكون 1 أو أكثر
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Unit Price -->
+                    <div class="col-md-5">
+                      <label class="form-label"> سعر الوحدة </label>
+
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="unitPrice"
+                        min="0"
+                      />
+
+                      @if (
+                        tier.get("unitPrice")?.touched &&
+                        tier.get("unitPrice")?.hasError("required")
+                      ) {
+                        <div class="text-danger mt-1">سعر الوحدة مطلوب</div>
+                      }
+
+                      @if (
+                        tier.get("unitPrice")?.touched &&
+                        tier.get("unitPrice")?.hasError("min")
+                      ) {
+                        <div class="text-danger mt-1">
+                          السعر لا يمكن أن يكون أقل من صفر
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Remove Tier -->
+                    <div class="col-md-2 d-flex align-items-end">
+                      <button
+                        type="button"
+                        class="btn btn-outline-danger w-100"
+                        (click)="removePricingTier($index)"
+                        [disabled]="pricingTiers.length === 1"
+                      >
+                        حذف
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Delivery Days -->
+          <div class="mb-3">
+            <label for="deliveryDays" class="form-label">
+              مدة التوصيل بالأيام
+            </label>
+
+            <input
+              id="deliveryDays"
+              type="number"
+              class="form-control"
+              formControlName="deliveryDays"
+              min="1"
+            />
+
+            @if (
+              offerForm.get("deliveryDays")?.touched &&
+              offerForm.get("deliveryDays")?.hasError("required")
+            ) {
+              <div class="text-danger mt-1">مدة التوصيل مطلوبة</div>
+            }
+
+            @if (
+              offerForm.get("deliveryDays")?.touched &&
+              offerForm.get("deliveryDays")?.hasError("min")
+            ) {
+              <div class="text-danger mt-1">
+                مدة التوصيل يجب أن تكون يومًا واحدًا على الأقل
+              </div>
+            }
+          </div>
+
+          <!-- Warranty -->
+          <div class="mb-3">
+            <label for="warranty" class="form-label"> الضمان </label>
+
+            <input
+              id="warranty"
+              type="text"
+              class="form-control"
+              formControlName="warranty"
+              placeholder="مثال: ضمان سنة"
+            />
+
+            @if (
+              offerForm.get("warranty")?.touched &&
+              offerForm.get("warranty")?.hasError("required")
+            ) {
+              <div class="text-danger mt-1">بيانات الضمان مطلوبة</div>
+            }
+          </div>
+
+          <!-- Terms -->
+          <div class="mb-4">
+            <label for="terms" class="form-label"> الشروط والأحكام </label>
+
+            <textarea
+              id="terms"
+              class="form-control"
+              rows="4"
+              formControlName="terms"
+              placeholder="اكتب شروط العرض"
+            ></textarea>
+
+            @if (
+              offerForm.get("terms")?.touched &&
+              offerForm.get("terms")?.hasError("required")
+            ) {
+              <div class="text-danger mt-1">الشروط والأحكام مطلوبة</div>
+            }
+          </div>
+
+          <!-- Submit -->
+          <div class="d-flex gap-2">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isLoading"
+            >
+              @if (isLoading) {
+                جاري تحديث العرض...
+              } @else {
+                حفظ التعديلات
+              }
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [routerLink]="['/supplier/my-offers']"
+            >
+              إلغاء
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+</div>
