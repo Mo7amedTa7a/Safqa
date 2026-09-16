@@ -115,7 +115,7 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   canConfirm(): boolean {
-    return this.isSupplier() && this.order?.status === 'PENDING';
+    return this.isBuyer() && this.order?.status === 'PENDING';
   }
 
   canMarkReadyForPickup(): boolean {
@@ -146,12 +146,13 @@ export class OrderDetailsComponent implements OnInit {
     this.isUpdating = true;
     this.actionMessage = '';
 
-    this.orderService.markReadyForPickup(this.order._id).subscribe({
+    // Create shipment for this order. The backend will automatically
+    // change the order status to READY_FOR_PICKUP
+    this.shipmentService.createShipmentForOrder(this.order._id).subscribe({
 
       next: (response) => {
-        this.order = response.data;
-        this.isUpdating = false;
-        this.actionMessage = 'تم تحديث الطلب إلى جاهز للاستلام';
+        this.actionMessage = 'تم إنشاء بوليصة الشحن وتحديث الطلب إلى جاهز للاستلام';
+        this.loadOrder(); // Reload order to reflect the status change
       },
 
       error: (err) => {
@@ -160,28 +161,6 @@ export class OrderDetailsComponent implements OnInit {
           err?.error?.message || 'حدث خطأ أثناء تحديث حالة الطلب';
       }
 
-    });
-  }
-
-  shipOrder(): void {
-    if (!this.order || !this.canShip()) {
-      return;
-    }
-
-    this.isUpdating = true;
-    this.actionMessage = '';
-    
-    // Create shipment
-    this.shipmentService.createShipmentForOrder(this.order._id).subscribe({
-      next: (res) => {
-        this.shipment = res.data;
-        this.actionMessage = 'تم إنشاء بوليصة الشحن بنجاح';
-        this.loadOrder(); // Reload order to get new status
-      },
-      error: (err) => {
-        this.isUpdating = false;
-        this.actionMessage = err?.error?.message || 'حدث خطأ أثناء إنشاء بوليصة الشحن';
-      }
     });
   }
 

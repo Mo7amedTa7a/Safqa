@@ -138,16 +138,17 @@ const updateShipmentStatus = async (shipmentId, status, user) => {
       // Ensure we only process payments once if status was already DELIVERED
       if (oldStatus !== 'DELIVERED') {
         try {
-          // Shipping Partner gets COD collected
+          // Shipping Partner collected physical cash (COD) so they owe this amount to the platform.
+          // Therefore, debit their virtual wallet balance.
           const spWallet = await getWallet(shipment.shippingPartner);
-          spWallet.balance += shipment.codAmount;
+          spWallet.balance -= shipment.codAmount;
           await spWallet.save();
           
           await Transaction.create({
             wallet: spWallet._id,
             amount: shipment.codAmount,
-            type: "CREDIT",
-            description: "COD Collected",
+            type: "DEBIT",
+            description: "COD Collected (Owed to Platform)",
             referenceOrder: order._id
           });
 
