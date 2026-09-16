@@ -1,4 +1,4 @@
-﻿// Member 3 - Buying Pool Service
+// Member 3 - Buying Pool Service
 // getPools(filters?)      → GET    /api/buying-pools
 // getPoolById(id)         → GET    /api/buying-pools/:id
 // createPool(data)        → POST   /api/buying-pools
@@ -79,7 +79,7 @@ export class BuyingPoolService {
   // POST /api/buying-pools/:id/close
   closePool( poolId: string ): Observable<BuyingPoolDetailsResponse> {
     return this.http.post<BuyingPoolDetailsResponse>(
-      `${this.apiUrl}/${poolId}/close`,
+      `${environment.apiUrl}/deal-selections/${poolId}/select-offer`,
       null
     );
   }

@@ -27,7 +27,8 @@ export class AdminBuyingRequestsComponent implements OnInit {
     
     this.adminService.getBuyingRequests().subscribe({
       next: (res) => {
-        this.requests = res.data;
+        // Filter out GROUP requests, keep only DIRECT (individual)
+        this.requests = res.data.filter((req: any) => req.purchaseType === 'DIRECT');
         this.isLoading = false;
       },
       error: (err) => {

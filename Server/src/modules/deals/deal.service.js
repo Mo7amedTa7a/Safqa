@@ -15,6 +15,8 @@ import Deal from './deal.model.js';
 // ==========================================
 
 function getEffectivePrice(pricingTiers, finalQuantity) {
+  if (!pricingTiers || pricingTiers.length === 0) return null;
+
   const sortedTiers = [...pricingTiers].sort(
     (a, b) => a.minQty - b.minQty
   );
@@ -25,6 +27,12 @@ function getEffectivePrice(pricingTiers, finalQuantity) {
     if (finalQuantity >= tier.minQty) {
       selectedTier = tier;
     }
+  }
+
+  if (!selectedTier && sortedTiers.length > 0) {
+    // Fallback to the first tier if quantity is less than the first tier's minQty
+    // (This happens if MOQ is less than the first tier's minQty)
+    selectedTier = sortedTiers[0];
   }
 
   if (!selectedTier) {

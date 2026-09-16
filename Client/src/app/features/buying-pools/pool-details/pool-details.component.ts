@@ -175,4 +175,28 @@ leaveMessage = '';
     }
   });
 }
+
+  isEndingPool = false;
+  endPoolMessage = '';
+
+  endPoolEarly(): void {
+    if (!this.poolId) return;
+
+    this.isEndingPool = true;
+    this.endPoolMessage = '';
+
+    this.buyingPoolService.closePool(this.poolId).subscribe({
+      next: (response) => {
+        console.log('Pool Ended:', response);
+        this.endPoolMessage = 'تم إنهاء التجمع وإنشاء الصفقة بنجاح!';
+        this.isEndingPool = false;
+        this.loadPool(); // reload the pool to see changes
+      },
+      error: (error) => {
+        console.error('Error ending pool:', error);
+        this.endPoolMessage = error?.error?.message || 'حدث خطأ أثناء إنهاء التجمع.';
+        this.isEndingPool = false;
+      }
+    });
+  }
 }

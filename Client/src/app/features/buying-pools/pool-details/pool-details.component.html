@@ -34,14 +34,27 @@
             <small class="text-muted">رقم التجمع: #{{ pool._id.substring(0, 8) }}</small>
           </div>
 
-          <div class="text-start">
+          <div class="text-start d-flex flex-column align-items-end">
             <span 
-              class="badge px-3 py-2 fs-6 rounded-pill"
+              class="badge px-3 py-2 fs-6 rounded-pill mb-2"
               [class.bg-success]="pool.status === 'OPEN'"
               [class.bg-secondary]="pool.status === 'CLOSED'"
             >
               {{ pool.status === 'OPEN' ? 'مفتوح للتجمع والعروض' : 'مغلق' }}
             </span>
+            
+            @if (currentUser?.role === 'ADMIN' && pool.status === 'OPEN') {
+              <button class="btn btn-warning btn-sm" (click)="endPoolEarly()" [disabled]="isEndingPool">
+                @if (isEndingPool) {
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري...
+                } @else {
+                  <i class="bi bi-stop-circle me-1"></i> إنهاء التجمع مبكراً
+                }
+              </button>
+              @if (endPoolMessage) {
+                <small class="text-danger mt-1">{{ endPoolMessage }}</small>
+              }
+            }
           </div>
         </div>
 
