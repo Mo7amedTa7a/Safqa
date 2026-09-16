@@ -6,6 +6,7 @@ import {
   getOrderByIdController,
   updateOrderStatusController,
   readyForPickupController,
+  confirmOrderController,
   cancelOrderController,
 } from './order.controller.js';
 
@@ -57,6 +58,18 @@ router.get(
   authMiddleware,
   authorize('BUYER', 'SUPPLIER', 'ADMIN'),
   getOrderByIdController
+);
+
+
+// ==========================================
+// CONFIRM ORDER (BUYER APPROVAL WITHIN 24H)
+// ==========================================
+
+router.patch(
+  '/:id/confirm',
+  authMiddleware,
+  authorize('BUYER', 'ADMIN'),
+  confirmOrderController
 );
 
 

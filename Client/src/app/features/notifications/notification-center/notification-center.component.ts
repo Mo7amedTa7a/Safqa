@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationService } from '../services/notification.service';
+import { SocketService } from '../../../core/services/socket.service';
 import { AppNotification } from '../models/notification.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -17,10 +18,20 @@ export class NotificationCenterComponent implements OnInit {
   errorMessage = '';
   unreadCount = 0;
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private socketService: SocketService
+  ) {}
 
   ngOnInit(): void {
     this.loadNotifications();
+
+    if (this.socketService) {
+      this.socketService.onNewNotification()?.subscribe((newNotif) => {
+        this.notifications.unshift(newNotif);
+        this.unreadCount++;
+      });
+    }
   }
 
   loadNotifications(): void {

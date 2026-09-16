@@ -22,6 +22,7 @@ export interface BuyingRequest {
   variant: string;
   quantity: number;
   location: string;
+  notes?: string;
   purchaseType: PurchaseType;
   status: BuyingRequestStatus;
   createdAt: string;
@@ -29,10 +30,14 @@ export interface BuyingRequest {
 }
 
 export interface CreateBuyingRequestDto {
-  product: string;
-  variant: string;
+  product?: string;
+  variant?: string;
+  productName?: string;
+  category?: string;
+  specifications?: string;
+  notes?: string;
   quantity: number;
-  location: string;
+  location?: string;
   purchaseType: PurchaseType;
 }
 

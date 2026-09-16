@@ -1,23 +1,58 @@
-<div class="categories-page" dir="rtl">
-  <div class="heading">
-    <span>المتجر</span>
-    <h1>التصنيفات</h1>
-    <p>اختر تصنيفًا لعرض المنتجات المرتبطة به.</p>
+<div class="container py-4" dir="rtl">
+  <!-- Hero Banner -->
+  <div class="page-hero-banner mb-4">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <span class="badge bg-emerald-subtle text-emerald mb-2">
+          <i class="bi bi-grid-3x3-gap-fill me-1"></i> الكتالوج والتصنيفات
+        </span>
+        <h2 class="fw-bold mb-2">تصنيفات المنتجات المتاحة</h2>
+        <p class="text-muted mb-0">
+          تصفح المنتجات والتجمعات حسب التصنيفات والقطاعات التجارية المختلفة.
+        </p>
+      </div>
+      <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a routerLink="/products" class="btn btn-outline-secondary px-4 py-2">
+          <i class="bi bi-box-seam me-1"></i>
+          <span>جميع المنتجات</span>
+        </a>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="loading" class="state">جاري تحميل التصنيفات...</div>
-  <div *ngIf="errorMessage" class="state error">{{ errorMessage }}</div>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-emerald" role="status"></div>
+    <p class="mt-3 text-muted">جاري تحميل التصنيفات...</p>
+  </div>
 
-  <div *ngIf="!loading && !errorMessage" class="grid">
-    <a
-      *ngFor="let category of categories"
-      [routerLink]="['/products']"
-      [queryParams]="{ category: category.name }"
-      class="category-card">
-      <div class="icon">▦</div>
-      <h3>{{ category.name }}</h3>
-      <p>{{ category.description || 'استعرض المنتجات في هذا التصنيف.' }}</p>
-      <span>عرض المنتجات ←</span>
-    </a>
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="alert alert-danger shadow-sm">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Categories Grid -->
+  <div *ngIf="!loading && !errorMessage" class="row g-4">
+    <div *ngFor="let category of categories" class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <a
+        [routerLink]="['/products']"
+        [queryParams]="{ category: category.name }"
+        class="card category-card text-decoration-none h-100 border-0 shadow-sm transition-all"
+      >
+        <div class="card-body p-4 text-center d-flex flex-column align-items-center">
+          <div class="category-icon-box mb-3">
+            <i class="bi bi-layers-fill"></i>
+          </div>
+          <h5 class="fw-bold text-dark mb-2">{{ category.name }}</h5>
+          <p class="text-muted fs-7 mb-3 flex-grow-1">
+            {{ category.description || 'استعرض طلبات الشراء والتجمعات المتاحة في هذا التصنيف.' }}
+          </p>
+          <span class="btn-browse-category">
+            <span>عرض المنتجات</span>
+            <i class="bi bi-arrow-left ms-1"></i>
+          </span>
+        </div>
+      </a>
+    </div>
   </div>
 </div>

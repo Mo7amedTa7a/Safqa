@@ -11,6 +11,10 @@ const createOfferValidation = Joi.object({
     .min(1)
     .required(),
 
+  originalUnitPrice: Joi.number()
+    .min(0)
+    .optional(),
+
   pricingTiers: Joi.array()
     .items(
       Joi.object({

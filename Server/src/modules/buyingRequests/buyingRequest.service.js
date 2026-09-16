@@ -10,6 +10,8 @@ import mongoose from "mongoose";
 
 import BuyingRequest from "./buyingRequest.model.js";
 import Product from "../products/product.model.js";
+import SupplierOffer from "../supplierOffers/supplierOffer.model.js";
+import { createBuyingPool } from "../buyingPools/buyingPool.service.js";
 
 import AppError from "../../utils/AppError.js";
 
@@ -62,53 +64,74 @@ const getProductAndVariant = async (productId, variantId) => {
 
 
 const createBuyingRequest = async (data, buyerId) => {
-
     checkValidId(buyerId, "buyer");
-    checkValidId(data.product, "product");
-    checkValidId(data.variant, "variant");
 
-    const result = await getProductAndVariant(
-        data.product,
-        data.variant
-    );
+    const productName = data.productName;
+    const category = data.category;
+    const description = data.specifications;
+
+    let productObj = await Product.findOne({ name: productName, category: category });
+    if (!productObj) {
+        productObj = await Product.create({
+            name: productName,
+            description: description,
+            category: category,
+            variants: [{
+                sku: `CUSTOM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                attributes: new Map([["المواصفات", description]]),
+                price: 0,
+                stock: 99999
+            }],
+            supplier: buyerId,
+            status: "ACTIVE"
+        });
+    }
 
     const buyingRequest = await BuyingRequest.create({
         buyer: buyerId,
-        product: data.product,
-        variant: data.variant,
+        product: productObj._id,
+        variant: productObj.variants[0]._id,
         quantity: data.quantity,
-        location: data.location,
-        purchaseType: data.purchaseType
+        location: data.location || "حسب الاتفاق مع المورد",
+        notes: description,
+        purchaseType: data.purchaseType || "GROUP"
     });
 
-    await buyingRequest.populate(
-        "product",
-        "name category images variants"
-    );
+    if (data.purchaseType === "GROUP") {
+        try {
+            await createBuyingPool(buyingRequest._id, buyerId);
+        } catch (poolErr) {
+            console.error("Auto pool create/join error:", poolErr);
+        }
+    }
 
-    await buyingRequest.populate(
-        "buyer",
-        "name email"
-    );
+    await buyingRequest.populate("product", "name category images variants description");
+    await buyingRequest.populate("buyer", "name email");
 
     return buyingRequest;
 };
 
 
-const getMyBuyingRequests = async (buyerId) => {
+const getMyBuyingRequests = async (userId, userRole = "BUYER") => {
 
-    checkValidId(buyerId, "buyer");
+    checkValidId(userId, "user");
 
-    const buyingRequests = await BuyingRequest.find({
-        buyer: buyerId
-    })
+    let filter = {};
+    if (userRole === "BUYER") {
+        filter.buyer = userId;
+    } else if (userRole === "SUPPLIER") {
+        filter.purchaseType = "DIRECT";
+        filter.status = "OPEN";
+    }
+
+    const buyingRequests = await BuyingRequest.find(filter)
         .populate(
             "product",
-            "name category images variants"
+            "name category images variants description"
         )
         .populate(
             "buyer",
-            "name email"
+            "name email companyName"
         )
         .sort({
             createdAt: -1
@@ -118,22 +141,23 @@ const getMyBuyingRequests = async (buyerId) => {
 };
 
 
-const getBuyingRequestById = async (id, buyerId) => {
+const getBuyingRequestById = async (id, userId, userRole = "BUYER") => {
 
     checkValidId(id, "buying request");
-    checkValidId(buyerId, "buyer");
 
-    const buyingRequest = await BuyingRequest.findOne({
-        _id: id,
-        buyer: buyerId
-    })
+    let filter = { _id: id };
+    if (userRole === "BUYER") {
+        filter.buyer = userId;
+    }
+
+    const buyingRequest = await BuyingRequest.findOne(filter)
         .populate(
             "product",
-            "name category images variants"
+            "name category images variants description"
         )
         .populate(
             "buyer",
-            "name email"
+            "name email companyName"
         );
 
     if (!buyingRequest) {
@@ -143,7 +167,13 @@ const getBuyingRequestById = async (id, buyerId) => {
         );
     }
 
-    return buyingRequest;
+    const offers = await SupplierOffer.find({ buyingRequest: id })
+        .populate("supplier", "name email companyName");
+
+    const result = buyingRequest.toObject();
+    result.offers = offers;
+
+    return result;
 };
 
 

@@ -31,7 +31,7 @@ export class AdminBuyingRequestsComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'حدث خطأ أثناء تحميل المناقصات.';
+        this.errorMessage = err.error?.message || 'حدث خطأ أثناء تحميل طلبات الشراء الفردي.';
         this.isLoading = false;
       }
     });

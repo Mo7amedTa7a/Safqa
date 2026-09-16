@@ -4,6 +4,8 @@ import SupplierOffer from '../supplierOffers/supplierOffer.model.js';
 import BuyingRequest from '../buyingRequests/buyingRequest.model.js';
 import BuyingPool from '../buyingPools/buyingPool.model.js';
 import PoolMember from '../poolMembers/poolMember.model.js';
+import Order from '../orders/order.model.js';
+import { createNotification } from '../notifications/notification.service.js';
 
 import Deal from './deal.model.js';
 
@@ -170,29 +172,74 @@ async function createDealFromPool(poolId) {
   );
 
 
-  // Create Deal only
-  // Orders will be created later
-  // by each buyer.
+  // Create Deal
   const deal = await Deal.create({
     pool: poolId,
-
-    selectedOffer:
-      winningOffer._id,
-
-    supplier:
-      winningOffer.supplier._id,
-
+    selectedOffer: winningOffer._id,
+    supplier: winningOffer.supplier._id,
     finalQuantity,
-
-    effectiveUnitPrice:
-      effectivePrice,
-
-    deliveryDays:
-      winningOffer.deliveryDays,
-
+    effectiveUnitPrice: effectivePrice,
+    deliveryDays: winningOffer.deliveryDays,
     status: 'ACTIVE',
   });
 
+  pool.status = 'CLOSED';
+  await pool.save();
+
+  // Automatically Create Orders for all Pool Members
+  const poolMembers = await PoolMember.find({ pool: poolId, status: 'ACTIVE' }).populate('buyer');
+  const confirmationDeadline = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+  for (const member of poolMembers) {
+    const buyerId = member.buyer._id || member.buyer;
+    const existingOrder = await Order.findOne({ deal: deal._id, buyer: buyerId });
+    if (!existingOrder) {
+      const newOrd = await Order.create({
+        deal: deal._id,
+        buyer: buyerId,
+        supplier: winningOffer.supplier._id,
+        poolMember: member._id,
+        buyingRequest: member.buyingRequest,
+        quantity: member.quantity,
+        unitPrice: effectivePrice,
+        deliveryFee: 0,
+        totalAmount: member.quantity * effectivePrice,
+        shippingAddress: {
+          street: 'العنوان المسجل لدى المشتري',
+          city: 'القاهرة',
+          country: 'مصر'
+        },
+        phone: member.buyer.phone || '01000000000',
+        status: 'PENDING',
+        confirmationDeadline
+      });
+
+      try {
+        await createNotification(
+          buyerId,
+          "ORDER_CREATED",
+          "تهانينا! فاز أفضل عرض للمورد واكتمل التجمع",
+          "تم إغلاق التجمع واختيار أفضل عرض. يرجى الدخول لتأكيد تفاصيل العنوان والهاتف لإكمال الطلب.",
+          { entityModel: "Order", entityId: newOrd._id }
+        );
+      } catch (err) {
+        console.error("Error sending deal pool order notification:", err);
+      }
+    }
+  }
+
+  try {
+    const supplierId = winningOffer.supplier._id || winningOffer.supplier;
+    await createNotification(
+      supplierId,
+      "DEAL_WON",
+      "تهانينا! فاز عرضك بصفقة التجمع",
+      "تم تجميع الكمية المطلوبة واختيار عرضك كأفضل عرض لصفقة التجمع.",
+      { entityModel: "Deal", entityId: deal._id }
+    );
+  } catch (err) {
+    console.error("Error sending supplier deal notification:", err);
+  }
 
   return {
     deal,
@@ -276,29 +323,44 @@ async function createDealFromRequest(
   );
 
 
-  // Create Deal only
-  // Order will be created later
-  // by the buyer.
+  // Create Deal
   const deal = await Deal.create({
-    buyingRequest:
-      requestId,
-
-    selectedOffer:
-      winningOffer._id,
-
-    supplier:
-      winningOffer.supplier._id,
-
+    buyingRequest: requestId,
+    selectedOffer: winningOffer._id,
+    supplier: winningOffer.supplier._id,
     finalQuantity,
-
-    effectiveUnitPrice:
-      effectivePrice,
-
-    deliveryDays:
-      winningOffer.deliveryDays,
-
+    effectiveUnitPrice: effectivePrice,
+    deliveryDays: winningOffer.deliveryDays,
     status: 'ACTIVE',
   });
+
+  request.status = 'FULFILLED';
+  await request.save();
+
+  // Automatically Create Order for the Buyer
+  const buyerId = request.buyer._id || request.buyer;
+  const existingOrder = await Order.findOne({ deal: deal._id, buyer: buyerId });
+  if (!existingOrder) {
+    const confirmationDeadline = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    await Order.create({
+      deal: deal._id,
+      buyer: buyerId,
+      supplier: winningOffer.supplier._id,
+      buyingRequest: requestId,
+      quantity: request.quantity,
+      unitPrice: effectivePrice,
+      deliveryFee: 0,
+      totalAmount: request.quantity * effectivePrice,
+      shippingAddress: {
+        street: request.location || 'العنوان المسجل لدى المشتري',
+        city: 'القاهرة',
+        country: 'مصر'
+      },
+      phone: '01000000000',
+      status: 'PENDING',
+      confirmationDeadline
+    });
+  }
 
 
   return {

@@ -17,33 +17,49 @@
       <nav class="desktop-nav d-none d-lg-flex">
         <a (click)="scrollToSection('hero')" class="nav-link">الرئيسية</a>
         <a routerLink="/buying-pools" class="nav-link">تجمعات الشراء</a>
-        <a routerLink="/buying-requests" class="nav-link">المناقصات والطلبات</a>
+        <a routerLink="/buying-requests" class="nav-link">الشراء الفردي</a>
       </nav>
 
       <!-- User Auth Actions -->
       <div class="header-actions d-none d-sm-flex">
-        <!-- If Guest (Not Logged In) -->
-        <ng-container *ngIf="!currentUser">
-          <a routerLink="/auth/login" class="btn-safqa-outline py-2 px-3">تسجيل الدخول</a>
-          <a routerLink="/auth/register" class="btn-safqa-primary py-2 px-4">
-            <span>ابدأ الآن مجانا</span>
-            <i class="bi bi-arrow-left"></i>
-          </a>
-        </ng-container>
-
         <!-- If Logged In -->
-        <ng-container *ngIf="currentUser">
-          <div class="user-logged-box">
-            <span class="user-pill">
-              <i class="bi bi-person-check-fill text-success"></i>
-              <span class="user-name">{{ currentUser.name }}</span>
-            </span>
-            <a routerLink="/dashboard" class="btn-safqa-primary py-2 px-3">
+        <ng-container *ngIf="currentUser; else guestHeaderActions">
+          <div class="user-logged-box d-flex align-items-center gap-2">
+            <a 
+              routerLink="/notifications" 
+              class="btn btn-outline-secondary position-relative border-0 p-2 rounded-circle text-dark d-inline-flex align-items-center justify-content-center me-1"
+              style="width: 40px; height: 40px; background-color: rgba(0,0,0,0.05);"
+              title="التنبيهات الإشعارات"
+            >
+              <i class="bi bi-bell fs-5"></i>
+              <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;" *ngIf="unreadNotificationsCount > 0">
+                {{ unreadNotificationsCount }}
+              </span>
+            </a>
+            <a 
+              *ngIf="currentUser.role === 'BUYER'" 
+              routerLink="/buying-requests/create" 
+              class="btn-safqa-primary py-2 px-3 me-1 d-inline-flex align-items-center gap-1 fw-bold text-decoration-none rounded-pill shadow-sm"
+              title="إنشاء طلب شراء جديد"
+            >
+              <i class="bi bi-cart-plus-fill"></i>
+              <span>شراء</span>
+            </a>
+            <a routerLink="/dashboard" class="btn-safqa-outline py-2 px-3">
               <span>لوحة التحكم</span>
               <i class="bi bi-grid-fill"></i>
             </a>
           </div>
         </ng-container>
+
+        <!-- If Guest (Not Logged In) -->
+        <ng-template #guestHeaderActions>
+          <a routerLink="/auth/login" class="btn-safqa-outline py-2 px-3">تسجيل الدخول</a>
+          <a routerLink="/auth/register" class="btn-safqa-primary py-2 px-4">
+            <span>ابدأ الآن مجانا</span>
+            <i class="bi bi-arrow-left"></i>
+          </a>
+        </ng-template>
       </div>
 
       <!-- Mobile Hamburger Button -->
@@ -70,20 +86,12 @@
         </a>
         <a routerLink="/buying-requests" (click)="closeMobileMenu()" class="mobile-nav-item">
           <i class="bi bi-file-earmark-diff"></i>
-          <span>المناقصات والطلبات</span>
+          <span>الشراء الفردي</span>
         </a>
       </nav>
 
       <div class="mobile-actions mt-3">
-        <ng-container *ngIf="!currentUser">
-          <a routerLink="/auth/login" (click)="closeMobileMenu()" class="btn-safqa-outline w-100 mb-2 text-center py-2">
-            تسجيل الدخول
-          </a>
-          <a routerLink="/auth/register" (click)="closeMobileMenu()" class="btn-safqa-primary w-100 text-center py-2">
-            ابدأ الآن مجانا
-          </a>
-        </ng-container>
-        <ng-container *ngIf="currentUser">
+        <ng-container *ngIf="currentUser; else guestMobileActions">
           <a routerLink="/dashboard" (click)="closeMobileMenu()" class="btn-safqa-primary w-100 mb-2 text-center py-2">
             الانتقال للوحة التحكم
           </a>
@@ -91,6 +99,15 @@
             تسجيل الخروج
           </button>
         </ng-container>
+
+        <ng-template #guestMobileActions>
+          <a routerLink="/auth/login" (click)="closeMobileMenu()" class="btn-safqa-outline w-100 mb-2 text-center py-2">
+            تسجيل الدخول
+          </a>
+          <a routerLink="/auth/register" (click)="closeMobileMenu()" class="btn-safqa-primary w-100 text-center py-2">
+            ابدأ الآن مجانا
+          </a>
+        </ng-template>
       </div>
     </div>
   </header>
@@ -115,18 +132,7 @@
           </p>
 
           <div class="hero-actions">
-            <ng-container *ngIf="!currentUser">
-              <a routerLink="/auth/register" class="btn-safqa-primary hero-btn-main">
-                <span>ابدأ التوفير الآن</span>
-                <i class="bi bi-arrow-left"></i>
-              </a>
-              <a (click)="scrollToSection('how-it-works')" class="btn-safqa-outline hero-btn-sub">
-                <i class="bi bi-play-circle"></i>
-                <span>كيف تعمل المنصة؟</span>
-              </a>
-            </ng-container>
-
-            <ng-container *ngIf="currentUser">
+            <ng-container *ngIf="currentUser; else guestHeroActions">
               <a routerLink="/dashboard" class="btn-safqa-primary hero-btn-main">
                 <span>الذهاب للوحة التحكم</span>
                 <i class="bi bi-grid-fill"></i>
@@ -135,6 +141,17 @@
                 <span>استكشف طرق الشراء</span>
               </a>
             </ng-container>
+
+            <ng-template #guestHeroActions>
+              <a routerLink="/auth/register" class="btn-safqa-primary hero-btn-main">
+                <span>ابدأ التوفير الآن</span>
+                <i class="bi bi-arrow-left"></i>
+              </a>
+              <a (click)="scrollToSection('how-it-works')" class="btn-safqa-outline hero-btn-sub">
+                <i class="bi bi-play-circle"></i>
+                <span>كيف تعمل المنصة؟</span>
+              </a>
+            </ng-template>
           </div>
 
           <!-- Quick Stats Row -->
@@ -203,7 +220,7 @@
                 </div>
                 <div class="flow-info">
                   <div class="flow-title">تنافس عروض الموردين</div>
-                  <div class="flow-desc">مناقصة عكسية فورية بين الموردين لتقديم أقل سعر</div>
+                  <div class="flow-desc">تنافس فوري بين الموردين لتقديم أقل سعر</div>
                 </div>
               </div>
 
@@ -700,7 +717,14 @@
           </p>
 
           <div class="cta-buttons">
-            <ng-container *ngIf="!currentUser">
+            <ng-container *ngIf="currentUser; else guestCtaActions">
+              <a routerLink="/dashboard" class="btn btn-cta-primary">
+                <span>الانتقال للوحة التحكم</span>
+                <i class="bi bi-speedometer2"></i>
+              </a>
+            </ng-container>
+
+            <ng-template #guestCtaActions>
               <a routerLink="/auth/register" class="btn btn-cta-primary">
                 <span>أنشئ حسابك مجانا</span>
                 <i class="bi bi-arrow-left"></i>
@@ -709,14 +733,7 @@
                 <i class="bi bi-grid-3x3-gap"></i>
                 <span>استكشف الصفقات والمجموعات</span>
               </a>
-            </ng-container>
-
-            <ng-container *ngIf="currentUser">
-              <a routerLink="/dashboard" class="btn btn-cta-primary">
-                <span>الانتقال للوحة التحكم</span>
-                <i class="bi bi-speedometer2"></i>
-              </a>
-            </ng-container>
+            </ng-template>
           </div>
 
           <div class="cta-assurances">

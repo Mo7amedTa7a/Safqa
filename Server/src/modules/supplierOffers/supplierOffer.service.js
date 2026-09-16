@@ -1,4 +1,4 @@
-﻿// SupplierOffer Service
+// SupplierOffer Service
 
 // - Belongs to: Member 3
 
@@ -18,40 +18,94 @@
 
 
 import BuyingPool from "../buyingPools/buyingPool.model.js";
-
+import BuyingRequest from "../buyingRequests/buyingRequest.model.js";
 import SupplierOffer from "./supplierOffer.model.js";
+import PoolMember from "../poolMembers/poolMember.model.js";
+import { createNotification } from "../notifications/notification.service.js";
 
 
 // ==========================================
 // Create Offer
 // ==========================================
 
-const createOffer = async (poolid, supplierid, data) => {
+const createOffer = async (targetId, supplierid, data) => {
 
-  const pool = await BuyingPool.findById(poolid);
+  let pool = await BuyingPool.findById(targetId);
+  let buyingRequest = null;
 
   if (!pool) {
-    throw new Error("Not found pool");
+    buyingRequest = await BuyingRequest.findById(targetId);
   }
 
-  if (pool.status !== "OPEN") {
+  if (!pool && !buyingRequest) {
+    throw new Error("Target pool or buying request not found");
+  }
+
+  if (pool && pool.status !== "OPEN") {
     throw new Error("The pool is not open");
   }
 
-  const existingOffer = await SupplierOffer.findOne({
-    supplier: supplierid,
-    pool: poolid
-  });
-
-  if (existingOffer) {
-    throw new Error("Supplier already has an offer for this pool");
+  if (buyingRequest && buyingRequest.status !== "OPEN") {
+    throw new Error("The buying request is not open");
   }
 
-  const offer = await SupplierOffer.create({
-    pool: poolid,
+  const query = { supplier: supplierid };
+  if (pool) query.pool = targetId;
+  if (buyingRequest) query.buyingRequest = targetId;
+
+  const existingOffer = await SupplierOffer.findOne(query);
+
+  if (existingOffer) {
+    throw new Error("Supplier already has an offer for this request");
+  }
+
+  const payload = {
     supplier: supplierid,
     ...data
-  });
+  };
+  if (pool) payload.pool = targetId;
+  if (buyingRequest) payload.buyingRequest = targetId;
+
+  const offer = await SupplierOffer.create(payload);
+
+  try {
+    if (buyingRequest && buyingRequest.buyer) {
+      await createNotification(
+        buyingRequest.buyer,
+        "NEW_OFFER",
+        "عرض سعر جديد على طلب الشراء الخاص بك",
+        `قدم أحد الموردين عرض سعر جديد بقدر ${data.offeredPrice || ''} ج.م على طلبك.`,
+        { entityModel: "BuyingRequest", entityId: buyingRequest._id }
+      );
+    } else if (pool) {
+      const members = await PoolMember.find({ pool: targetId, status: "ACTIVE" });
+      const notifiedSet = new Set();
+      for (const m of members) {
+        const uId = m.buyer ? m.buyer.toString() : null;
+        if (uId && !notifiedSet.has(uId)) {
+          notifiedSet.add(uId);
+          await createNotification(
+            uId,
+            "NEW_OFFER",
+            "عرض سعر جديد على تجمع الشراء",
+            `قدم أحد الموردين عرض سعر جديد بقدر ${data.offeredPrice || ''} ج.م على التجمع الذي تشارك به.`,
+            { entityModel: "BuyingPool", entityId: pool._id }
+          );
+        }
+      }
+      if (pool.createdBy && !notifiedSet.has(pool.createdBy.toString())) {
+        await createNotification(
+          pool.createdBy,
+          "NEW_OFFER",
+          "عرض سعر جديد على تجمع الشراء",
+          `قدم أحد الموردين عرض سعر جديد بقدر ${data.offeredPrice || ''} ج.م على التجمع الخاص بك.`,
+          { entityModel: "BuyingPool", entityId: pool._id }
+        );
+      }
+    }
+  } catch (notifErr) {
+    console.error("Error creating offer notification:", notifErr);
+  }
 
   return offer;
 };
@@ -140,15 +194,19 @@ const withdrawOffer = async (offerId, supplierId) => {
 
 const getOffersForPool = async (poolId) => {
 
-  const pool = await BuyingPool.findById(poolId);
-
+  let pool = await BuyingPool.findById(poolId);
+  let buyingRequest = null;
   if (!pool) {
-    throw new Error("Pool not found");
+    buyingRequest = await BuyingRequest.findById(poolId);
   }
 
-  const offers = await SupplierOffer.find({
-    pool: poolId
-  });
+  if (!pool && !buyingRequest) {
+    throw new Error("Pool or buying request not found");
+  }
+
+  const query = pool ? { pool: poolId } : { buyingRequest: poolId };
+
+  const offers = await SupplierOffer.find(query).populate("supplier", "name email companyName");
 
   return offers;
 };

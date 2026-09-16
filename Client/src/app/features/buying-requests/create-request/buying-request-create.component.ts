@@ -1,16 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Product } from '../../products/models/product.model';
 import { PurchaseType } from '../models/buying-request.model';
-import { ProductService } from '../../products/services/product.service';
 import { BuyingRequestService } from '../services/buying-request.service';
 
 @Component({
   selector: 'app-buying-request-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CurrencyPipe, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './buying-request-create.component.html',
   styleUrl: './buying-request-create.component.css'
 })
@@ -18,57 +16,51 @@ export class BuyingRequestCreateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly productService = inject(ProductService);
   private readonly buyingRequestService = inject(BuyingRequestService);
 
-  product?: Product;
-  loading = false;
   submitting = false;
   errorMessage = '';
 
+  categories: string[] = [
+    'مواد غذائية وزيوت',
+    'حديد ومواد بناء',
+    'أجهزة وإلكترونيات',
+    'مستلزمات ومواد خام مصانع',
+    'أوراق وتغليف',
+    'قطع غيار ومعدات',
+    'عام / أخرى'
+  ];
+
   form = this.fb.nonNullable.group({
-    product: ['', Validators.required],
-    variant: ['', Validators.required],
+    purchaseType: ['GROUP' as PurchaseType, Validators.required],
+    productName: ['', [Validators.required, Validators.minLength(2)]],
+    category: ['مواد غذائية وزيوت', Validators.required],
+    specifications: ['', [Validators.required, Validators.minLength(5)]],
     quantity: [1, [Validators.required, Validators.min(1)]],
-    location: ['', [Validators.required, Validators.minLength(2)]],
-    purchaseType: ['DIRECT' as PurchaseType, Validators.required]
+    location: ['']
   });
 
   ngOnInit(): void {
-    const productId = this.route.snapshot.queryParamMap.get('product');
-    const variantId = this.route.snapshot.queryParamMap.get('variant');
     const purchaseType = this.route.snapshot.queryParamMap.get('purchaseType') as PurchaseType | null;
-
-    if (!productId) {
-      this.errorMessage = 'اختر منتجًا أولًا';
-      return;
-    }
-
     if (purchaseType === 'GROUP' || purchaseType === 'DIRECT') {
       this.form.controls.purchaseType.setValue(purchaseType);
     }
 
-    this.loading = true;
+    this.onPurchaseTypeChange();
 
-    this.productService.getProductById(productId).subscribe({
-      next: product => {
-        this.product = product;
-        this.form.controls.product.setValue(product._id);
-
-        const selected = product.variants.find(variant => variant._id === variantId)
-          || product.variants[0];
-
-        if (selected) {
-          this.form.controls.variant.setValue(selected._id);
-        }
-
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        this.errorMessage = error?.error?.message || 'تعذر تحميل المنتج';
-      }
+    this.form.controls.purchaseType.valueChanges.subscribe(() => {
+      this.onPurchaseTypeChange();
     });
+  }
+
+  onPurchaseTypeChange(): void {
+    const isDirect = this.form.controls.purchaseType.value === 'DIRECT';
+    if (isDirect) {
+      this.form.controls.location.setValidators([Validators.required, Validators.minLength(2)]);
+    } else {
+      this.form.controls.location.clearValidators();
+    }
+    this.form.controls.location.updateValueAndValidity();
   }
 
   submit(): void {
@@ -80,16 +72,20 @@ export class BuyingRequestCreateComponent implements OnInit {
     this.submitting = true;
     this.errorMessage = '';
 
-    this.buyingRequestService.createRequest(this.form.getRawValue()).subscribe({
+    const payload = this.form.getRawValue();
+
+    this.buyingRequestService.createRequest(payload).subscribe({
       next: request => {
         this.submitting = false;
-
-        // GROUP requests are later consumed by the pool feature.
-        this.router.navigate(['/buying-requests', request._id]);
+        if (this.form.controls.purchaseType.value === 'GROUP') {
+          this.router.navigate(['/buying-pools']);
+        } else {
+          this.router.navigate(['/buying-requests']);
+        }
       },
       error: error => {
         this.submitting = false;
-        this.errorMessage = error?.error?.message || 'تعذر إنشاء الطلب';
+        this.errorMessage = error?.error?.message || 'تعذر إنشاء عملية الشراء';
       }
     });
   }

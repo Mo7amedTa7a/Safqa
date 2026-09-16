@@ -1,16 +1,18 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { Order, ShippingAddress } from '../models/order.model';
 import { ApiResponse } from '../../../core/models/api-response.model';
 
+import { environment } from '../../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
 
-  private baseUrl = 'http://localhost:3000/api/orders';
+  private baseUrl = `${environment.apiUrl}/orders`;
 
   constructor(private http: HttpClient) {}
 
@@ -67,6 +69,16 @@ export class OrderService {
     return this.http.patch<ApiResponse<Order>>(
       `${this.baseUrl}/${id}/cancel`,
       {}
+    );
+  }
+
+  confirmOrder(
+    id: string,
+    shippingData?: { phone?: string; shippingAddress?: ShippingAddress }
+  ): Observable<ApiResponse<Order>> {
+    return this.http.patch<ApiResponse<Order>>(
+      `${this.baseUrl}/${id}/confirm`,
+      shippingData || {}
     );
   }
 }

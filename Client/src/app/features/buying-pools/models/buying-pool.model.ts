@@ -1,19 +1,21 @@
-﻿// Member 3 - BuyingPool Model
+// Member 3 - BuyingPool Model
 // _id, product, variant, createdBy, totalQuantity, memberCount
 // status: 'OPEN' | 'CLOSED'
 // startAt, closeAt, createdAt
 
 export interface BuyingPool {
   _id: string;
-  product: string;
-  variant: string;
-  createdBy: string;
+  product: any;
+  variant: any;
+  createdBy: any;
   totalQuantity: number;
   memberCount: number;
   startAt: string;
   closeAt: string;
   status: 'OPEN' | 'CLOSED';
   selectedOffer?: string;
+  members?: any[];
+  offers?: any[];
 }
 
 export interface BuyingPoolListResponse {

@@ -8,8 +8,8 @@ import { ProductService } from '../services/product.service';
   selector: 'app-admin-product-management',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './admin-product-management.component.html',
-  styleUrl: './admin-product-management.component.css'
+  templateUrl: './product-management.component.html',
+  styleUrl: './product-management.component.css'
 })
 export class AdminProductManagementComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

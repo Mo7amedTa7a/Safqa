@@ -1,0 +1,160 @@
+<div class="main-layout-wrapper">
+  <!-- Top Navigation Header (Same as Home) -->
+  <header class="home-header">
+    <div class="container-xl header-inner">
+      <!-- Brand Logo -->
+      <a routerLink="/" class="brand-logo">
+        <div class="brand-icon">
+          <i class="bi bi-layers-fill"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">صفقة</span>
+          <span class="brand-tag">للمشتريات والتوريد</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="desktop-nav d-none d-lg-flex">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">الرئيسية</a>
+        <a routerLink="/buying-pools" routerLinkActive="active" class="nav-link">تجمعات الشراء</a>
+        <a routerLink="/buying-requests" routerLinkActive="active" class="nav-link">الشراء الفردي</a>
+      </nav>
+
+      <!-- User Auth Actions -->
+      <div class="header-actions d-none d-sm-flex">
+        <!-- If Logged In -->
+        <ng-container *ngIf="currentUser; else guestHeaderActions">
+          <div class="user-logged-box d-flex align-items-center gap-2">
+            <a 
+              routerLink="/notifications" 
+              class="btn btn-outline-secondary position-relative border-0 p-2 rounded-circle text-dark d-inline-flex align-items-center justify-content-center me-1"
+              style="width: 40px; height: 40px; background-color: rgba(0,0,0,0.05);"
+              title="التنبيهات الإشعارات"
+            >
+              <i class="bi bi-bell fs-5"></i>
+              <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;" *ngIf="unreadNotificationsCount > 0">
+                {{ unreadNotificationsCount }}
+              </span>
+            </a>
+            <a 
+              *ngIf="currentUser.role === 'BUYER'" 
+              routerLink="/buying-requests/create" 
+              class="btn-safqa-primary py-2 px-3 me-1 d-inline-flex align-items-center gap-1 fw-bold text-decoration-none rounded-pill shadow-sm"
+              title="إنشاء طلب شراء جديد"
+            >
+              <i class="bi bi-cart-plus-fill"></i>
+              <span>شراء</span>
+            </a>
+            <a routerLink="/dashboard" class="btn-safqa-outline py-2 px-3">
+              <span>لوحة التحكم</span>
+              <i class="bi bi-grid-fill"></i>
+            </a>
+          </div>
+        </ng-container>
+
+        <!-- If Guest (Not Logged In) -->
+        <ng-template #guestHeaderActions>
+          <a routerLink="/auth/login" class="btn-safqa-outline py-2 px-3">تسجيل الدخول</a>
+          <a routerLink="/auth/register" class="btn-safqa-primary py-2 px-4">
+            <span>ابدأ الآن مجانا</span>
+            <i class="bi bi-arrow-left"></i>
+          </a>
+        </ng-template>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button 
+        type="button" 
+        class="mobile-toggle d-lg-none" 
+        (click)="toggleMobileMenu()"
+        aria-label="القائمة"
+      >
+        <i class="bi" [ngClass]="isMobileMenuOpen ? 'bi-x-lg' : 'bi-list'"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="mobile-drawer d-lg-none" [class.open]="isMobileMenuOpen">
+      <nav class="mobile-nav">
+        <a routerLink="/" (click)="closeMobileMenu()" class="mobile-nav-link">
+          <i class="bi bi-house-door-fill"></i>
+          <span>الرئيسية</span>
+        </a>
+        <a routerLink="/buying-pools" (click)="closeMobileMenu()" class="mobile-nav-link">
+          <i class="bi bi-pie-chart-fill"></i>
+          <span>تجمعات الشراء</span>
+        </a>
+        <a routerLink="/buying-requests" (click)="closeMobileMenu()" class="mobile-nav-link">
+          <i class="bi bi-file-earmark-text-fill"></i>
+          <span>الشراء الفردي</span>
+        </a>
+
+        <div class="mobile-drawer-divider"></div>
+
+        <ng-container *ngIf="currentUser; else guestMobileActions">
+          <a routerLink="/dashboard" (click)="closeMobileMenu()" class="btn btn-safqa-primary w-100 justify-content-center">
+            <span>لوحة التحكم</span>
+            <i class="bi bi-grid-fill ms-2"></i>
+          </a>
+        </ng-container>
+
+        <ng-template #guestMobileActions>
+          <a routerLink="/auth/login" (click)="closeMobileMenu()" class="btn btn-safqa-outline w-100 justify-content-center mb-2">
+            تسجيل الدخول
+          </a>
+          <a routerLink="/auth/register" (click)="closeMobileMenu()" class="btn btn-safqa-primary w-100 justify-content-center">
+            أنشئ حساب مجانا
+          </a>
+        </ng-template>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page View Outlet -->
+  <main class="main-page-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Minimal Clean Footer (Same as Home) -->
+  <footer class="home-footer">
+    <div class="container-xl">
+      <div class="footer-top">
+        <div class="row g-4 align-items-center">
+          <div class="col-md-6">
+            <div class="footer-brand">
+              <div class="brand-icon small">
+                <i class="bi bi-layers-fill"></i>
+              </div>
+              <span class="brand-name">صفقة</span>
+            </div>
+            <p class="footer-tagline">
+              المنصة الرائدة للمشتريات الجماعية والتوريد الذكي للشركات والمصانع في الشرق الأوسط.
+            </p>
+          </div>
+
+          <div class="col-md-6">
+            <div class="footer-links-row">
+              <a routerLink="/">الرئيسية</a>
+              <a routerLink="/buying-pools">تجمعات الشراء</a>
+              <a routerLink="/buying-requests">الشراء الفردي</a>
+              <a routerLink="/auth/login">تسجيل الدخول</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+          <div class="copyright-text">
+            جميع الحقوق محفوظة لمنصة صفقة 2026.
+          </div>
+          <div class="footer-sub-links">
+            <a href="javascript:void(0)">الشروط والأحكام</a>
+            <span>•</span>
+            <a href="javascript:void(0)">سياسة الخصوصية والأمان</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

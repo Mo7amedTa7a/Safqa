@@ -52,8 +52,8 @@
             <div class="col-md-6">
               <div class="p-3 bg-light rounded">
                 <h6 class="fw-bold mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i> عنوان التسليم</h6>
-                <p class="mb-1">{{ shipment.deliveryAddress?.street }}</p>
-                <p class="mb-0 text-muted">{{ shipment.deliveryAddress?.city }} - {{ shipment.deliveryAddress?.country }}</p>
+                <p class="mb-1" *ngIf="shipment.deliveryAddress">{{ shipment.deliveryAddress.street }}</p>
+                <p class="mb-0 text-muted" *ngIf="shipment.deliveryAddress">{{ shipment.deliveryAddress.city }} - {{ shipment.deliveryAddress.country }}</p>
               </div>
             </div>
             <div class="col-md-6">

@@ -1,100 +1,58 @@
 :host {
-    display: block;
-    min-height: 100vh;
-    background: #F8FAFC
+  display: block;
+  font-family: 'Cairo', sans-serif;
+  background-color: #F8FAFC;
+  min-height: 80vh;
 }
 
-.categories-page {
-    max-width: 1100px;
-    margin: auto;
-    padding: 30px;
-    color: #0F172A
+.page-hero-banner {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%);
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 24px 28px;
 }
 
-.heading span {
-    color: #059669;
-    font-size: 12px;
-    font-weight: 800
-}
-
-.heading h1 {
-    margin: 7px 0;
-    font-size: 30px
-}
-
-.heading p {
-    margin: 0 0 25px;
-    color: #64748B
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px
+.bg-emerald-subtle {
+  background-color: #E6F4EA;
+  color: #0F5132;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 6px 12px;
+  border-radius: 999px;
 }
 
 .category-card {
-    padding: 22px;
-    text-decoration: none;
-    background: #fff;
-    border: 1px solid #E2E8F0;
-    border-radius: 13px;
-    transition: .2s
+  border-radius: 16px;
+  transition: all 0.25s ease;
+  background: #FFFFFF;
 }
 
 .category-card:hover {
-    border-color: #0F5132;
-    transform: translateY(-2px)
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(15, 81, 50, 0.08) !important;
 }
 
-.icon {
-    width: 46px;
-    height: 46px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: #E8F3EE;
-    color: #0F5132;
-    font-size: 22px
+.category-icon-box {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0F5132, #059669);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: 0 4px 12px rgba(15, 81, 50, 0.15);
 }
 
-.category-card h3 {
-    color: #0F172A;
-    margin: 14px 0 7px
+.btn-browse-category {
+  color: #0F5132;
+  font-weight: 700;
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
 }
 
-.category-card p {
-    min-height: 42px;
-    color: #64748B;
-    font-size: 13px
-}
-
-.category-card span {
-    color: #0F5132;
-    font-size: 12px;
-    font-weight: 800
-}
-
-.state {
-    padding: 40px;
-    text-align: center;
-    background: #fff;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px
-}
-
-.state.error {
-    color: #991B1B
-}
-
-@media(max-width:900px) {
-    .grid {
-        grid-template-columns: repeat(2, 1fr)
-    }
-}
-
-@media(max-width:550px) {
-    .grid {
-        grid-template-columns: 1fr
-    }
+.fs-7 {
+  font-size: 0.85rem;
 }

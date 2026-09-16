@@ -1,4 +1,4 @@
-﻿// Member 3 - Pool Details
+// Member 3 - Pool Details
 // GET /api/buying-pools/:id
 // BUYER: Join | Update Qty | Leave
 
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { BuyingPoolService } from '../services/buying-pool.service';
+import { AuthService } from '../../../core/services/auth.service';
 import {
   BuyingPool,
   UpdateQuantityRequest
@@ -16,7 +17,8 @@ import {
 
 @Component({
   selector: 'app-pool-details',
-  imports: [DatePipe,FormsModule,RouterLink],
+  standalone: true,
+  imports: [DatePipe, FormsModule, RouterLink],
   templateUrl: './pool-details.component.html',
   styleUrl: './pool-details.component.css'
 })
@@ -24,9 +26,40 @@ export class PoolDetailsComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private buyingPoolService = inject(BuyingPoolService);
+  private authService = inject(AuthService);
 
   poolId = '';
   pool: BuyingPool | null = null;
+
+  get currentUser() {
+    return this.authService.currentUserValue;
+  }
+
+  getOfferMetrics(offer: any) {
+    const moq = offer.moq || offer.pricingTiers?.[0]?.minQty || 1;
+    const offerUnitPrice = offer.pricingTiers?.[0]?.unitPrice || 0;
+    
+    const originalUnitPrice = offer.originalUnitPrice && offer.originalUnitPrice > offerUnitPrice 
+      ? offer.originalUnitPrice 
+      : Math.round(offerUnitPrice * 1.25);
+
+    const originalTotal = originalUnitPrice * moq;
+    const offerTotal = offerUnitPrice * moq;
+    const savings = originalTotal - offerTotal;
+    const discountPercent = originalUnitPrice > 0 
+      ? Math.round(((originalUnitPrice - offerUnitPrice) / originalUnitPrice) * 100) 
+      : 0;
+
+    return {
+      moq,
+      offerUnitPrice,
+      originalUnitPrice,
+      originalTotal,
+      offerTotal,
+      savings,
+      discountPercent
+    };
+  }
 
   isLoading = false;
   errorMessage = '';

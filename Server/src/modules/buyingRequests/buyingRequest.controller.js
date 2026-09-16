@@ -39,7 +39,8 @@ const createBuyingRequestController = asyncHandler(async (req, res) => {
 const getMyBuyingRequestsController = asyncHandler(async (req, res) => {
 
     const buyingRequests = await getMyBuyingRequests(
-        req.user.id
+        req.user.id,
+        req.user.role
     );
 
     sendSuccess(
@@ -56,7 +57,8 @@ const getBuyingRequestByIdController = asyncHandler(async (req, res) => {
 
     const buyingRequest = await getBuyingRequestById(
         req.params.id,
-        req.user.id
+        req.user.id,
+        req.user.role
     );
 
     sendSuccess(

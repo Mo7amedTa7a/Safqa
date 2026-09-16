@@ -1,4 +1,4 @@
-﻿// Member 3 - SupplierOffer Model
+// Member 3 - SupplierOffer Model
 // _id, pool, supplier, unitPrice, MOQ, deliveryDays, warranty?, terms?
 // pricingTiers?: { minQty, maxQty, price }[]
 // status: 'ACTIVE' | 'WITHDRAWN' | 'SELECTED' | 'REJECTED'
@@ -28,6 +28,8 @@ export interface SupplierOffer {
   warranty: string;
   terms: string;
   status: 'PENDING' | 'ELIGIBLE' | 'INELIGIBLE' | 'WITHDRAWN' | 'SELECTED';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface SupplierOfferResponse {

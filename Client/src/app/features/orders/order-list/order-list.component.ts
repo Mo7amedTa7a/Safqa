@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { OrderService } from '../services/order.service';
@@ -64,4 +64,29 @@ export class OrderListComponent implements OnInit {
 
 }
 
+  confirmOrder(orderId: string): void {
+    if (!confirm('هل تريد تأكيد الطلب وإرساله للتوريد والشحن؟')) return;
+    this.orderService.confirmOrder(orderId).subscribe({
+      next: () => {
+        alert('تم تأكيد طلبك بنجاح! جاري التنسيق مع المورد وشركة الشحن.');
+        this.loadOrders();
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'تعذر تأكيد الطلب');
+      }
+    });
+  }
+
+  cancelOrder(orderId: string): void {
+    if (!confirm('هل أنت متأكد من إلغاء هذا الطلب؟')) return;
+    this.orderService.cancelOrder(orderId).subscribe({
+      next: () => {
+        alert('تم إلغاء الطلب.');
+        this.loadOrders();
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'تعذر إلغاء الطلب');
+      }
+    });
+  }
 }

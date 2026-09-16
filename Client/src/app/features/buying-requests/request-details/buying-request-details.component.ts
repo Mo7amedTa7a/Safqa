@@ -4,6 +4,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BuyingRequest, BuyingRequestStatus } from '../models/buying-request.model';
 import { BuyingRequestService } from '../services/buying-request.service';
 
+import { AuthService } from '../../../core/services/auth.service';
+
 @Component({
   selector: 'app-buying-request-details',
   standalone: true,
@@ -15,11 +17,53 @@ export class BuyingRequestDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly service = inject(BuyingRequestService);
+  private readonly authService = inject(AuthService);
 
-  request?: BuyingRequest;
+  request?: BuyingRequest & { offers?: any[] };
   loading = false;
   errorMessage = '';
   actionLoading = false;
+
+  get currentUser() {
+    return this.authService.currentUserValue;
+  }
+
+  get isSupplier(): boolean {
+    return this.currentUser?.role === 'SUPPLIER';
+  }
+
+  get isOwner(): boolean {
+    if (!this.request || !this.currentUser) return false;
+    const buyerId = typeof this.request.buyer === 'string' ? this.request.buyer : (this.request.buyer as any)?._id;
+    const currentUserId = (this.currentUser as any)?._id || (this.currentUser as any)?.id;
+    return buyerId === currentUserId;
+  }
+
+  getOfferMetrics(offer: any) {
+    const qty = this.request?.quantity || 1;
+    const offerUnitPrice = offer.pricingTiers?.[0]?.unitPrice || 0;
+    
+    const originalUnitPrice = offer.originalUnitPrice && offer.originalUnitPrice > offerUnitPrice 
+      ? offer.originalUnitPrice 
+      : Math.round(offerUnitPrice * 1.25);
+
+    const originalTotal = originalUnitPrice * qty;
+    const offerTotal = offerUnitPrice * qty;
+    const savings = originalTotal - offerTotal;
+    const discountPercent = originalUnitPrice > 0 
+      ? Math.round(((originalUnitPrice - offerUnitPrice) / originalUnitPrice) * 100) 
+      : 0;
+
+    return {
+      moq: offer.moq || 1,
+      offerUnitPrice,
+      originalUnitPrice,
+      originalTotal,
+      offerTotal,
+      savings,
+      discountPercent
+    };
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -50,6 +94,17 @@ export class BuyingRequestDetailsComponent implements OnInit {
       : this.request.product.name;
   }
 
+  productDescription(): string {
+    if (!this.request) return '';
+    if (this.request.notes && this.request.notes.trim()) {
+      return this.request.notes;
+    }
+    if (typeof this.request.product !== 'string' && this.request.product.description) {
+      return this.request.product.description;
+    }
+    return 'لا توجد مواصفات إضافية';
+  }
+
   variantText(): string {
     if (!this.request || typeof this.request.product === 'string') return this.request?.variant || '';
 
@@ -59,9 +114,15 @@ export class BuyingRequestDetailsComponent implements OnInit {
 
     if (!variant) return this.request.variant;
 
-    return Object.entries(variant.attributes || {})
+    const attributesText = Object.entries(variant.attributes || {})
       .map(([key, value]) => `${key}: ${value}`)
-      .join(' • ') || variant.sku;
+      .join(' • ');
+
+    if (attributesText && !attributesText.includes('CUSTOM-')) {
+      return attributesText;
+    }
+
+    return this.productDescription();
   }
 
   statusLabel(status: BuyingRequestStatus): string {

@@ -4,6 +4,7 @@
 import BuyingRequest from "../buyingRequests/buyingRequest.model.js";
 import BuyingPool from "./buyingPool.model.js";
 import PoolMember from "../poolMembers/poolMember.model.js";
+import SupplierOffer from "../supplierOffers/supplierOffer.model.js";
 
 const createBuyingPool = async (buyingRequestId, buyerId) => {
     const request = await BuyingRequest.findById(buyingRequestId);
@@ -76,23 +77,34 @@ const createBuyingPool = async (buyingRequestId, buyerId) => {
 };
 
 const getpool = async () => {
-    const pool = await BuyingPool.find();
-
-    if (pool.length === 0) {
-        throw new Error("No buying pools found");
-    }
+    const pool = await BuyingPool.find()
+        .populate("product", "name category images variants description")
+        .populate("createdBy", "name email")
+        .sort({ createdAt: -1 });
 
     return pool;
 };
 
 const getPoolById = async (poolid) => {
-    const person = await BuyingPool.findById(poolid);
+    const poolObj = await BuyingPool.findById(poolid)
+        .populate("product", "name category images variants description")
+        .populate("createdBy", "name email");
 
-    if (!person) {
+    if (!poolObj) {
         throw new Error("The pool does not exist");
     }
 
-    return person;
+    const members = await PoolMember.find({ pool: poolid, status: "ACTIVE" })
+        .populate("buyer", "name email companyName");
+
+    const offers = await SupplierOffer.find({ pool: poolid })
+        .populate("supplier", "name email companyName");
+
+    const result = poolObj.toObject();
+    result.members = members;
+    result.offers = offers;
+
+    return result;
 };
 
 const closePool = async (poolId) => {

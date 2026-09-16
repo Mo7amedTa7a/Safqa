@@ -85,6 +85,21 @@ const readyForPickupController = asyncHandler(async (req, res) => {
   );
 });
 
+const confirmOrderController = asyncHandler(async (req, res) => {
+  const order = await confirmOrder(
+    req.params.id,
+    req.user,
+    req.body
+  );
+
+  return sendSuccess(
+    res,
+    200,
+    'Order confirmed successfully',
+    order
+  );
+});
+
 const cancelOrderController = asyncHandler(async (req, res) => {
   const order = await cancelOrder(
     req.params.id,
@@ -105,5 +120,6 @@ export {
   getOrderByIdController,
   updateOrderStatusController,
   readyForPickupController,
+  confirmOrderController,
   cancelOrderController,
 };

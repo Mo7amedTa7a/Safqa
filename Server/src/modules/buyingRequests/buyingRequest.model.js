@@ -37,6 +37,12 @@ const buyingRequestSchema = new mongoose.Schema(
             trim: true
         },
 
+        notes: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
         purchaseType: {
             type: String,
             enum: ["DIRECT", "GROUP"],

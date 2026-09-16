@@ -31,8 +31,8 @@
       <h1>{{ product.name }}</h1>
       <p class="description">{{ product.description }}</p>
 
-      <div class="supplier" *ngIf="product.supplier && typeof product.supplier !== 'string'">
-        المورد: <strong>{{ product.supplier.name || 'غير محدد' }}</strong>
+      <div class="supplier" *ngIf="product.supplier">
+        المورد: <strong>{{ getSupplierName(product.supplier) }}</strong>
       </div>
 
       <div class="variant-box">

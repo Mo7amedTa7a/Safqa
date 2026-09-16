@@ -20,7 +20,7 @@
   <!-- Navigation Links -->
   <div class="sidebar-nav">
 
-    <!-- 1. BUYER SECTION -->
+    <!-- 1. BUYER SECTION (المشتري) -->
     <ng-container *ngIf="currentUser?.role === UserRole.BUYER">
       <div class="nav-section-title">لوحة التحكم والمشتريات</div>
       <ul class="nav-list">
@@ -31,40 +31,17 @@
             <span>الرئيسية</span>
           </a>
         </li>
-        <li>
-          <a routerLink="/buying-pools" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
-            <i class="bi bi-people-fill nav-icon"></i>
-            <span>تجمعات الشراء</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/buying-requests" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
-            <i class="bi bi-file-earmark-diff nav-icon"></i>
-            <span>المناقصات والطلبات</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/products" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
-            <i class="bi bi-box-seam nav-icon"></i>
-            <span>سوق المنتجات</span>
-          </a>
-        </li>
+
         <li>
           <a routerLink="/orders" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
-            <i class="bi bi-bag-check nav-icon"></i>
-            <span>طلباتي وأوامري</span>
+            <i class="bi bi-truck nav-icon"></i>
+            <span>تتبع الأوردرات والشحنات</span>
           </a>
         </li>
         <li>
-          <a routerLink="/deals" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
-            <i class="bi bi-file-earmark-text nav-icon"></i>
-            <span>العقود والصفقات</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/disputes" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
-            <i class="bi bi-shield-exclamation nav-icon"></i>
-            <span>النزاعات وحماية المشتري</span>
+          <a routerLink="/pool-confirmations" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-check2-circle nav-icon"></i>
+            <span>تأكيد الطلبات الجماعية</span>
           </a>
         </li>
         <li>
@@ -73,36 +50,30 @@
             <span>الإشعارات والتنبيهات</span>
           </a>
         </li>
+        <li>
+          <a routerLink="/disputes" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-shield-exclamation nav-icon"></i>
+            <span>النزاعات والشكاوى للادمن</span>
+          </a>
+        </li>
       </ul>
     </ng-container>
 
-    <!-- 2. SUPPLIER SECTION -->
+    <!-- 2. SUPPLIER SECTION (المورد) -->
     <ng-container *ngIf="currentUser?.role === UserRole.SUPPLIER">
-      <div class="nav-section-title">خدمات المورد والتوريد</div>
+      <div class="nav-section-title">مركز التوريد والمبيعات</div>
       <ul class="nav-list">
         <li>
           <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
             class="nav-item" (click)="onNavClick()">
             <i class="bi bi-speedometer2 nav-icon"></i>
-            <span>لوحة المورد</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/supplier/available-pools" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
-            <i class="bi bi-people-fill nav-icon"></i>
-            <span>فرص التوريد والتجمعات</span>
+            <span>لوحة المورد الرئيسية</span>
           </a>
         </li>
         <li>
           <a routerLink="/supplier/my-offers" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-tag nav-icon"></i>
             <span>عروضي المقدمة</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/products" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
-            <i class="bi bi-box-seam nav-icon"></i>
-            <span>إدارة المنتجات والكتالوج</span>
           </a>
         </li>
         <li>
@@ -114,19 +85,19 @@
         <li>
           <a routerLink="/shipments" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-truck nav-icon"></i>
-            <span>متابعة الشحنات</span>
+            <span>متابعة الشحنات واللوجستيات</span>
           </a>
         </li>
         <li>
           <a routerLink="/settlements" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-wallet2 nav-icon"></i>
-            <span>محفظة الضمان والتسويات</span>
+            <span>المحفظة والتسويات المالية</span>
           </a>
         </li>
         <li>
           <a routerLink="/supplier/complete-profile" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-building-check nav-icon"></i>
-            <span>ملف المورد التجاري</span>
+            <span>الملف التجاري والتوثيق</span>
           </a>
         </li>
         <li>
@@ -138,9 +109,9 @@
       </ul>
     </ng-container>
 
-    <!-- 3. SHIPPING PARTNER SECTION -->
+    <!-- 3. SHIPPING PARTNER SECTION (شركة الشحن) -->
     <ng-container *ngIf="currentUser?.role === UserRole.SHIPPING_PARTNER">
-      <div class="nav-section-title">خدمات شركة الشحن</div>
+      <div class="nav-section-title">مركز إدارة الشحن واللوجستيات</div>
       <ul class="nav-list">
         <li>
           <a routerLink="/shipments" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
@@ -163,7 +134,7 @@
       </ul>
     </ng-container>
 
-    <!-- 4. ADMIN SECTION -->
+    <!-- 4. ADMIN SECTION (مدير النظام) -->
     <ng-container *ngIf="currentUser?.role === UserRole.ADMIN">
       <div class="nav-section-title">إدارة النظام (الأدمن)</div>
       <ul class="nav-list">
@@ -182,7 +153,7 @@
         <li>
           <a routerLink="/admin/suppliers" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-patch-check nav-icon"></i>
-            <span>اعتماد الموردين</span>
+            <span>اعتماد وتوثيق الموردين</span>
           </a>
         </li>
         <li>
@@ -194,7 +165,7 @@
         <li>
           <a routerLink="/admin/buying-requests" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-file-earmark-diff nav-icon"></i>
-            <span>إدارة المناقصات (RFQ)</span>
+            <span>إدارة طلبات الشراء الفردي</span>
           </a>
         </li>
         <li>
@@ -218,7 +189,7 @@
         <li>
           <a routerLink="/shipments" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-truck nav-icon"></i>
-            <span>إدارة الشحنات واللوجستيات</span>
+            <span>إدارة اللوجستيات والشحنات</span>
           </a>
         </li>
         <li>
@@ -236,7 +207,7 @@
       <li>
         <a routerLink="/profile" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
           <i class="bi bi-person-badge nav-icon"></i>
-          <span>الملف الشخصي</span>
+          <span>الملف الشخصي والبيانات</span>
         </a>
       </li>
     </ul>
@@ -251,7 +222,7 @@
       </div>
       <div class="user-card-info">
         <span class="user-card-name">{{ currentUser.name }}</span>
-        <span class="user-card-role">{{ currentUser.role }}</span>
+        <span class="user-card-role">{{ getRoleBadgeText(currentUser.role) }}</span>
       </div>
       <button class="btn-logout" (click)="logout()" title="تسجيل الخروج">
         <i class="bi bi-box-arrow-left"></i>

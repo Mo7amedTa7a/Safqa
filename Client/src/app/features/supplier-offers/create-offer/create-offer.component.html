@@ -1,12 +1,23 @@
-﻿<div class="container py-5" dir="rtl">
+<div class="container py-5" dir="rtl">
 
   <div class="card shadow-sm">
 
     <div class="card-body">
 
-      <h3 class="mb-4">
-        تقديم عرض للمجمع
+      <h3 class="mb-4 text-emerald fw-bold">
+        {{ isIndividualRequest ? 'تقديم عرض سعر لطلب الشراء الفردي' : 'تقديم عرض سعر لتجمع الشراء الجماعي' }}
       </h3>
+
+      @if (targetRequest) {
+        <div class="alert alert-emerald bg-light border-emerald mb-4 p-3 rounded-3">
+          <h6 class="fw-bold text-dark mb-1">تفاصيل الطلب الفردي المستهدف:</h6>
+          <div class="d-flex flex-wrap gap-4 text-muted small mt-2">
+            <div><strong>اسم المنتج:</strong> {{ targetRequest.product?.name || targetRequest.product }}</div>
+            <div><strong>الكمية المطلوبة:</strong> <span class="badge bg-emerald text-white px-2 py-1 fs-7">{{ targetRequest.quantity }} قطعة</span></div>
+            <div><strong>مكان التسليم:</strong> {{ targetRequest.location || 'حسب الاتفاق' }}</div>
+          </div>
+        </div>
+      }
 
       @if (successMessage) {
         <div class="alert alert-success">
@@ -25,12 +36,10 @@
         (ngSubmit)="submitOffer()"
       >
 
-        <!-- MOQ -->
-
+        <!-- MOQ / Quantity -->
         <div class="mb-3">
-
-          <label for="moq" class="form-label">
-            الحد الأدنى للطلب (MOQ)
+          <label for="moq" class="form-label fw-bold">
+            {{ isIndividualRequest ? 'الكمية المستهدفة للطلب' : 'الحد الأدنى للطلب (MOQ)' }}
           </label>
 
           <input
@@ -39,6 +48,7 @@
             class="form-control"
             formControlName="moq"
             min="1"
+            [readonly]="isIndividualRequest"
           >
 
           @if (
@@ -46,23 +56,26 @@
             offerForm.get('moq')?.hasError('required')
           ) {
             <div class="text-danger mt-1">
-              الحد الأدنى للطلب مطلوب
+              الكمية مطلوبة
             </div>
           }
-
-          @if (
-            offerForm.get('moq')?.touched &&
-            offerForm.get('moq')?.hasError('min')
-          ) {
-            <div class="text-danger mt-1">
-              الحد الأدنى للطلب يجب أن يكون 1 أو أكثر
-            </div>
-          }
-
         </div>
 
-
-        <!-- PRICING TIERS -->
+        <!-- Original Unit Price -->
+        <div class="mb-3">
+          <label for="originalUnitPrice" class="form-label fw-bold">
+            السعر الأصلي للقطعة (قبل الخصم والجملة) - ج.م
+          </label>
+          <input
+            id="originalUnitPrice"
+            type="number"
+            class="form-control"
+            formControlName="originalUnitPrice"
+            min="0"
+            placeholder="مثال: 1000 ج.م"
+          >
+          <small class="text-muted">يُستخدم لإظهار السعر القديم ونسبة الخصم والتوفير للمشتري.</small>
+        </div>
 
         <div class="mb-4">
 

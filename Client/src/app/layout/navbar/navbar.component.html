@@ -1,7 +1,7 @@
 <header class="safqa-navbar">
   <div class="navbar-content">
-    <!-- Right side: Hamburger Button (for mobile) + Search Box -->
-    <div class="d-flex align-items-center gap-2 flex-grow-1 max-w-search">
+    <!-- Right side: Hamburger Button (for mobile) -->
+    <div class="d-flex align-items-center gap-2 flex-grow-1">
       <!-- Hamburger Toggle Button (mobile only) -->
       <button 
         *ngIf="showSidebarToggle"
@@ -13,40 +13,17 @@
       >
         <i class="bi bi-list"></i>
       </button>
-
-      <!-- Search Bar -->
-      <div class="search-container">
-        <span class="search-icon"><i class="bi bi-search"></i></span>
-        <input 
-          type="text" 
-          class="form-control search-input" 
-          placeholder="ابحث عن صفقات، مناقصات، موردين..."
-        />
-      </div>
-
-      <div class="d-none d-lg-flex align-items-center gap-3 mx-3 nav-links-header">
-        <a routerLink="/buying-pools" routerLinkActive="fw-bold text-success" class="text-decoration-none text-dark small">
-          <i class="bi bi-people-fill text-success ms-1"></i>تجمعات الشراء
-        </a>
-        <a routerLink="/buying-requests" routerLinkActive="fw-bold text-success" class="text-decoration-none text-dark small">
-          <i class="bi bi-file-earmark-text text-primary ms-1"></i>المناقصات والطلبات
-        </a>
-        <a routerLink="/products" routerLinkActive="fw-bold text-success" class="text-decoration-none text-dark small">
-          <i class="bi bi-box-seam text-secondary ms-1"></i>المنتجات
-        </a>
-      </div>
     </div>
 
     <!-- Left side Actions (Notifications, User Profile) -->
     <div class="navbar-actions">
       <!-- Action Icons -->
       <div class="action-buttons">
-        <button class="icon-btn d-none d-sm-flex" title="الرسائل">
-          <i class="bi bi-chat-dots"></i>
-        </button>
         <button class="icon-btn position-relative" title="التنبيهات" routerLink="/notifications">
           <i class="bi bi-bell"></i>
-          <span class="notification-badge"></span>
+          <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;" *ngIf="unreadNotificationsCount > 0">
+            {{ unreadNotificationsCount }}
+          </span>
         </button>
       </div>
 
@@ -96,12 +73,6 @@
             </button>
           </li>
         </ul>
-      </div>
-
-      <!-- Guest Login Link if not logged in -->
-      <div *ngIf="!currentUser" class="guest-actions">
-        <a routerLink="/auth/login" class="btn-safqa-outline py-1 px-3">تسجيل الدخول</a>
-        <a routerLink="/auth/register" class="btn-safqa-primary py-1 px-3">انضم الآن</a>
       </div>
     </div>
   </div>

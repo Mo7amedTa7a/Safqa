@@ -2,6 +2,7 @@
 // - Belongs to: Member 5
 
 import Notification from "./notification.model.js";
+import { getIO } from "../../config/socket.js";
 
 const createNotification = async (recipientId, type, title, message, relatedEntity) => {
   const notification = await Notification.create({
@@ -11,6 +12,17 @@ const createNotification = async (recipientId, type, title, message, relatedEnti
     message: message,
     relatedEntity: relatedEntity || null,
   });
+
+  try {
+    const io = getIO();
+    if (io && recipientId) {
+      const room = `user_${recipientId.toString()}`;
+      io.to(room).emit("new_notification", notification);
+      console.log(`[Socket.io] Emitted new_notification to ${room}`);
+    }
+  } catch (err) {
+    console.error("Socket emit error:", err);
+  }
 
   return notification;
 };

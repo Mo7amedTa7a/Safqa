@@ -1,57 +1,146 @@
 <div class="details-page" dir="rtl">
-  <div class="top">
-    <a routerLink="/buying-requests">← العودة لطلباتي</a>
+  <div class="top mb-3">
+    <a [routerLink]="request?.purchaseType === 'GROUP' ? '/buying-pools' : '/buying-requests'" class="btn btn-outline-secondary btn-sm">
+      ← {{ request?.purchaseType === 'GROUP' ? 'العودة لتجمعات الشراء الجماعي' : 'العودة لطلبات الشراء' }}
+    </a>
   </div>
 
-  <div *ngIf="loading" class="state">جاري تحميل الطلب...</div>
-  <div *ngIf="errorMessage" class="state error">{{ errorMessage }}</div>
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-emerald" role="status"></div>
+    <p class="mt-2 text-muted">جاري تحميل تفاصيل الطلب...</p>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
-  <section *ngIf="request && !loading" class="layout">
-    <div class="card">
-      <div class="request-header">
-        <div>
-          <span>طلب شراء</span>
-          <h1>{{ productName() }}</h1>
-          <p>{{ variantText() }}</p>
+  <section *ngIf="request && !loading" class="row g-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-3">
+          <div>
+            <span class="badge mb-2 px-3 py-1 fw-bold"
+                  [ngClass]="request.purchaseType === 'GROUP' ? 'bg-primary-subtle text-primary border border-primary-subtle' : 'bg-emerald-subtle text-emerald border border-emerald-subtle'">
+              {{ request.purchaseType === 'GROUP' ? 'طلب شراء جماعي (تجمع)' : 'طلب شراء فردي (مباشر)' }}
+            </span>
+            <h1 class="h3 fw-bold mb-1 text-dark">{{ productName() }}</h1>
+            <p class="text-muted mb-0">{{ variantText() }}</p>
+          </div>
+          <span class="badge bg-success px-3 py-2 fs-6 rounded-pill">{{ statusLabel(request.status) }}</span>
         </div>
-        <strong class="status">{{ statusLabel(request.status) }}</strong>
+
+        <div class="row g-3 mb-4 text-center">
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded-3">
+              <div class="text-muted small">الكمية المطلوبة</div>
+              <div class="fw-bold fs-5 text-dark">{{ request.quantity }} قطعة</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded-3">
+              <div class="text-muted small">نوع الشراء</div>
+              <div class="fw-bold fs-5" [ngClass]="request.purchaseType === 'GROUP' ? 'text-primary' : 'text-emerald'">
+                {{ request.purchaseType === 'GROUP' ? 'شراء جماعي' : 'شراء فردي' }}
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded-3">
+              <div class="text-muted small">مكان التسليم</div>
+              <div class="fw-bold fs-6 text-dark text-truncate">{{ request.location }}</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded-3">
+              <div class="text-muted small">تاريخ الطلب</div>
+              <div class="fw-bold fs-6 text-dark">{{ request.createdAt | date:'yyyy/MM/dd' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Specifications & Details Block -->
+        <div class="p-3 bg-body-tertiary rounded-3 mb-4 border">
+          <h6 class="fw-bold text-dark mb-2">
+            <i class="bi bi-info-circle-fill text-emerald me-1"></i> مواصفات وتفاصيل المنتج المطلوبة:
+          </h6>
+          <p class="text-muted mb-0 fs-6 lh-base whitespace-pre-line">
+            {{ productDescription() }}
+          </p>
+        </div>
+
+        <!-- Dynamic Action Buttons -->
+        <div class="d-flex gap-2 flex-wrap pt-3 border-top" *ngIf="request.status === 'OPEN'">
+          <a *ngIf="isOwner" [routerLink]="['/buying-requests', request._id, 'edit']" class="btn btn-emerald px-4">تعديل الطلب</a>
+          <button *ngIf="isOwner" (click)="cancel()" [disabled]="actionLoading" class="btn btn-outline-danger px-4">
+            {{ actionLoading ? 'جاري الإلغاء...' : 'إلغاء الطلب' }}
+          </button>
+
+          <a *ngIf="request.purchaseType === 'GROUP'" routerLink="/buying-pools" class="btn btn-outline-primary px-4 fw-bold">
+            <i class="bi bi-people-fill me-1"></i> الانضمام لصفحة التجمعات
+          </a>
+          
+          <a *ngIf="isSupplier" [routerLink]="['/buying-requests', request._id, 'create-offer']" class="btn btn-emerald px-4 py-2 fw-bold">
+            <i class="bi bi-tag-fill me-1"></i> تقديم عرض سعر للمشتري
+          </a>
+        </div>
       </div>
 
-      <div class="info-grid">
-        <div><span>الكمية</span><strong>{{ request.quantity }}</strong></div>
-        <div><span>طريقة الشراء</span><strong>{{ request.purchaseType === 'DIRECT' ? 'مباشر' : 'جماعي' }}</strong></div>
-        <div><span>الموقع</span><strong>{{ request.location }}</strong></div>
-        <div><span>تاريخ الإنشاء</span><strong>{{ request.createdAt | date:'yyyy/MM/dd HH:mm' }}</strong></div>
-      </div>
+      <!-- Supplier Offers Section -->
+      <div class="card border-0 shadow-sm rounded-4 p-4">
+        <h3 class="h5 fw-bold mb-4 text-dark border-bottom pb-3">
+          <i class="bi bi-box-seam me-2 text-emerald"></i>
+          عروض الأسعار المقدمة من الموردين ({{ request.offers?.length || 0 }})
+        </h3>
 
-      <div class="actions" *ngIf="request.status === 'OPEN'">
-        <a [routerLink]="['/buying-requests', request._id, 'edit']" class="edit">تعديل الطلب</a>
-        <button (click)="cancel()" [disabled]="actionLoading" class="cancel">
-          {{ actionLoading ? 'جاري الإلغاء...' : 'إلغاء الطلب' }}
-        </button>
+        <div *ngIf="!request.offers || request.offers.length === 0" class="text-center py-4 text-muted">
+          <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary opacity-50"></i>
+          لا توجد عروض أسعار مقدمة من الموردين على هذا الطلب حتى الآن.
+        </div>
+
+        <div *ngFor="let offer of request.offers" class="border rounded-4 p-4 mb-3 bg-white shadow-sm position-relative">
+          <ng-container *ngIf="getOfferMetrics(offer) as metrics">
+            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-building fs-4 text-emerald"></i>
+                <div>
+                  <h6 class="fw-bold mb-0 text-dark">{{ offer.supplier?.companyName || offer.supplier?.name || 'مورد مجهول' }}</h6>
+                  <small class="text-muted">{{ offer.createdAt | date:'yyyy/MM/dd' }}</small>
+                </div>
+              </div>
+              <span class="badge bg-danger fs-6 px-3 py-2 rounded-pill">
+                خصم {{ metrics.discountPercent }}%
+              </span>
+            </div>
+
+            <!-- Price Breakdown Grid -->
+            <div class="row g-3 bg-light p-3 rounded-3 mb-3 text-center">
+              <div class="col-6 col-md-3">
+                <span class="text-muted small d-block">سعر القطعة الأصلي</span>
+                <span class="text-decoration-line-through text-muted fw-bold">{{ metrics.originalUnitPrice }} ج.م</span>
+              </div>
+              <div class="col-6 col-md-3">
+                <span class="text-muted small d-block">السعر بعد الخصم</span>
+                <span class="text-emerald fw-bold fs-5">{{ metrics.offerUnitPrice }} ج.م</span>
+              </div>
+              <div class="col-6 col-md-3">
+                <span class="text-muted small d-block">إجمالي الصفقة للطلب</span>
+                <span class="text-dark fw-bold fs-5">{{ metrics.offerTotal }} ج.م</span>
+              </div>
+              <div class="col-6 col-md-3">
+                <span class="text-muted small d-block">إجمالي التوفير</span>
+                <span class="text-success fw-bold fs-5">{{ metrics.savings }} ج.م</span>
+              </div>
+            </div>
+
+            <!-- Additional Terms -->
+            <div class="row g-2 small text-muted">
+              <div class="col-md-4"><strong>الحد الأدنى (MOQ):</strong> {{ metrics.moq }} قطعة</div>
+              <div class="col-md-4"><strong>مدة التوريد:</strong> {{ offer.deliveryDays }} أيام</div>
+              <div class="col-md-4"><strong>الضمان:</strong> {{ offer.warranty }}</div>
+              <div class="col-12 mt-2" *ngIf="offer.terms">
+                <strong>الشروط والأحكام:</strong> {{ offer.terms }}
+              </div>
+            </div>
+          </ng-container>
+        </div>
       </div>
     </div>
-
-    <aside class="card timeline">
-      <h2>حالة الطلب</h2>
-      <div class="step" [class.current]="request.status === 'OPEN'">
-        <b>تم إنشاء الطلب</b><small>OPEN</small>
-      </div>
-      <div class="step" [class.current]="request.status === 'PENDING'">
-        <b>قيد المراجعة</b><small>PENDING</small>
-      </div>
-      <div class="step" [class.current]="request.status === 'POOLED'">
-        <b>ضمن التجمع</b><small>POOLED</small>
-      </div>
-      <div class="step" [class.current]="request.status === 'CLOSED'">
-        <b>مغلق</b><small>CLOSED</small>
-      </div>
-      <div class="step" [class.current]="request.status === 'FULFILLED'">
-        <b>تم التنفيذ</b><small>FULFILLED</small>
-      </div>
-      <div class="step" [class.current]="request.status === 'COMPLETED'">
-        <b>مكتمل</b><small>COMPLETED</small>
-      </div>
-    </aside>
   </section>
 </div>

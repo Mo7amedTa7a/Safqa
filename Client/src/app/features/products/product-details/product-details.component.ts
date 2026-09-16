@@ -63,4 +63,10 @@ export class ProductDetailsComponent implements OnInit {
       .map(([key, value]) => `${key}: ${value}`)
       .join(' • ');
   }
+
+  getSupplierName(supplier: any): string {
+    if (!supplier) return 'غير محدد';
+    if (typeof supplier === 'string') return supplier;
+    return supplier.name || supplier.companyName || 'غير محدد';
+  }
 }

@@ -1,17 +1,24 @@
 // BuyingRequest Validation
-// - Belongs to: Member 2
-// - create: product, variant, quantity, location, purchaseType
-// - update: quantity and location only while request is OPEN
-// - cancel: request id
-
 import Joi from "joi";
 
-
 const validateCreateBuyingRequest = Joi.object({
-    product: Joi.string()
+    purchaseType: Joi.string()
+        .valid("DIRECT", "GROUP")
+        .default("GROUP")
         .required(),
 
-    variant: Joi.string()
+    productName: Joi.string()
+        .trim()
+        .min(2)
+        .required(),
+
+    category: Joi.string()
+        .trim()
+        .required(),
+
+    specifications: Joi.string()
+        .trim()
+        .min(5)
         .required(),
 
     quantity: Joi.number()
@@ -21,15 +28,9 @@ const validateCreateBuyingRequest = Joi.object({
 
     location: Joi.string()
         .trim()
-        .required(),
-
-    purchaseType: Joi.string()
-        .valid("DIRECT", "GROUP")
-        .default("GROUP")
-        .required()
+        .optional()
+        .allow("")
 });
-
-
 
 const validateUpdateBuyingRequest = Joi.object({
     quantity: Joi.number()
@@ -40,13 +41,10 @@ const validateUpdateBuyingRequest = Joi.object({
         .trim()
 });
 
-
-
 const validateBuyingRequestId = Joi.object({
     id: Joi.string()
         .required()
 });
-
 
 export {
     validateCreateBuyingRequest,

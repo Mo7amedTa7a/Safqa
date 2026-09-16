@@ -9,8 +9,8 @@ import { BuyingRequestService } from '../services/buying-request.service';
   selector: 'app-buying-request-list',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './buying-request-list.component.html',
-  styleUrl: './buying-request-list.component.css'
+  templateUrl: './my-requests.component.html',
+  styleUrl: './my-requests.component.css'
 })
 export class BuyingRequestListComponent implements OnInit {
   private readonly service = inject(BuyingRequestService);
@@ -18,18 +18,6 @@ export class BuyingRequestListComponent implements OnInit {
   requests: BuyingRequest[] = [];
   loading = false;
   errorMessage = '';
-  selectedStatus: BuyingRequestStatus | '' = '';
-
-  statuses: Array<BuyingRequestStatus | ''> = [
-    '',
-    'OPEN',
-    'PENDING',
-    'POOLED',
-    'CLOSED',
-    'CANCELLED',
-    'FULFILLED',
-    'COMPLETED'
-  ];
 
   ngOnInit(): void {
     this.loadRequests();
@@ -52,11 +40,7 @@ export class BuyingRequestListComponent implements OnInit {
   }
 
   get filteredRequests(): BuyingRequest[] {
-    if (!this.selectedStatus) {
-      return this.requests;
-    }
-
-    return this.requests.filter(request => request.status === this.selectedStatus);
+    return this.requests.filter(request => request.purchaseType === 'DIRECT');
   }
 
   statusLabel(status: BuyingRequestStatus): string {
@@ -79,6 +63,16 @@ export class BuyingRequestListComponent implements OnInit {
       : request.product?.name || 'منتج';
   }
 
+  productDetails(request: BuyingRequest): string {
+    if (request.notes && request.notes.trim()) {
+      return request.notes;
+    }
+    if (typeof request.product !== 'string' && request.product?.description) {
+      return request.product.description;
+    }
+    return 'لا توجد مواصفات إضافية';
+  }
+
   productImage(request: BuyingRequest): string {
     if (typeof request.product === 'string') return '';
     return request.product?.images?.[0] || '';
@@ -90,5 +84,24 @@ export class BuyingRequestListComponent implements OnInit {
 
   canEdit(request: BuyingRequest): boolean {
     return request.status === 'OPEN';
+  }
+
+  getStatusBadgeClass(status: BuyingRequestStatus): string {
+    switch (status) {
+      case 'OPEN':
+        return 'bg-success text-white';
+      case 'PENDING':
+        return 'bg-warning text-dark';
+      case 'POOLED':
+        return 'bg-info text-dark';
+      case 'FULFILLED':
+      case 'COMPLETED':
+        return 'bg-primary text-white';
+      case 'CLOSED':
+      case 'CANCELLED':
+        return 'bg-secondary text-white';
+      default:
+        return 'bg-light text-dark';
+    }
   }
 }

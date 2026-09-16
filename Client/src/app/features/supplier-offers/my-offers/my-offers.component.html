@@ -1,189 +1,192 @@
-﻿<!-- my-offers template -->
 <div class="container py-4" dir="rtl">
-  <!-- Header -->
-  @if (isLoading) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">جاري التحميل...</span>
-      </div>
-
-      <p class="mt-3 text-muted">جاري تحميل العروض...</p>
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="fw-bold mb-1 text-dark">عروضي</h2>
+      <p class="text-muted mb-0">جميع العروض التي قدمتها على التجمعات وطلبات الشراء</p>
     </div>
-  }
+  </div>
 
-  <!-- Error -->
-  @if (!isLoading && errorMessage) {
-    <div class="alert alert-danger" role="alert">
-      {{ errorMessage }}
+  <!-- Global Alerts -->
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
+    <i class="bi bi-check-circle-fill fs-5"></i>
+    <div>{{ successMessage }}</div>
+    <button type="button" class="btn-close ms-auto" (click)="successMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+    <div>{{ errorMessage }}</div>
+    <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5 my-5">
+    <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">جاري التحميل...</span>
     </div>
-  }
+    <p class="mt-3 text-muted">جاري تحميل عروضك...</p>
+  </div>
 
-  <!-- Empty -->
-  @if (!isLoading && !errorMessage && offers.length === 0) {
-    <div class="alert alert-info" role="alert">لا يوجد لديك عروض حتى الآن.</div>
-  }
-
-  <!-- Offers -->
-  @if (!isLoading && !errorMessage && offers.length > 0) {
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h2 class="mb-1">عروضي</h2>
-        <p class="text-muted mb-0">جميع العروض التي قدمتها على التجمعات</p>
-      </div>
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !errorMessage && offers.length === 0" class="text-center py-5 my-5">
+    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+      <i class="bi bi-inbox text-secondary fs-1"></i>
     </div>
+    <h5 class="fw-bold text-dark">لا يوجد لديك عروض حتى الآن</h5>
+    <p class="text-muted">لم تقم بتقديم أي عروض أسعار على التجمعات بعد.</p>
+  </div>
 
-    <div class="row g-4">
-      @for (offer of offers; track offer._id) {
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="card h-100 shadow-sm">
-            <div class="card-body d-flex flex-column">
-              <!-- Title + Status -->
-              <div
-                class="d-flex justify-content-between align-items-start mb-3"
-              >
-                <div>
-                  <h5 class="card-title mb-1">عرض مورد</h5>
-
-                  <small class="text-muted">
-                    رقم العرض:
-                    {{ offer._id }}
-                  </small>
-                </div>
-
-                <span
-                  class="badge"
-                  [class.bg-warning]="offer.status === 'PENDING'"
-                  [class.bg-success]="offer.status === 'ELIGIBLE'"
-                  [class.bg-danger]="offer.status === 'INELIGIBLE'"
-                  [class.bg-secondary]="offer.status === 'WITHDRAWN'"
-                  [class.bg-primary]="offer.status === 'SELECTED'"
-                >
-                  @if (offer.status === "PENDING") {
-                    قيد المراجعة
-                  }
-
-                  @if (offer.status === "ELIGIBLE") {
-                    مؤهل
-                  }
-
-                  @if (offer.status === "INELIGIBLE") {
-                    غير مؤهل
-                  }
-
-                  @if (offer.status === "WITHDRAWN") {
-                    مسحوب
-                  }
-
-                  @if (offer.status === "SELECTED") {
-                    تم الاختيار
-                  }
-                </span>
-              </div>
-
-              <!-- Offer Data -->
-              <div class="mb-3">
-                <p class="mb-2">
-                  <strong>الحد الأدنى للطلب:</strong>
-                  {{ offer.moq }}
-                </p>
-
-                <p class="mb-2">
-                  <strong>مدة التوصيل:</strong>
-                  {{ offer.deliveryDays }} يوم
-                </p>
-
-                <p class="mb-2">
-                  <strong>الضمان:</strong>
-                  {{ offer.warranty }}
-                </p>
-
-                <p class="mb-0">
-                  <strong>الشروط:</strong>
-                  {{ offer.terms }}
-                </p>
-              </div>
-
-              <!-- Pricing Tiers -->
-              <div class="mb-3">
-                <h6 class="mb-2">شرائح الأسعار</h6>
-
-                @for (tier of offer.pricingTiers; track $index) {
-                  <div class="border rounded p-2 mb-2">
-                    <div class="d-flex justify-content-between gap-2">
-                      <span>
-                        أقل كمية:
-                        <strong>{{ tier.minQty }}</strong>
-                      </span>
-
-                      <span>
-                        سعر الوحدة:
-                        <strong>{{ tier.unitPrice }}</strong>
-                      </span>
-                    </div>
-                  </div>
-                }
-              </div>
-
-              <!-- Actions -->
-              <div class="d-flex gap-2 flex-wrap mt-auto">
-                <!-- View -->
-                <a
-                  [routerLink]="['/supplier/offer-details', offer._id]"
-                  class="btn btn-outline-primary"
-                >
-                  عرض التفاصيل
-                </a>
-
-                <!-- Edit + Withdraw only when ELIGIBLE -->
-                @if (offer.status === "ELIGIBLE") {
-                  <a
-                    [routerLink]="['/supplier/edit-offer', offer._id]"
-                    class="btn btn-primary"
-                  >
-                    تعديل العرض
-                  </a>
-
-                  <button type="button" class="btn btn-outline-danger">
-                    سحب العرض
-                  </button>
-                }
-              </div>
-
-              <!-- Status Message -->
-              @if (offer.status === "PENDING") {
-                <div class="alert alert-warning mt-3 mb-0">
-                  العرض ما زال قيد المراجعة.
-                </div>
-              }
-
-              @if (offer.status === "ELIGIBLE") {
-                <div class="alert alert-success mt-3 mb-0">
-                  العرض مؤهل ويمكنك تعديله أو سحبه.
-                </div>
-              }
-
-              @if (offer.status === "INELIGIBLE") {
-                <div class="alert alert-danger mt-3 mb-0">
-                  العرض غير مؤهل حاليًا.
-                </div>
-              }
-
-              @if (offer.status === "WITHDRAWN") {
-                <div class="alert alert-secondary mt-3 mb-0">
-                  تم سحب هذا العرض.
-                </div>
-              }
-
-              @if (offer.status === "SELECTED") {
-                <div class="alert alert-success mt-3 mb-0">
-                  تم اختيار هذا العرض.
-                </div>
-              }
-            </div>
+  <!-- Offers List -->
+  <div *ngIf="!isLoading && !errorMessage && offers.length > 0" class="d-flex flex-column gap-4">
+    <div class="card offer-card border-0 shadow-sm rounded-4 bg-white" *ngFor="let offer of offers">
+      
+      <!-- Card Header -->
+      <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="bg-light rounded-3 p-2 text-success d-flex align-items-center justify-content-center">
+            <i class="bi bi-receipt fs-4"></i>
+          </div>
+          <div>
+            <div class="text-muted small mb-1">رقم العرض</div>
+            <div class="fw-bold font-monospace text-dark fs-5">#{{ offer._id }}</div>
           </div>
         </div>
-      }
+        <div>
+          <span class="status-pill" [ngClass]="getStatusBadgeClass(offer.status)">
+            {{ getStatusLabel(offer.status) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body p-4">
+        
+        <!-- Info Grid -->
+        <div class="row g-4 mb-4 pb-4 border-bottom">
+          <div class="col-6 col-md-3">
+            <div class="text-muted small mb-1">الحد الأدنى للطلب (MOQ)</div>
+            <div class="fw-bold fs-5 text-dark">{{ offer.moq }} <span class="fs-6 fw-normal text-muted">قطعة</span></div>
+          </div>
+          
+          <div class="col-6 col-md-3">
+            <div class="text-muted small mb-1">مدة التوصيل</div>
+            <div class="fw-bold fs-5 text-dark">{{ offer.deliveryDays }} <span class="fs-6 fw-normal text-muted">أيام</span></div>
+          </div>
+          
+          <div class="col-12 col-md-3">
+            <div class="text-muted small mb-1">فترة الضمان</div>
+            <div class="fw-bold fs-5 text-dark">{{ offer.warranty || 'بدون ضمان' }}</div>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <div class="text-muted small mb-1">شروط التوريد</div>
+            <div class="fw-medium text-dark">{{ offer.terms || '-' }}</div>
+          </div>
+        </div>
+
+        <!-- Pricing Tiers Table -->
+        <div class="mb-4">
+          <h6 class="fw-bold text-dark mb-3">شرائح الأسعار</h6>
+          <div class="table-responsive rounded-3 border">
+            <table class="table table-borderless table-hover align-middle mb-0">
+              <thead class="table-light text-muted small">
+                <tr>
+                  <th class="py-3 px-4 fw-medium w-50">الكمية (من)</th>
+                  <th class="py-3 px-4 fw-medium w-50">سعر الوحدة</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tier of offer.pricingTiers" class="border-top">
+                  <td class="py-3 px-4">
+                    <span class="fw-bold text-dark fs-6">{{ tier.minQty }}</span> <span class="text-muted small">قطعة فأكثر</span>
+                  </td>
+                  <td class="py-3 px-4">
+                    <span class="fw-bold text-success fs-6">{{ tier.unitPrice }}</span> <span class="text-muted small">ج.م</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Status Notice -->
+        <div class="status-notice-box p-3 rounded-3 d-flex align-items-center gap-3 small fw-medium" [ngClass]="offer.status">
+          <i class="bi bi-info-circle-fill fs-4 flex-shrink-0"></i>
+          <div>
+            <ng-container *ngIf="offer.status === 'PENDING'">
+              جاري مراجعة وتدقيق العطاء من مسؤول النظام. يرجى الانتظار.
+            </ng-container>
+            <ng-container *ngIf="offer.status === 'ELIGIBLE'">
+              العرض مؤهل للتنافس. يمكنك تعديله أو سحبه حتى موعد إغلاق التجمع.
+            </ng-container>
+            <ng-container *ngIf="offer.status === 'SELECTED'">
+              تهانينا! تم اختيار هذا العرض وتأكيد الصفقة بنجاح.
+            </ng-container>
+            <ng-container *ngIf="offer.status === 'WITHDRAWN'">
+              لقد قمت بسحب هذا العطاء. لن يتم تضمينه في المنافسة.
+            </ng-container>
+            <ng-container *ngIf="offer.status === 'INELIGIBLE'">
+              نعتذر، العرض غير مؤهل للتنافس في الوقت الحالي.
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="card-footer bg-light-subtle border-top-0 px-4 py-3 d-flex flex-wrap align-items-center justify-content-between gap-3 rounded-bottom-4">
+        <div class="text-muted small">
+          تاريخ التقديم: <span class="fw-medium text-dark">{{ offer.createdAt ? (offer.createdAt | date:'yyyy/MM/dd') : '-' }}</span>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <a [routerLink]="['/supplier/offer-details', offer._id]" class="btn btn-light border btn-sm rounded-pill px-4 py-2 fw-medium text-dark shadow-sm">
+            عرض التفاصيل
+          </a>
+
+          <a *ngIf="offer.status === 'ELIGIBLE' || offer.status === 'PENDING'" [routerLink]="['/supplier/edit-offer', offer._id]" class="btn btn-success btn-sm rounded-pill px-4 py-2 fw-medium shadow-sm">
+            تعديل العرض
+          </a>
+
+          <button *ngIf="offer.status === 'ELIGIBLE' || offer.status === 'PENDING'" type="button" (click)="openWithdrawModal(offer)" class="btn btn-outline-danger btn-sm rounded-pill px-4 py-2 fw-medium shadow-sm bg-white">
+            سحب العرض
+          </button>
+        </div>
+      </div>
+
     </div>
-  }
+  </div>
+
+  <!-- Withdraw Modal -->
+  <div *ngIf="selectedOfferToWithdraw" class="modal-backdrop fade show"></div>
+  <div *ngIf="selectedOfferToWithdraw" class="modal d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" dir="rtl">
+        <div class="modal-header border-0 bg-danger-subtle text-danger p-4">
+          <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+            تأكيد سحب العطاء
+          </h5>
+          <button type="button" class="btn-close ms-0" (click)="closeWithdrawModal()"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <p class="lead text-dark fs-6 mb-3">
+            هل أنت متأكد من رغبتك في سحب هذا العرض؟
+          </p>
+          <div class="p-3 bg-light rounded-3 mb-2 text-start font-monospace text-muted border">
+            رقم العرض: #{{ selectedOfferToWithdraw._id }}
+          </div>
+        </div>
+        <div class="modal-footer border-0 bg-light p-3 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-light border rounded-3 px-4 py-2 fw-medium text-dark" (click)="closeWithdrawModal()" [disabled]="isWithdrawing">
+            إلغاء
+          </button>
+          <button type="button" class="btn btn-danger rounded-3 px-4 py-2 fw-medium d-flex align-items-center gap-2 shadow-sm" (click)="confirmWithdraw()" [disabled]="isWithdrawing">
+            <span *ngIf="isWithdrawing" class="spinner-border spinner-border-sm" role="status"></span>
+            <span>تأكيد السحب</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

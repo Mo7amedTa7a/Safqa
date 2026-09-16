@@ -1,59 +1,95 @@
-<div class="requests-page" dir="rtl">
-  <div class="heading">
-    <div>
-      <span>المشتري</span>
-      <h1>طلباتي</h1>
-      <p>تابع وأدر طلبات الشراء الخاصة بك.</p>
-    </div>
-    <a routerLink="/products" class="primary">إنشاء طلب جديد</a>
-  </div>
-
-  <div class="toolbar">
-    <select [(ngModel)]="selectedStatus" (change)="loadRequests()">
-      <option *ngFor="let status of statuses" [value]="status">
-        {{ status ? statusLabel(status) : 'كل الحالات' }}
-      </option>
-    </select>
-  </div>
-
-  <div *ngIf="loading" class="state">جاري تحميل الطلبات...</div>
-  <div *ngIf="errorMessage" class="state error">{{ errorMessage }}</div>
-
-  <div *ngIf="!loading && !errorMessage" class="table-card">
-    <div class="table-head">
-      <span>المنتج</span>
-      <span>الكمية</span>
-      <span>النوع</span>
-      <span>الحالة</span>
-      <span>التاريخ</span>
-      <span>الإجراء</span>
-    </div>
-
-    <div *ngFor="let request of filteredRequests" class="table-row">
-      <div class="product">
-        <img
-          *ngIf="productImage(request)"
-          [src]="imageUrl(productImage(request))"
-          [alt]="productName(request)">
-        <span>{{ productName(request) }}</span>
+<div class="container py-4" dir="rtl">
+  <!-- Hero Banner -->
+  <div class="page-hero-banner mb-4">
+    <div class="row align-items-center">
+      <div class="col-md-7">
+        <span class="badge bg-emerald-subtle text-emerald mb-2">
+          <i class="bi bi-file-earmark-diff-fill me-1"></i> الشراء الفردي
+        </span>
+        <h2 class="fw-bold mb-2">طلبات الشراء الفردي</h2>
+        <p class="text-muted mb-0">
+          تصفح طلبات الشراء الفردية المفتوحة من قبل المشترين للتوريد المباشر.
+        </p>
       </div>
-
-      <span>{{ request.quantity }}</span>
-      <span>{{ request.purchaseType === 'DIRECT' ? 'مباشر' : 'جماعي' }}</span>
-
-      <span class="status" [class.cancelled]="request.status === 'CANCELLED'">
-        {{ statusLabel(request.status) }}
-      </span>
-
-      <span>{{ request.createdAt | date:'yyyy/MM/dd' }}</span>
-
-      <a [routerLink]="['/buying-requests', request._id]" class="view">
-        عرض التفاصيل
-      </a>
     </div>
+  </div>
 
-    <div *ngIf="filteredRequests.length === 0" class="empty">
-      لا توجد طلبات في هذه الحالة.
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-emerald" role="status"></div>
+    <p class="mt-3 text-muted">جاري تحميل طلبات الشراء...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="alert alert-danger shadow-sm">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !errorMessage && filteredRequests.length === 0" class="text-center py-5 card border-0 shadow-sm">
+    <div class="card-body py-5">
+      <i class="bi bi-inbox text-muted display-4"></i>
+      <h4 class="fw-bold mt-3">لا توجد طلبات شراء حالياً</h4>
+      <p class="text-muted">لم يتم العثور على طلبات شراء مطابقة للتصفية.</p>
+    </div>
+  </div>
+
+  <!-- Requests Cards Grid -->
+  <div *ngIf="!loading && !errorMessage && filteredRequests.length > 0" class="row g-4">
+    <div *ngFor="let request of filteredRequests" class="col-12 col-md-6 col-lg-4">
+      <div class="card pool-card border-0 shadow-sm h-100 transition-all rounded-4">
+        <div class="card-body p-4 d-flex flex-column">
+          <!-- Card Header -->
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <span [class]="'badge px-3 py-2 rounded-pill ' + getStatusBadgeClass(request.status)">
+                {{ statusLabel(request.status) }}
+              </span>
+              <h5 class="fw-bold mt-2 mb-1 text-dark">{{ productName(request) }}</h5>
+              <small class="text-muted fs-8">رقم الطلب: #{{ request._id.substring(0, 8) }}</small>
+            </div>
+            <div class="pool-icon-badge">
+              <i class="bi bi-box-seam-fill text-emerald fs-4"></i>
+            </div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="pool-stats-grid p-3 rounded-3 bg-light mb-3">
+            <div class="row text-center g-2">
+              <div class="col-6 border-end">
+                <small class="text-muted d-block fs-8 mb-1">الكمية المطلوبة</small>
+                <strong class="text-dark fs-6">{{ request.quantity || 1 }} قطعة</strong>
+              </div>
+              <div class="col-6">
+                <small class="text-muted d-block fs-8 mb-1">مكان التسليم</small>
+                <strong class="text-emerald fs-6 text-truncate d-block">{{ request.location || 'حسب الاتفاق' }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Details / Specifications -->
+          <div class="mb-3 fs-7 bg-body-tertiary p-3 rounded-3">
+            <div class="fw-bold text-dark mb-1 small">
+              <i class="bi bi-info-circle me-1 text-emerald"></i> مواصفات وتفاصيل المنتج:
+            </div>
+            <p class="text-muted small mb-0 text-break" style="max-height: 80px; overflow-y: auto;">
+              {{ productDetails(request) }}
+            </p>
+          </div>
+
+          <!-- Card Footer & Actions -->
+          <div class="mt-auto pt-3 border-top">
+            <div class="d-flex align-items-center justify-content-between text-muted fs-8 mb-3">
+              <span><i class="bi bi-calendar3 me-1"></i> تاريخ الإنشاء:</span>
+              <span class="fw-semibold text-dark">{{ request.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <a [routerLink]="['/buying-requests', request._id]" class="btn btn-safqa-primary w-100 py-2 rounded-3 fw-bold">
+              <span>عرض تفاصيل الطلب والعروض</span>
+              <i class="bi bi-arrow-left ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

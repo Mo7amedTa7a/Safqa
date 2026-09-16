@@ -7,6 +7,8 @@ import { OrderService } from '../../core/services/order.service';
 import { User, UserRole } from '../../core/models/user.model';
 import { SupplierProfile } from '../../core/models/supplier-profile.model';
 import { Order } from '../../core/models/order.model';
+import { SupplierOfferService } from '../supplier-offers/services/supplier-offer.service';
+import { SupplierOffer } from '../supplier-offers/models/supplier-offer.model';
 
 @Component({
   selector: 'app-supplier-dashboard',
@@ -25,6 +27,8 @@ export class SupplierDashboardComponent implements OnInit {
   UserRole = UserRole;
   
   recentOrders: Order[] = [];
+  recentOffers: SupplierOffer[] = [];
+  openRfqs: any[] = [];
   totalProfit = 0;
   
   supplierKpiStats = [
@@ -37,7 +41,8 @@ export class SupplierDashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private supplierService: SupplierProfileService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private supplierOfferService: SupplierOfferService
   ) {}
 
   ngOnInit(): void {
@@ -109,6 +114,14 @@ export class SupplierDashboardComponent implements OnInit {
         ];
       },
       error: (err) => console.error('Error loading orders', err)
+    });
+
+    this.supplierOfferService.getMyOffers().subscribe({
+      next: (res) => {
+        const offers = res.data || [];
+        this.recentOffers = offers.slice(0, 3); // Take top 3 recent offers
+      },
+      error: (err) => console.error('Error loading offers', err)
     });
   }
 

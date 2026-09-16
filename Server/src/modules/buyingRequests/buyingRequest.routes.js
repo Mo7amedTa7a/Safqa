@@ -29,45 +29,37 @@ const router = express.Router();
 
 router.use(protect);
 
-
-router.use(authorize("BUYER"));
-
-
-
 router.post(
     "/",
+    authorize("BUYER"),
     validate(validateCreateBuyingRequest),
     createBuyingRequestController
 );
 
-
-
 router.get(
     "/",
+    authorize("BUYER", "SUPPLIER", "ADMIN"),
     getMyBuyingRequestsController
 );
 
-
-
 router.get(
     "/:id",
+    authorize("BUYER", "SUPPLIER", "ADMIN"),
     validate(validateBuyingRequestId, "params"),
     getBuyingRequestByIdController
 );
 
-
-
 router.patch(
     "/:id",
+    authorize("BUYER"),
     validate(validateBuyingRequestId, "params"),
     validate(validateUpdateBuyingRequest),
     updateBuyingRequestController
 );
 
-
-
 router.patch(
     "/:id/cancel",
+    authorize("BUYER"),
     validate(validateBuyingRequestId, "params"),
     cancelBuyingRequestController
 );

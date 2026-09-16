@@ -1,198 +1,339 @@
-﻿@if (!isLoading && !errorMessage && pool) {
-
-  <!-- Pool Details -->
-  <div class="card shadow-sm">
-    <div class="card-body">
-
-      <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h4 class="mb-0">
-          Buying Pool
-        </h4>
-
-        <span
-          class="badge"
-          [class.bg-success]="pool.status === 'OPEN'"
-          [class.bg-secondary]="pool.status === 'CLOSED'"
-        >
-          {{ pool.status }}
-        </span>
-
-      </div>
-
-      <div class="row g-4">
-
-        <div class="col-md-6">
-          <small class="text-muted d-block">
-            Product ID
-          </small>
-
-          <strong>
-            {{ pool.product }}
-          </strong>
-        </div>
-
-        <div class="col-md-6">
-          <small class="text-muted d-block">
-            Variant ID
-          </small>
-
-          <strong>
-            {{ pool.variant }}
-          </strong>
-        </div>
-
-        <div class="col-md-6">
-          <small class="text-muted d-block">
-            الكمية المطلوبة
-          </small>
-
-          <strong>
-            {{ pool.totalQuantity }}
-          </strong>
-        </div>
-
-        <div class="col-md-6">
-          <small class="text-muted d-block">
-            عدد المشاركين
-          </small>
-
-          <strong>
-            {{ pool.memberCount }}
-          </strong>
-        </div>
-
-        <div class="col-md-6">
-          <small class="text-muted d-block">
-            بداية الـ Pool
-          </small>
-
-          <strong>
-            {{ pool.startAt | date:'dd/MM/yyyy HH:mm' }}
-          </strong>
-        </div>
-
-        <div class="col-md-6">
-          <small class="text-muted d-block">
-            انتهاء الـ Pool
-          </small>
-
-          <strong>
-            {{ pool.closeAt | date:'dd/MM/yyyy HH:mm' }}
-          </strong>
-        </div>
-
-      </div>
-
+<div class="container py-4" dir="rtl">
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-success" role="status"></div>
+      <p class="mt-3 text-muted">جاري تحميل تفاصيل تجمع الشراء...</p>
     </div>
-  </div>
+  }
 
-
-  <!-- Update Quantity -->
-
-  <div class="card shadow-sm mt-4">
-    <div class="card-body">
-
-      <h5 class="card-title mb-3">
-        تحديث الكمية
-      </h5>
-
-      <div class="mb-3">
-
-        <label for="quantity" class="form-label">
-          الكمية
-        </label>
-
-        <input
-          id="quantity"
-          type="number"
-          class="form-control"
-          min="1"
-          [(ngModel)]="quantity"
-        >
-
-      </div>
-
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="updateQuantity()"
-        [disabled]="isUpdatingQuantity"
-      >
-
-        @if (isUpdatingQuantity) {
-          جاري التحديث...
-        } @else {
-          تحديث الكمية
-        }
-
-      </button>
-
-      @if (updateMessage) {
-        <div class="alert alert-info mt-3 mb-0">
-          {{ updateMessage }}
-        </div>
-      }
-
+  @if (errorMessage) {
+    <div class="alert alert-danger shadow-sm">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
     </div>
-  </div>
+  }
 
-
-  <!-- Leave Pool -->
-
-  <div class="card shadow-sm mt-4">
-    <div class="card-body">
-
-      <h5 class="card-title mb-3">
-        مغادرة التجمع
-      </h5>
-
-      <button
-        type="button"
-        class="btn btn-danger"
-        (click)="leavePool()"
-        [disabled]="isLeavingPool"
-      >
-
-        @if (isLeavingPool) {
-          جاري المغادرة...
-        } @else {
-          مغادرة التجمع
-        }
-
-      </button>
-
-      @if (leaveMessage) {
-        <div class="alert alert-info mt-3 mb-0">
-          {{ leaveMessage }}
-        </div>
-      }
-
-    </div>
-  </div>
-
-
-  <!-- Create Supplier Offer -->
-
-  <div class="card shadow-sm mt-4">
-    <div class="card-body">
-
-      <h5 class="card-title mb-3">
-        إجراءات التجمع
-      </h5>
-
-      <a
-        class="btn btn-success"
-        [routerLink]="[
-          '/buying-pools',
-          pool._id,
-          'create-offer'
-        ]"
-      >
-        تقديم عرض
+  @if (!isLoading && !errorMessage && pool) {
+    <!-- Breadcrumb Nav -->
+    <nav class="mb-3">
+      <a routerLink="/buying-pools" class="text-decoration-none text-muted fs-7">
+        <i class="bi bi-arrow-right me-1"></i> العودة لتجمعات الشراء
       </a>
+    </nav>
 
+    <!-- Header Section -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 border-bottom pb-3 mb-4">
+          <div>
+            <span class="badge bg-emerald-subtle text-emerald px-3 py-2 rounded-pill mb-2">
+              <i class="bi bi-people-fill me-1"></i> تجمع شراء جماعي نشط
+            </span>
+            <h2 class="fw-bold mb-1 text-dark">
+              {{ pool.product?.name || pool.product || 'طلب شراء جماعي' }}
+            </h2>
+            <small class="text-muted">رقم التجمع: #{{ pool._id.substring(0, 8) }}</small>
+          </div>
+
+          <div class="text-start">
+            <span 
+              class="badge px-3 py-2 fs-6 rounded-pill"
+              [class.bg-success]="pool.status === 'OPEN'"
+              [class.bg-secondary]="pool.status === 'CLOSED'"
+            >
+              {{ pool.status === 'OPEN' ? 'مفتوح للتجمع والعروض' : 'مغلق' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Key Metrics Cards Row -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded text-center border">
+              <small class="text-muted d-block mb-1 fs-8">إجمالي الكمية المتجمعة</small>
+              <strong class="fs-4 text-emerald fw-bold">{{ pool.totalQuantity }}</strong>
+              <span class="fs-7 text-muted me-1">قطعة</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded text-center border">
+              <small class="text-muted d-block mb-1 fs-8">عدد المشاركين</small>
+              <strong class="fs-4 text-dark fw-bold">{{ pool.memberCount }}</strong>
+              <span class="fs-7 text-muted me-1">أعضاء</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded text-center border">
+              <small class="text-muted d-block mb-1 fs-8">التصنيف</small>
+              <strong class="fs-6 text-dark d-block text-truncate">{{ pool.product?.category || 'عام' }}</strong>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded text-center border">
+              <small class="text-muted d-block mb-1 fs-8">موعد الإغلاق</small>
+              <strong class="fs-6 text-dark d-block">{{ pool.closeAt | date:'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Specifications -->
+        <div class="p-3 rounded bg-body-tertiary">
+          <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-file-text me-2"></i>المواصفات الفنية المطلوبة:</h6>
+          <p class="text-secondary mb-0 leading-relaxed">
+            {{ pool.product?.description || 'لا يوجد وصف تفصيلي إضافي للمنتج.' }}
+          </p>
+        </div>
+      </div>
     </div>
-  </div>
 
-}
+    <!-- Supplier Offer CTA Banner (Visible to Supplier ONLY) -->
+    @if (currentUser?.role === 'SUPPLIER') {
+      <div class="card border-0 shadow-sm bg-emerald-subtle mb-4">
+        <div class="card-body p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <div>
+            <h5 class="fw-bold text-dark mb-1">
+              <i class="bi bi-tags-fill text-success me-2"></i> هل أنت مورد لهذا المنتج؟
+            </h5>
+            <p class="text-muted mb-0">
+              يمكنك تقديم عرض سعر منافس لهذا التجمع وتحديد الكمية المطلوبة للحصول على صفقة التوريد.
+            </p>
+          </div>
+          <a
+            [routerLink]="['/buying-pools', pool._id, 'create-offer']"
+            class="btn btn-safqa-primary py-2 px-4 shadow-sm"
+          >
+            <i class="bi bi-plus-circle me-1"></i> تقديم عرض سعر الآن
+          </a>
+        </div>
+      </div>
+    }
+
+    <!-- Supplier Offers List Section -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-tag-fill me-2 text-primary"></i> عروض الموردين المقدمة لتجمع الشراء
+        </h5>
+        @if (pool.offers && pool.offers.length > 0) {
+          <span class="badge bg-primary rounded-pill">{{ pool.offers.length }} عروض</span>
+        }
+      </div>
+      <div class="card-body p-4">
+        @if (!pool.offers || pool.offers.length === 0) {
+          <div class="text-center py-4 bg-light rounded">
+            <i class="bi bi-hourglass-split text-muted fs-2 d-block mb-2"></i>
+            <h6 class="fw-bold text-dark">بانتظار عروض الموردين المنافسة</h6>
+            <p class="text-muted small mb-0">سيقوم الموردون المعتمدون بتقديم عروض أسعار جملة فور وصول التجمع للكميات المناسبة.</p>
+          </div>
+        } @else {
+          <div class="row g-3">
+            @for (offer of pool.offers; track offer._id) {
+              @let metrics = getOfferMetrics(offer);
+              <div class="col-12 col-md-6">
+                <div class="card border border-success-subtle shadow-sm rounded-3">
+                  <div class="card-body p-4">
+                    <!-- Supplier Header -->
+                    <div class="d-flex justify-content-between align-items-start border-bottom pb-2 mb-3">
+                      <div>
+                        <strong class="d-block text-dark fs-5">{{ offer.supplier?.companyName || offer.supplier?.name || 'مورد معتمد' }}</strong>
+                        <small class="text-muted fs-8"><i class="bi bi-check-circle-fill text-success"></i> مورد موثق بالمنصة</small>
+                      </div>
+                      <div class="text-end">
+                        <span class="badge bg-success bg-gradient px-3 py-1 mb-1 d-inline-block">عرض نشط</span>
+                        @if (metrics.discountPercent > 0) {
+                          <span class="badge bg-danger d-block fs-8">خصم {{ metrics.discountPercent }}%</span>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Price Comparison Box -->
+                    <div class="p-3 bg-light rounded-3 mb-3 border">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted fs-7">سعر القطعة الأصلي (قبل العرض):</span>
+                        <span class="text-decoration-line-through text-muted fw-semibold fs-6">
+                          {{ metrics.originalUnitPrice }} ج.م
+                        </span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+                        <span class="fw-bold text-dark fs-7">سعر القطعة في عرض التجمع:</span>
+                        <span class="fs-4 fw-bold text-success">
+                          {{ metrics.offerUnitPrice }} ج.م
+                        </span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-center fs-7 mb-1">
+                        <span class="text-muted">الحد الأدنى للكمية المطلوبة (MOQ):</span>
+                        <span class="fw-bold text-dark fs-6">{{ metrics.moq }} قطعة</span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-center fs-7 border-top pt-2">
+                        <span class="text-muted">إجمالي الصفقة على كمية ({{ metrics.moq }} قطعة):</span>
+                        <span class="fw-bold text-dark">
+                          {{ metrics.offerTotal }} ج.م
+                          <small class="text-decoration-line-through text-muted ms-1 fs-8">({{ metrics.originalTotal }} ج.م)</small>
+                        </span>
+                      </div>
+
+                      @if (metrics.savings > 0) {
+                        <div class="mt-2 p-2 bg-emerald-subtle rounded text-center">
+                          <small class="text-emerald fw-bold">
+                            <i class="bi bi-piggy-bank-fill me-1"></i> إجمالي التوفير في الصفقة: {{ metrics.savings }} ج.م
+                          </small>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Terms & Delivery -->
+                    <div class="fs-7 text-secondary">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span><i class="bi bi-truck me-1 text-primary"></i> مدة التوصيل والتوريد:</span>
+                        <span class="fw-semibold text-dark">{{ offer.deliveryDays || 3 }} أيام</span>
+                      </div>
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span><i class="bi bi-shield-check me-1 text-success"></i> الضمان المقدم:</span>
+                        <span class="fw-semibold text-dark">{{ offer.warranty || 'ضمان سنة' }}</span>
+                      </div>
+                      @if (offer.terms) {
+                        <div class="mt-2 pt-2 border-top">
+                          <span class="d-block text-muted fs-8 mb-1">الشروط والأحكام:</span>
+                          <p class="text-dark mb-0 fs-8 leading-relaxed">{{ offer.terms }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Participating Members Section -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-people me-2 text-emerald"></i> الأعضاء المشاركون وكمية كل مشتري
+        </h5>
+        <span class="badge bg-emerald-subtle text-emerald rounded-pill">{{ pool.members?.length || pool.memberCount }} أعضاء</span>
+      </div>
+      <div class="card-body p-0">
+        @if (!pool.members || pool.members.length === 0) {
+          <div class="p-4 text-center text-muted">
+            لا توجد تفاصيل أعضاء متاحة حالياً.
+          </div>
+        } @else {
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="ps-4">#</th>
+                  <th scope="col">اسم المشتري / الشركة</th>
+                  <th scope="col">الكمية المطلوبة</th>
+                  <th scope="col">تاريخ الانضمام</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (member of pool.members; track member._id; let i = $index) {
+                  <tr>
+                    <td class="ps-4 fw-bold text-muted">{{ i + 1 }}</td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="avatar-sm bg-emerald-subtle text-emerald rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                          <i class="bi bi-person-fill"></i>
+                        </div>
+                        <span class="fw-semibold text-dark">
+                          {{ member.buyer?.name || member.buyer?.email || 'مشتري مشارك' }}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark border px-3 py-2 fs-7">
+                        {{ member.quantity }} قطعة
+                      </span>
+                    </td>
+                    <td class="text-muted fs-7">
+                      {{ member.createdAt | date:'dd/MM/yyyy' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="table-group-divider">
+                <tr class="fw-bold bg-light">
+                  <td colspan="2" class="ps-4 text-dark">إجمالي الكميات المجمعة للأعضاء:</td>
+                  <td colspan="2" class="text-emerald fs-6">{{ pool.totalQuantity }} قطعة</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Buyer Actions (Update Qty / Leave Pool) -->
+    @if (currentUser?.role === 'BUYER') {
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+              <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-pencil-square me-2"></i>تعديل كميتك المشارك بها</h5>
+              <div class="mb-3">
+                <label for="quantity" class="form-label text-muted fs-7">اختر الكمية الجديدة:</label>
+                <input
+                  id="quantity"
+                  type="number"
+                  class="form-control"
+                  min="1"
+                  [(ngModel)]="quantity"
+                />
+              </div>
+              <button
+                type="button"
+                class="btn btn-safqa-primary w-100 py-2"
+                (click)="updateQuantity()"
+                [disabled]="isUpdatingQuantity"
+              >
+                @if (isUpdatingQuantity) {
+                  جاري التحديث...
+                } @else {
+                  تحديث الكمية في التجمع
+                }
+              </button>
+              @if (updateMessage) {
+                <div class="alert alert-info mt-3 mb-0 fs-7">
+                  {{ updateMessage }}
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm h-100 border-danger-subtle">
+            <div class="card-body p-4">
+              <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-box-arrow-right me-2"></i>مغادرة التجمع</h5>
+              <p class="text-muted fs-7 mb-3">يمكنك مغادرة هذا التجمع الشرائي في أي وقت قبل إغلاق التجمع واعتماد الصفقة.</p>
+              <button
+                type="button"
+                class="btn btn-outline-danger w-100 py-2"
+                (click)="leavePool()"
+                [disabled]="isLeavingPool"
+              >
+                @if (isLeavingPool) {
+                  جاري المغادرة...
+                } @else {
+                  مغادرة التجمع الحالي
+                }
+              </button>
+              @if (leaveMessage) {
+                <div class="alert alert-info mt-3 mb-0 fs-7">
+                  {{ leaveMessage }}
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ProductCardComponent } from '../product-card.component';
-import { Category } from '../models/product.model';
+import { Category, Product } from '../models/product.model';
 import { ProductService } from '../services/product.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { ProductService } from '../services/product.service';
 export class ProductListComponent implements OnInit {
   private readonly productService = inject(ProductService);
 
-  products = [];
+  products: Product[] = [];
   categories: Category[] = [];
 
   search = '';

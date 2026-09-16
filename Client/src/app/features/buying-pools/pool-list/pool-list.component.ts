@@ -1,17 +1,17 @@
-﻿// Member 3 - Pool List
+// Member 3 - Pool List
 // GET /api/buying-pools
 // OPEN pools: product, totalQuantity, memberCount, deadline countdown
 
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { BuyingPoolService } from '../services/buying-pool.service';
 import { BuyingPool } from '../models/buying-pool.model';
 
 @Component({
   selector: 'app-pool-list',
-  imports: [RouterLink, DatePipe],
+  imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './pool-list.component.html',
   styleUrl: './pool-list.component.css'
 })

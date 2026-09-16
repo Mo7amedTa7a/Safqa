@@ -1,77 +1,137 @@
 <div class="request-page" dir="rtl">
-  <div class="top">
-    <a routerLink="/products">← العودة للمنتجات</a>
+  <div class="top mb-3">
+    <a routerLink="/buying-requests" class="text-decoration-none text-emerald fw-bold">← العودة لطلبات الشراء</a>
   </div>
 
-  <section class="card">
-    <div class="heading">
-      <span>طلب شراء</span>
-      <h1>إنشاء طلب شراء</h1>
-      <p>أدخل الكمية والموقع وطريقة الشراء.</p>
+  <section class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="heading mb-4">
+      <span class="badge bg-emerald-subtle text-emerald px-3 py-2 mb-2">إنشاء طلب جديد</span>
+      <h1 class="fw-bold mb-2">إنشاء عملية شراء</h1>
+      <p class="text-muted mb-0">اكتب اسم وتفاصيل المنتج المطلوب، وحدد نوع الشراء (جماعي أو فردي).</p>
     </div>
 
-    <div *ngIf="loading" class="state">جاري تحميل المنتج...</div>
-    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger shadow-sm mb-4">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+    </div>
 
-    <form *ngIf="product && !loading" [formGroup]="form" (ngSubmit)="submit()">
-      <div class="product-summary">
-        <div>
-          <span>المنتج</span>
-          <strong>{{ product.name }}</strong>
-          <small>{{ product.category }}</small>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- Step 1: Select Purchase Type -->
+      <div class="purchase-type mb-4">
+        <label class="form-label fw-bold mb-2">نوع عملية الشراء *</label>
+        
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="type-card h-100 p-3 border rounded-3 d-flex align-items-start gap-3 cursor-pointer" 
+                   [class.selected]="form.controls.purchaseType.value === 'GROUP'">
+              <input type="radio" formControlName="purchaseType" value="GROUP" class="mt-1">
+              <div>
+                <strong class="d-block text-dark fs-6 mb-1">
+                  <i class="bi bi-people-fill text-emerald me-1"></i> شراء جماعي (تجمع شراء)
+                </strong>
+                <small class="text-muted d-block leading-relaxed">
+                  تحدد المنتج والمواصفات والكمية، وينزل الطلب في تجمعات الشراء ليتمكن أي مشتري آخر من الانضمام لنفس المنتج وتجميع الكميات للحصول على خصومات المصنع.
+                </small>
+              </div>
+            </label>
+          </div>
+
+          <div class="col-md-6">
+            <label class="type-card h-100 p-3 border rounded-3 d-flex align-items-start gap-3 cursor-pointer" 
+                   [class.selected]="form.controls.purchaseType.value === 'DIRECT'">
+              <input type="radio" formControlName="purchaseType" value="DIRECT" class="mt-1">
+              <div>
+                <strong class="d-block text-dark fs-6 mb-1">
+                  <i class="bi bi-person-fill text-primary me-1"></i> شراء فردي
+                </strong>
+                <small class="text-muted d-block leading-relaxed">
+                  طلب شراء خاص بك فقط، يطلب منك تحديد مكان استلام الأوردر، وينزل في قسم الشراء الفردي ليتنافس الموردون على تقديم أفضل سعر لك.
+                </small>
+              </div>
+            </label>
+          </div>
         </div>
-        <div class="variant-summary">
-          <label>المواصفة</label>
-          <select formControlName="variant">
-            <option *ngFor="let variant of product.variants" [value]="variant._id">
-              {{ variant.sku }} — {{ variant.price | currency:'EGP':'symbol':'1.0-0' }}
-            </option>
-          </select>
+      </div>
+
+      <!-- Step 2: Write Product Details -->
+      <div class="product-details-card p-3 bg-light rounded-3 mb-4">
+        <h5 class="fw-bold mb-3 text-dark">
+          <i class="bi bi-pencil-square text-emerald me-1"></i> مواصفات وبيانات المنتج المطلوب
+        </h5>
+
+        <div class="row g-3">
+          <div class="col-md-7">
+            <label class="form-label fw-semibold fs-7 text-dark">اسم المنتج المطلوب *</label>
+            <input 
+              type="text" 
+              formControlName="productName" 
+              class="form-control" 
+              placeholder="مثال: زيت طعام عباد الشمس 1 لتر / حديد تسليح 12 مم"
+            >
+            <div *ngIf="form.controls.productName.touched && form.controls.productName.invalid" class="text-danger fs-8 mt-1">
+              أدخل اسم المنتج المطلوب.
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <label class="form-label fw-semibold fs-7 text-dark">الفئة / التصنيف *</label>
+            <select formControlName="category" class="form-select">
+              <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold fs-7 text-dark">مواصفات وتفاصيل المنتج الفنية *</label>
+            <textarea 
+              formControlName="specifications" 
+              rows="3" 
+              class="form-control" 
+              placeholder="اكتب كل التفاصيل والمواصفات الفنية، الأبعاد، معايير الجودة، والشروط المطلوبة..."
+            ></textarea>
+            <div *ngIf="form.controls.specifications.touched && form.controls.specifications.invalid" class="text-danger fs-8 mt-1">
+              اكتب مواصفات وتفاصيل المنتج المطلوب (5 حروف على الأقل).
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-grid">
-        <label>
-          الكمية *
-          <input type="number" formControlName="quantity" min="1">
-          <small *ngIf="form.controls.quantity.touched && form.controls.quantity.invalid">
-            الكمية يجب أن تكون 1 أو أكثر.
-          </small>
-        </label>
+      <!-- Step 3: Quantity & Location -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-dark">الكمية المطلوبة (عدد القطع) *</label>
+          <input 
+            type="number" 
+            formControlName="quantity" 
+            min="1" 
+            class="form-control" 
+            placeholder="مثال: 100"
+          >
+          <div *ngIf="form.controls.quantity.touched && form.controls.quantity.invalid" class="text-danger fs-8 mt-1">
+            الكمية يجب أن تكون 1 قطعة أو أكثر.
+          </div>
+        </div>
 
-        <label>
-          الموقع *
-          <input type="text" formControlName="location" placeholder="مثال: القاهرة، مصر">
-          <small *ngIf="form.controls.location.touched && form.controls.location.invalid">
-            أدخل موقع التسليم.
-          </small>
-        </label>
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-dark">
+            موقع التسليم (مكان استلام الأوردر)
+            <span *ngIf="form.controls.purchaseType.value === 'DIRECT'" class="text-danger">*</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="location" 
+            class="form-control" 
+            placeholder="مثال: مدينة 6 أكتوبر، الجيزة، مصر"
+          >
+          <div *ngIf="form.controls.location.touched && form.controls.location.invalid" class="text-danger fs-8 mt-1">
+            يرجى تحديد موقع التسليم واستلام الأوردر عند اختيار شراء فردي.
+          </div>
+        </div>
       </div>
 
-      <div class="purchase-type">
-        <h3>طريقة الشراء *</h3>
-
-        <label [class.selected]="form.controls.purchaseType.value === 'DIRECT'">
-          <input type="radio" formControlName="purchaseType" value="DIRECT">
-          <span>
-            <strong>شراء مباشر</strong>
-            <small>شراء مباشر من المورد.</small>
-          </span>
-        </label>
-
-        <label [class.selected]="form.controls.purchaseType.value === 'GROUP'">
-          <input type="radio" formControlName="purchaseType" value="GROUP">
-          <span>
-            <strong>شراء جماعي</strong>
-            <small>الطلب يمكن أن يدخل لاحقًا في مسار الـPools.</small>
-          </span>
-        </label>
-      </div>
-
-      <div class="actions">
-        <a routerLink="/products" class="cancel">إلغاء</a>
-        <button type="submit" [disabled]="submitting">
-          {{ submitting ? 'جاري الإنشاء...' : 'إنشاء الطلب' }}
+      <!-- Submit Actions -->
+      <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+        <a routerLink="/buying-requests" class="btn btn-outline-secondary px-4 py-2">إلغاء</a>
+        <button type="submit" class="btn btn-safqa-primary px-4 py-2 fw-bold" [disabled]="submitting">
+          {{ submitting ? 'جاري إنشاء الطلب...' : (form.controls.purchaseType.value === 'GROUP' ? 'إنشاء وتأكيد الشراء الجماعي' : 'إنشاء وتأكيد الشراء الفردي') }}
         </button>
       </div>
     </form>

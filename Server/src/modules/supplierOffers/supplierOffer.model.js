@@ -44,6 +44,11 @@ const SupplierOfferSchema = new mongoose.Schema({
       type: Number,
     },
 
+    originalUnitPrice: {
+      type: Number,
+      default: 0
+    },
+
     pricingTiers: {
       type: [pricingTierSchema],
       required: true

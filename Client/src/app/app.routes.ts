@@ -2,11 +2,13 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { noAuthGuard } from './core/guards/no-auth.guard';
 import { UserRole } from './core/models/user.model';
 
 // Layouts
 import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
 import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component';
+import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 
 // Home / Landing Page
 import { HomeComponent } from './features/home/home.component';
@@ -44,7 +46,7 @@ import { CategoryListComponent } from './features/products/category-list/categor
 import { AdminProductManagementComponent } from './features/products/product-management/product-management.component';
 
 // Member 2 - Buying Requests
-import { MyRequestsComponent } from './features/buying-requests/my-requests/my-requests.component';
+import { BuyingRequestListComponent } from './features/buying-requests/my-requests/my-requests.component';
 import { BuyingRequestCreateComponent } from './features/buying-requests/create-request/buying-request-create.component';
 import { BuyingRequestEditComponent } from './features/buying-requests/edit-request/buying-request-edit.component';
 import { BuyingRequestDetailsComponent } from './features/buying-requests/request-details/buying-request-details.component';
@@ -73,10 +75,10 @@ import { NotificationCenterComponent } from './features/notifications/notificati
 import { PoolListComponent } from './features/buying-pools/pool-list/pool-list.component';
 import { PoolDetailsComponent } from './features/buying-pools/pool-details/pool-details.component';
 import { JoinComponent } from './features/buying-pools/join-pool/join-pool.component';
+import { PoolConfirmationsComponent } from './features/buying-pools/pool-confirmations/pool-confirmations.component';
 
 // Member 3 - Supplier Offers
 import { CreateOfferComponent } from './features/supplier-offers/create-offer/create-offer.component';
-import { AvailableOffersComponent } from './features/supplier-offers/available-pools/available-pools.component';
 import { MyOffersComponent } from './features/supplier-offers/my-offers/my-offers.component';
 import { OfferDetailsComponent } from './features/supplier-offers/offer-details/offer-details.component';
 import { EditOfferComponent } from './features/supplier-offers/edit-offer/edit-offer.component';
@@ -102,10 +104,11 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // Public Auth Routes
+  // Public Auth Routes (Protected for Guests only)
   {
     path: 'auth',
     component: PublicLayoutComponent,
+    canActivate: [noAuthGuard],
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
@@ -121,6 +124,36 @@ export const routes: Routes = [
     component: UnauthorizedComponent
   },
 
+  // Standalone Public & Market Routes (Wrapped with Main Home Layout & Header)
+  {
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      { path: 'products', redirectTo: 'buying-requests', pathMatch: 'full' },
+      { path: 'products/:id', redirectTo: 'buying-requests', pathMatch: 'full' },
+      { path: 'categories', component: CategoryListComponent },
+      { path: 'buying-requests', component: BuyingRequestListComponent },
+      { path: 'buying-requests/create', component: BuyingRequestCreateComponent, canActivate: [authGuard] },
+      { path: 'buying-requests/:id/edit', component: BuyingRequestEditComponent, canActivate: [authGuard] },
+      {
+        path: 'buying-requests/:id/create-offer',
+        component: CreateOfferComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.SUPPLIER] }
+      },
+      { path: 'buying-requests/:id', component: BuyingRequestDetailsComponent },
+      { path: 'buying-pools', component: PoolListComponent },
+      { path: 'buying-pools/:id/join', component: JoinComponent, canActivate: [authGuard] },
+      {
+        path: 'buying-pools/:id/create-offer',
+        component: CreateOfferComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.SUPPLIER] }
+      },
+      { path: 'buying-pools/:id', component: PoolDetailsComponent }
+    ]
+  },
+
   // Authenticated Application / Dashboard Routes
   {
     path: '',
@@ -128,11 +161,9 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardHomeComponent },
+      { path: 'pool-confirmations', component: PoolConfirmationsComponent },
 
-      // Products & Categories Routes
-      { path: 'products', component: ProductListComponent },
-      { path: 'products/:id', component: ProductDetailsComponent },
-      { path: 'categories', component: CategoryListComponent },
+      // Management & Action Routes
       {
         path: 'admin/products',
         component: AdminProductManagementComponent,
@@ -140,30 +171,7 @@ export const routes: Routes = [
         data: { roles: [UserRole.ADMIN, UserRole.SUPPLIER] }
       },
 
-      // Buying Requests Routes (المناقصات والطلبات)
-      { path: 'buying-requests', component: MyRequestsComponent },
-      { path: 'buying-requests/create', component: BuyingRequestCreateComponent },
-      { path: 'buying-requests/:id/edit', component: BuyingRequestEditComponent },
-      { path: 'buying-requests/:id', component: BuyingRequestDetailsComponent },
-
-      // Buying Pools Routes (تجمعات الشراء)
-      { path: 'buying-pools', component: PoolListComponent },
-      { path: 'buying-pools/:id', component: PoolDetailsComponent },
-      { path: 'buying-pools/:id/join', component: JoinComponent },
-      {
-        path: 'buying-pools/:id/create-offer',
-        component: CreateOfferComponent,
-        canActivate: [roleGuard],
-        data: { roles: [UserRole.SUPPLIER] }
-      },
-
       // Supplier Offers Routes
-      {
-        path: 'supplier/available-pools',
-        component: AvailableOffersComponent,
-        canActivate: [roleGuard],
-        data: { roles: [UserRole.SUPPLIER] }
-      },
       {
         path: 'supplier/my-offers',
         component: MyOffersComponent,

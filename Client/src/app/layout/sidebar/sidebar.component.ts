@@ -35,4 +35,19 @@ export class SidebarComponent implements OnInit {
     this.closeSidebar.emit();
     this.authService.logout();
   }
+
+  getRoleBadgeText(role?: string): string {
+    switch (role) {
+      case UserRole.ADMIN:
+        return 'مدير النظام (Admin)';
+      case UserRole.SUPPLIER:
+        return 'مورد معتمد';
+      case UserRole.BUYER:
+        return 'مشتري / شركة';
+      case UserRole.SHIPPING_PARTNER:
+        return 'شركة الشحن واللوجستيات';
+      default:
+        return 'عضو منصة';
+    }
+  }
 }

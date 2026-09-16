@@ -4,6 +4,7 @@ import Order from './order.model.js';
 import Deal from '../deals/deal.model.js';
 import PoolMember from '../poolMembers/poolMember.model.js';
 import BuyingRequest from '../buyingRequests/buyingRequest.model.js';
+import { createNotification } from '../notifications/notification.service.js';
 
 async function createOrderFromDeal(
   dealId,
@@ -100,6 +101,29 @@ async function createOrderFromDeal(
   }
 
   const order = await Order.create(orderData);
+
+  try {
+    if (buyerId) {
+      await createNotification(
+        buyerId,
+        "ORDER_CREATED",
+        "تم تسجيل طلبك بنجاح",
+        "تم تسجيل طلب الشراء الخاص بك وفي انتظار التأكيد النهائي.",
+        { entityModel: "Order", entityId: order._id }
+      );
+    }
+    if (deal.supplier) {
+      await createNotification(
+        deal.supplier,
+        "NEW_ORDER",
+        "طلب جديد من مشتري",
+        "تم استلام طلب شراء جديد من مشتري.",
+        { entityModel: "Order", entityId: order._id }
+      );
+    }
+  } catch (notifErr) {
+    console.error("Error creating order notifications:", notifErr);
+  }
 
   return order;
 }
@@ -220,6 +244,27 @@ async function updateOrderStatus(orderId, status, user) {
 
   await order.save();
 
+  try {
+    const statusTextMap = {
+      'CONFIRMED': 'مؤكد وجاري التجهيز',
+      'READY_FOR_PICKUP': 'جاهز للتسليم والشحن',
+      'SHIPPED': 'تم الشحن وهو في الطريق إليك',
+      'DELIVERED': 'تم التسليم بنجاح'
+    };
+    const statusLabel = statusTextMap[status] || status;
+    if (order.buyer) {
+      await createNotification(
+        order.buyer,
+        "ORDER_STATUS_UPDATED",
+        "تحديث حالة الشحنة والطلب",
+        `تم تحديث حالة طلبك إلى: ${statusLabel}`,
+        { entityModel: "Order", entityId: order._id }
+      );
+    }
+  } catch (notifErr) {
+    console.error("Error sending order status notification:", notifErr);
+  }
+
   return order;
 }
 
@@ -247,6 +292,20 @@ async function markOrderReadyForPickup(orderId, supplierId) {
   order.status = 'READY_FOR_PICKUP';
 
   await order.save();
+
+  try {
+    if (order.buyer) {
+      await createNotification(
+        order.buyer,
+        "ORDER_STATUS_UPDATED",
+        "طلبك جاهز للتسليم والشحن",
+        "قام المورد بتجهيز طلبك وسيتم تسليمه قريباً.",
+        { entityModel: "Order", entityId: order._id }
+      );
+    }
+  } catch (notifErr) {
+    console.error("Error sending ready for pickup notification:", notifErr);
+  }
 
   return order;
 }
@@ -291,6 +350,86 @@ async function cancelOrder(orderId, user) {
 
   await order.save();
 
+  try {
+    if (order.buyer) {
+      await createNotification(
+        order.buyer,
+        "ORDER_CANCELLED",
+        "تم إلغاء الطلب",
+        "تم إلغاء طلب الشراء الخاص بك.",
+        { entityModel: "Order", entityId: order._id }
+      );
+    }
+    if (order.supplier) {
+      await createNotification(
+        order.supplier,
+        "ORDER_CANCELLED",
+        "تم إلغاء الطلب",
+        "تم إلغاء طلب الشراء الخاص بالعميل.",
+        { entityModel: "Order", entityId: order._id }
+      );
+    }
+  } catch (notifErr) {
+    console.error("Error sending order cancel notification:", notifErr);
+  }
+
+  return order;
+}
+
+async function confirmOrder(orderId, user, shippingDetails) {
+  const order = await Order.findById(orderId);
+
+  if (!order) {
+    throw new AppError('Order not found', 404);
+  }
+
+  if (user.role === 'BUYER' && order.buyer.toString() !== user.id.toString()) {
+    throw new AppError('Not authorized to confirm this order', 403);
+  }
+
+  if (order.status !== 'PENDING') {
+    throw new AppError(`Cannot confirm order in status: ${order.status}`, 400);
+  }
+
+  if (shippingDetails) {
+    if (shippingDetails.phone) {
+      order.phone = shippingDetails.phone;
+    }
+    if (shippingDetails.shippingAddress) {
+      order.shippingAddress = {
+        street: shippingDetails.shippingAddress.street || order.shippingAddress?.street || 'العنوان المسجل',
+        city: shippingDetails.shippingAddress.city || order.shippingAddress?.city || 'القاهرة',
+        country: shippingDetails.shippingAddress.country || order.shippingAddress?.country || 'مصر'
+      };
+    }
+  }
+
+  order.status = 'CONFIRMED';
+  await order.save();
+
+  try {
+    if (order.supplier) {
+      await createNotification(
+        order.supplier,
+        "ORDER_CONFIRMED",
+        "تم تأكيد الطلب والعنوان من المشتري",
+        "قام المشتري بتأكيد عنوان الشحن ورقم الهاتف وأصبح الطلب مؤكداً وفي انتظار التجهيز.",
+        { entityModel: "Order", entityId: order._id }
+      );
+    }
+    if (order.buyer) {
+      await createNotification(
+        order.buyer,
+        "ORDER_CONFIRMED",
+        "تم تأكيد طلبك بنجاح",
+        "شكراً لك! تم تأكيد عنوان الشحن ورقم الهاتف بنجاح، وسيتم التواصل معك من قبل المورد.",
+        { entityModel: "Order", entityId: order._id }
+      );
+    }
+  } catch (notifErr) {
+    console.error("Error sending confirm order notification:", notifErr);
+  }
+
   return order;
 }
 
@@ -300,5 +439,6 @@ export {
   getOrderById,
   updateOrderStatus,
   markOrderReadyForPickup,
+  confirmOrder,
   cancelOrder
 };

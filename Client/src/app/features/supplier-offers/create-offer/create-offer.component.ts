@@ -1,4 +1,4 @@
-﻿import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   FormArray,
@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 
 import { SupplierOfferService } from '../services/supplier-offer.service';
+import { BuyingRequestService } from '../../buying-requests/services/buying-request.service';
 import { CreateSupplierOfferRequest } from '../models/supplier-offer.model';
 
 @Component({
@@ -23,8 +24,11 @@ export class CreateOfferComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private supplierOfferService = inject(SupplierOfferService);
+  private buyingRequestService = inject(BuyingRequestService);
 
   poolId = '';
+  isIndividualRequest = false;
+  targetRequest?: any;
 
   isLoading = false;
   successMessage = '';
@@ -35,6 +39,10 @@ export class CreateOfferComponent implements OnInit {
     moq: new FormControl(1, [
       Validators.required,
       Validators.min(1)
+    ]),
+
+    originalUnitPrice: new FormControl(0, [
+      Validators.min(0)
     ]),
 
     pricingTiers: new FormArray([
@@ -58,10 +66,22 @@ export class CreateOfferComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.poolId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.isIndividualRequest = this.router.url.includes('/buying-requests/');
 
-    this.poolId =
-      this.route.snapshot.paramMap.get('id') ?? '';
-
+    if (this.isIndividualRequest && this.poolId) {
+      this.buyingRequestService.getRequestById(this.poolId).subscribe({
+        next: (req) => {
+          this.targetRequest = req;
+          const qty = req.quantity || 1;
+          this.offerForm.patchValue({ moq: qty });
+          if (this.pricingTiers.length > 0) {
+            this.pricingTiers.at(0).patchValue({ minQty: qty });
+          }
+        },
+        error: (err) => console.error('Error fetching request for offer:', err)
+      });
+    }
   }
 
 
@@ -117,58 +137,31 @@ export class CreateOfferComponent implements OnInit {
     this.errorMessage = '';
 
     if (!this.poolId) {
-
-      this.errorMessage =
-        'رقم التجمع غير موجود';
-
+      this.errorMessage = 'رقم الطلب غير موجود';
       return;
-
     }
-
 
     if (this.offerForm.invalid) {
-
       this.offerForm.markAllAsTouched();
-
-      this.errorMessage =
-        'من فضلك أدخل جميع البيانات بشكل صحيح';
-
+      this.errorMessage = 'من فضلك أدخل جميع البيانات بشكل صحيح';
       return;
-
     }
 
-
-    const data =
-      this.offerForm.getRawValue() as CreateSupplierOfferRequest;
-
-
+    const data = this.offerForm.getRawValue() as unknown as CreateSupplierOfferRequest;
     this.isLoading = true;
-
 
     this.supplierOfferService
       .createOffer(this.poolId, data)
       .subscribe({
-
         next: (response) => {
-
           this.isLoading = false;
-
           if (response.success) {
-
-            this.successMessage =
-              'تم إرسال العرض بنجاح';
-
+            this.successMessage = 'تم إرسال العرض بنجاح';
+            const targetPath = this.router.url.includes('/buying-requests/') ? '/buying-requests' : '/buying-pools';
             setTimeout(() => {
-
-              this.router.navigate([
-                '/buying-pools',
-                this.poolId
-              ]);
-
+              this.router.navigate([targetPath, this.poolId]);
             }, 1000);
-
           }
-
         },
 
         error: (error) => {
