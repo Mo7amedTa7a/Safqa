@@ -4,8 +4,8 @@
 import Joi from "joi";
 
 const createShipmentValidation = Joi.object({
-  shipmentType: Joi.string().valid("OUTBOUND", "RETURN").required(),
-  trackingNumber: Joi.string().required(),
+  shipmentType: Joi.string().valid("OUTBOUND", "RETURN").default("OUTBOUND"),
+  trackingNumber: Joi.string().optional(),
   pickupAddress: Joi.object({
     street: Joi.string(),
     city: Joi.string(),
