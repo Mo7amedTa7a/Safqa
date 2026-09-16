@@ -4,6 +4,8 @@ import { ShipmentService } from '../services/shipment.service';
 import { Shipment } from '../models/shipment.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-shipment-details',
@@ -32,7 +34,8 @@ export class ShipmentDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private shipmentService: ShipmentService
+    private shipmentService: ShipmentService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -85,5 +88,13 @@ export class ShipmentDetailsComponent implements OnInit {
       case 'RETURNED': return 'badge text-bg-danger';
       default: return 'badge text-bg-secondary';
     }
+  }
+
+  isShippingPartner(): boolean {
+    return this.authService.hasRole([UserRole.SHIPPING_PARTNER]);
+  }
+
+  isAdmin(): boolean {
+    return this.authService.hasRole([UserRole.ADMIN]);
   }
 }

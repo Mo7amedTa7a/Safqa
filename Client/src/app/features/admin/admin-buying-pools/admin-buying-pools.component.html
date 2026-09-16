@@ -62,14 +62,22 @@
               <td class="small text-danger fw-bold"><i class="bi bi-hourglass-bottom me-1"></i> {{ pool.closeAt | date:'shortDate' }}</td>
               <td>
                 <span class="badge rounded-pill" 
-                      [ngClass]="{'badge-safqa-success': pool.status === 'OPEN', 'badge-safqa-danger': pool.status === 'CLOSED'}">
-                  {{ pool.status === 'OPEN' ? 'مفتوح' : 'مغلق' }}
+                      [ngClass]="{'badge-safqa-success': pool.status === 'OPEN', 'bg-warning': pool.status === 'OPEN_OFFERS', 'badge-safqa-danger': pool.status === 'CLOSED'}">
+                  {{ pool.status === 'OPEN' ? 'مفتوح' : (pool.status === 'OPEN_OFFERS' ? 'تلقي العروض' : 'مغلق') }}
                 </span>
               </td>
-              <td class="text-center">
-                <button *ngIf="pool.status === 'OPEN'" class="btn btn-warning btn-sm" (click)="endPool(pool._id)" [disabled]="isEndingPoolId === pool._id" title="إنهاء التجمع فوراً">
+              <td class="text-center d-flex gap-2 justify-content-center">
+                <button *ngIf="pool.status === 'OPEN'" class="btn btn-warning btn-sm" (click)="endPool(pool)" [disabled]="isEndingPoolId === pool._id" title="إغلاق لتلقي العروض">
                   <span *ngIf="isEndingPoolId === pool._id" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  <i *ngIf="isEndingPoolId !== pool._id" class="bi bi-stop-circle me-1"></i> إنهاء
+                  <i *ngIf="isEndingPoolId !== pool._id" class="bi bi-stop-circle me-1"></i> إغلاق
+                </button>
+                <button *ngIf="pool.status === 'OPEN_OFFERS'" class="btn btn-danger btn-sm" (click)="endPool(pool)" [disabled]="isEndingPoolId === pool._id" title="إغلاق نهائي بدون ترسية">
+                  <span *ngIf="isEndingPoolId === pool._id" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <i *ngIf="isEndingPoolId !== pool._id" class="bi bi-x-circle me-1"></i> إلغاء وإغلاق
+                </button>
+                <button *ngIf="pool.status === 'OPEN_OFFERS'" class="btn btn-success btn-sm" (click)="awardDeal(pool._id)" [disabled]="isAwardingPoolId === pool._id" title="ترسية العطاء">
+                  <span *ngIf="isAwardingPoolId === pool._id" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <i *ngIf="isAwardingPoolId !== pool._id" class="bi bi-check-circle me-1"></i> ترسية
                 </button>
               </td>
             </tr>

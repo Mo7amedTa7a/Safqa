@@ -6,6 +6,7 @@
 // updateQuantity(poolId)  → PATCH  /api/buying-pools/:poolId/members/me
 // leavePool(poolId)       → DELETE /api/buying-pools/:poolId/members/me
 // closePool(poolId)       → PATCH  /api/buying-pools/:poolId/close  [Admin]
+// selectOffer(poolId)     → POST   /api/deal-selections/:poolId/select-offer
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -76,8 +77,16 @@ export class BuyingPoolService {
     );
   }
 
-  // POST /api/buying-pools/:id/close
+  // PATCH /api/buying-pools/:id/close
   closePool( poolId: string ): Observable<BuyingPoolDetailsResponse> {
+    return this.http.patch<BuyingPoolDetailsResponse>(
+      `${this.apiUrl}/${poolId}/close`,
+      null
+    );
+  }
+
+  // POST /api/deal-selections/:id/select-offer
+  selectOffer( poolId: string ): Observable<BuyingPoolDetailsResponse> {
     return this.http.post<BuyingPoolDetailsResponse>(
       `${environment.apiUrl}/deal-selections/${poolId}/select-offer`,
       null

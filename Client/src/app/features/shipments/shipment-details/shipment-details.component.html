@@ -76,7 +76,7 @@
     </div>
 
     <!-- Actions / Status Update -->
-    <div class="col-md-4">
+    <div class="col-md-4" *ngIf="isShippingPartner() || isAdmin()">
       <div class="card shadow-sm mb-4 border-primary">
         <div class="card-header bg-primary text-white">
           <h5 class="mb-0">تحديث الحالة</h5>

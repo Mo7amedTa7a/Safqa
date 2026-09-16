@@ -1,0 +1,112 @@
+<div class="container py-4" dir="rtl">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>المحفظة المالية</h2>
+    <button class="btn btn-primary" (click)="openWithdrawModal()" *ngIf="wallet && wallet.balance > 0">
+      <i class="bi bi-cash-stack"></i> سحب رصيد
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="wallet && !isLoading" class="row mb-4">
+    <div class="col-md-6">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-header">الرصيد المتاح</div>
+        <div class="card-body">
+          <h3 class="card-title">{{ wallet.balance }} ج.م</h3>
+          <p class="card-text">رصيد قابل للسحب</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card text-white bg-warning mb-3">
+        <div class="card-header">الرصيد المعلق</div>
+        <div class="card-body">
+          <h3 class="card-title">{{ wallet.pendingBalance }} ج.م</h3>
+          <p class="card-text">قيد التحويل أو قيد الانتظار</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="mb-3" *ngIf="!isLoading">سجل الحركات</h4>
+  <div class="table-responsive" *ngIf="!isLoading">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>التاريخ</th>
+          <th>النوع</th>
+          <th>الوصف</th>
+          <th>المبلغ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tx of transactions">
+          <td>{{ tx.createdAt | date:'short' }}</td>
+          <td>
+            <span class="badge" [ngClass]="tx.type === 'CREDIT' ? 'bg-success' : 'bg-danger'">
+              {{ tx.type === 'CREDIT' ? 'إيداع' : 'سحب' }}
+            </span>
+          </td>
+          <td>{{ tx.description }}</td>
+          <td [ngClass]="tx.type === 'CREDIT' ? 'text-success' : 'text-danger'" class="fw-bold">
+            {{ tx.type === 'CREDIT' ? '+' : '-' }}{{ tx.amount }} ج.م
+          </td>
+        </tr>
+        <tr *ngIf="transactions.length === 0">
+          <td colspan="4" class="text-center py-4 text-muted">لا توجد حركات مالية</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Withdraw Modal -->
+<div class="modal fade show d-block" *ngIf="showWithdrawModal" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content" dir="rtl">
+      <div class="modal-header">
+        <h5 class="modal-title">طلب سحب رصيد</h5>
+        <button type="button" class="btn-close" (click)="closeWithdrawModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">المبلغ المراد سحبه (الحد الأقصى: {{ wallet?.balance }})</label>
+          <input type="number" class="form-control" [(ngModel)]="withdrawAmount" [max]="wallet?.balance || 0" min="1">
+        </div>
+        
+        <h6 class="mt-4 mb-3">بيانات الحساب البنكي</h6>
+        
+        <div class="mb-3">
+          <label class="form-label">اسم البنك</label>
+          <input type="text" class="form-control" [(ngModel)]="bankDetails.bankName" placeholder="مثال: البنك الأهلي المصري">
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">رقم الحساب / الآيبان (IBAN)</label>
+          <input type="text" class="form-control" [(ngModel)]="bankDetails.accountNumber">
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">اسم صاحب الحساب</label>
+          <input type="text" class="form-control" [(ngModel)]="bankDetails.accountName">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeWithdrawModal()" [disabled]="isSubmitting">إلغاء</button>
+        <button type="button" class="btn btn-primary" (click)="submitWithdrawal()" [disabled]="isSubmitting || withdrawAmount <= 0 || withdrawAmount > (wallet?.balance || 0)">
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+          تأكيد الطلب
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

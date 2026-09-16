@@ -16,6 +16,7 @@ export class AdminBuyingPoolsComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   isEndingPoolId: string | null = null;
+  isAwardingPoolId: string | null = null;
 
   constructor(
     private adminService: AdminService,
@@ -42,18 +43,39 @@ export class AdminBuyingPoolsComponent implements OnInit {
     });
   }
 
-  endPool(poolId: string): void {
-    if (confirm('هل أنت متأكد من إنهاء هذا التجمع الشرائي واختيار أفضل عرض الآن؟')) {
-      this.isEndingPoolId = poolId;
-      this.poolService.closePool(poolId).subscribe({
+  endPool(pool: any): void {
+    const confirmMessage = pool.status === 'OPEN' 
+      ? 'هل أنت متأكد من إغلاق هذا التجمع لانتقال لمرحلة تلقي العروض؟'
+      : 'هل أنت متأكد من إنهاء مرحلة تلقي العروض وإغلاق التجمع نهائياً بدون ترسية؟';
+
+    if (confirm(confirmMessage)) {
+      this.isEndingPoolId = pool._id;
+      this.poolService.closePool(pool._id).subscribe({
         next: (res) => {
-          alert('تم إنهاء التجمع وإنشاء الصفقة بنجاح.');
+          alert(pool.status === 'OPEN' ? 'تم إغلاق التجمع لتلقي العروض بنجاح.' : 'تم إغلاق التجمع نهائياً.');
           this.isEndingPoolId = null;
           this.loadPools(); // Reload to get updated status
         },
         error: (err) => {
-          alert(err.error?.message || 'حدث خطأ أثناء إنهاء التجمع.');
+          alert(err.error?.message || 'حدث خطأ أثناء الإغلاق.');
           this.isEndingPoolId = null;
+        }
+      });
+    }
+  }
+
+  awardDeal(poolId: string): void {
+    if (confirm('هل أنت متأكد من ترسية العطاء وإنشاء صفقة لهذا التجمع؟')) {
+      this.isAwardingPoolId = poolId;
+      this.poolService.selectOffer(poolId).subscribe({
+        next: (res) => {
+          alert('تم ترسية العطاء وإنشاء الصفقة بنجاح.');
+          this.isAwardingPoolId = null;
+          this.loadPools(); // Reload to get updated status
+        },
+        error: (err) => {
+          alert(err.error?.message || 'حدث خطأ أثناء ترسية العطاء.');
+          this.isAwardingPoolId = null;
         }
       });
     }

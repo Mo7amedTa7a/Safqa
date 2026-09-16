@@ -1,7 +1,7 @@
-﻿// BuyingPool Model
+// BuyingPool Model
 // - Belongs to: Member 3
-// - Fields: product (ref), variant, totalQuantity, status, expiresAt (3-day window)
-// - status: OPEN | CLOSED | EXPIRED
+// - Fields: product (ref), variant, totalQuantity, status, startAt, closeAt, joinCloseAt, offerCloseAt
+// - status: OPEN | OPEN_OFFERS | CLOSED | EXPIRED
 // - Index on product + variant + status
 
 
@@ -45,9 +45,17 @@ const BuyingPoolSchema = new mongoose.Schema(
       required: true
     },
 
+    joinCloseAt: {
+      type: Date
+    },
+
+    offerCloseAt: {
+      type: Date
+    },
+
     status: {
       type: String,
-      enum: ["OPEN", "CLOSED"],
+      enum: ["OPEN", "OPEN_OFFERS", "CLOSED"],
       required: true,
       default: "OPEN"
     },

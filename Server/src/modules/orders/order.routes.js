@@ -44,7 +44,7 @@ router.post(
 router.get(
   '/',
   authMiddleware,
-  authorize('BUYER', 'SUPPLIER', 'ADMIN'),
+  authorize('BUYER', 'SUPPLIER', 'ADMIN', 'SHIPPING_PARTNER'),
   getOrdersController
 );
 
@@ -56,7 +56,7 @@ router.get(
 router.get(
   '/:id',
   authMiddleware,
-  authorize('BUYER', 'SUPPLIER', 'ADMIN'),
+  authorize('BUYER', 'SUPPLIER', 'ADMIN', 'SHIPPING_PARTNER'),
   getOrderByIdController
 );
 
@@ -80,7 +80,7 @@ router.patch(
 router.patch(
   '/:id/status',
   authMiddleware,
-  authorize('SUPPLIER', 'ADMIN'),
+  authorize('SUPPLIER', 'ADMIN', 'SHIPPING_PARTNER'),
   validate(updateOrderStatusValidation),
   updateOrderStatusController
 );

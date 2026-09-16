@@ -130,6 +130,21 @@
             </button>
           }
 
+        </div>
+
+      </section>
+
+    }
+
+    <!-- Shipping Partner Actions -->
+    @if (isShippingPartner()) {
+
+      <section class="details-card actions-card">
+
+        <h2>إجراءات الشحن</h2>
+
+        <div class="actions">
+
           @if (canShip() && !shipment) {
             <button
               type="button"
@@ -138,17 +153,6 @@
               [disabled]="isUpdating"
             >
               {{ isUpdating ? 'جاري الإنشاء...' : 'إنشاء بوليصة شحن' }}
-            </button>
-          }
-
-          @if (canDeliver()) {
-            <button
-              type="button"
-              class="action-btn deliver-btn"
-              (click)="deliverOrder()"
-              [disabled]="isUpdating"
-            >
-              {{ isUpdating ? 'جاري التحديث...' : 'تأكيد التوصيل' }}
             </button>
           }
 
@@ -207,6 +211,21 @@
 
       </div>
 
+    </section>
+
+    <!-- Product Information -->
+    <section class="details-card" *ngIf="getProduct() as product">
+      <h2>المنتج المطلوب</h2>
+      <div class="d-flex align-items-center gap-3">
+        <div style="width: 64px; height: 64px; background: #fff; border: 1px solid #dee2e6; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          <img *ngIf="product.images?.length" [src]="product.images[0]" alt="Product" style="width: 100%; height: 100%; object-fit: cover;">
+          <i *ngIf="!product.images?.length" class="bi bi-box fs-3 text-muted"></i>
+        </div>
+        <div>
+          <strong class="d-block text-dark mb-1" style="font-size: 1.1rem;">{{ product.name || 'منتج غير معروف' }}</strong>
+          <span class="text-muted d-block">{{ product.category || '' }}</span>
+        </div>
+      </div>
     </section>
 
     <!-- Supplier -->

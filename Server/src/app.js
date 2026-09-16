@@ -37,6 +37,7 @@ import refundRoutes from "./modules/refunds/refund.routes.js";
 import reviewRoutes from "./modules/reviews/review.routes.js";
 import notificationRoutes from "./modules/notifications/notification.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
+import walletRoutes from "./modules/wallets/wallet.routes.js";
 
 const app = express()
 
@@ -70,6 +71,7 @@ app.use("/api/refunds", refundRoutes)
 app.use("/api/reviews", reviewRoutes)
 app.use("/api/notifications", notificationRoutes)
 app.use("/api/admin", adminRoutes)
+app.use("/api/wallets", walletRoutes)
 
 // Test Route
 app.get('/', (req, res) => {

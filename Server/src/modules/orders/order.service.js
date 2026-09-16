@@ -140,20 +140,38 @@ async function getOrders(user) {
   }
 
   return Order.find(filter)
-    .populate('deal')
+    .populate({
+      path: 'deal',
+      populate: [
+        { path: 'pool', populate: { path: 'product' } },
+        { path: 'buyingRequest', populate: { path: 'product' } }
+      ]
+    })
     .populate('buyer')
     .populate('supplier')
     .populate('poolMember')
-    .populate('buyingRequest');
+    .populate({
+      path: 'buyingRequest',
+      populate: { path: 'product' }
+    });
 }
 
 async function getOrderById(orderId, user) {
   const order = await Order.findById(orderId)
-    .populate('deal')
+    .populate({
+      path: 'deal',
+      populate: [
+        { path: 'pool', populate: { path: 'product' } },
+        { path: 'buyingRequest', populate: { path: 'product' } }
+      ]
+    })
     .populate('buyer')
     .populate('supplier')
     .populate('poolMember')
-    .populate('buyingRequest');
+    .populate({
+      path: 'buyingRequest',
+      populate: { path: 'product' }
+    });
 
   if (!order) {
     throw new AppError('Order not found', 404);

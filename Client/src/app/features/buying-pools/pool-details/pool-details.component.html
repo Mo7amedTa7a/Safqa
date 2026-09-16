@@ -38,9 +38,10 @@
             <span 
               class="badge px-3 py-2 fs-6 rounded-pill mb-2"
               [class.bg-success]="pool.status === 'OPEN'"
+              [class.bg-warning]="pool.status === 'OPEN_OFFERS'"
               [class.bg-secondary]="pool.status === 'CLOSED'"
             >
-              {{ pool.status === 'OPEN' ? 'مفتوح للتجمع والعروض' : 'مغلق' }}
+              {{ pool.status === 'OPEN' ? 'مفتوح للتجمع' : (pool.status === 'OPEN_OFFERS' ? 'مفتوح لتلقي العروض' : 'مغلق') }}
             </span>
             
             @if (currentUser?.role === 'ADMIN' && pool.status === 'OPEN') {
@@ -48,11 +49,33 @@
                 @if (isEndingPool) {
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري...
                 } @else {
-                  <i class="bi bi-stop-circle me-1"></i> إنهاء التجمع مبكراً
+                  <i class="bi bi-stop-circle me-1"></i> إغلاق التجمع لتلقي العروض
                 }
               </button>
               @if (endPoolMessage) {
                 <small class="text-danger mt-1">{{ endPoolMessage }}</small>
+              }
+            }
+            @if (currentUser?.role === 'ADMIN' && pool.status === 'OPEN_OFFERS') {
+              <div class="d-flex flex-column gap-2 mt-2">
+                <button class="btn btn-success btn-sm" (click)="awardDeal()" [disabled]="isAwardingDeal || isEndingPool">
+                  @if (isAwardingDeal) {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري...
+                  } @else {
+                    <i class="bi bi-check-circle me-1"></i> ترسية العطاء وإنشاء صفقة
+                  }
+                </button>
+                <button class="btn btn-danger btn-sm" (click)="endPoolEarly()" [disabled]="isEndingPool || isAwardingDeal">
+                  @if (isEndingPool) {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري...
+                  } @else {
+                    <i class="bi bi-x-circle me-1"></i> إغلاق نهائي بدون ترسية
+                  }
+                </button>
+              </div>
+
+              @if (awardDealMessage) {
+                <small class="text-danger mt-1">{{ awardDealMessage }}</small>
               }
             }
           </div>

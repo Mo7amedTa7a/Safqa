@@ -83,15 +83,21 @@
           </a>
         </li>
         <li>
+          <a routerLink="/orders" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-box-seam nav-icon"></i>
+            <span>الأوردرات المطلوبة</span>
+          </a>
+        </li>
+        <li>
           <a routerLink="/shipments" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-truck nav-icon"></i>
             <span>متابعة الشحنات واللوجستيات</span>
           </a>
         </li>
         <li>
-          <a routerLink="/settlements" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <a routerLink="/wallet" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-wallet2 nav-icon"></i>
-            <span>المحفظة والتسويات المالية</span>
+            <span>المحفظة المالية والسحب</span>
           </a>
         </li>
         <li>
@@ -114,15 +120,21 @@
       <div class="nav-section-title">مركز إدارة الشحن واللوجستيات</div>
       <ul class="nav-list">
         <li>
+          <a routerLink="/orders" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-box-seam nav-icon"></i>
+            <span>تصفح الأوردرات الجديدة</span>
+          </a>
+        </li>
+        <li>
           <a routerLink="/shipments" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-truck nav-icon"></i>
             <span>إدارة واستلام الشحنات</span>
           </a>
         </li>
         <li>
-          <a routerLink="/settlements" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+          <a routerLink="/wallet" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-wallet2 nav-icon"></i>
-            <span>تحصيل وتوريد مبالغ COD</span>
+            <span>المحفظة المالية (تحصيل COD)</span>
           </a>
         </li>
         <li>
@@ -172,6 +184,12 @@
           <a routerLink="/admin/products" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
             <i class="bi bi-box-seam nav-icon"></i>
             <span>إدارة كتالوج المنتجات</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/withdrawals" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+            <i class="bi bi-cash-stack nav-icon"></i>
+            <span>إدارة طلبات السحب</span>
           </a>
         </li>
         <li>

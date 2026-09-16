@@ -189,7 +189,13 @@ leaveMessage = '';
   endPoolMessage = '';
 
   endPoolEarly(): void {
-    if (!this.poolId) return;
+    if (!this.poolId || !this.pool) return;
+
+    const confirmMessage = this.pool.status === 'OPEN'
+      ? 'هل أنت متأكد من إغلاق هذا التجمع لانتقال لمرحلة تلقي العروض؟'
+      : 'هل أنت متأكد من إنهاء مرحلة تلقي العروض وإغلاق التجمع نهائياً بدون ترسية؟';
+      
+    if (!confirm(confirmMessage)) return;
 
     this.isEndingPool = true;
     this.endPoolMessage = '';
@@ -197,14 +203,38 @@ leaveMessage = '';
     this.buyingPoolService.closePool(this.poolId).subscribe({
       next: (response) => {
         console.log('Pool Ended:', response);
-        this.endPoolMessage = 'تم إنهاء التجمع وإنشاء الصفقة بنجاح!';
+        this.endPoolMessage = this.pool?.status === 'OPEN' ? 'تم إغلاق التجمع لتلقي العروض بنجاح!' : 'تم إغلاق التجمع نهائياً.';
         this.isEndingPool = false;
         this.loadPool(); // reload the pool to see changes
       },
       error: (error) => {
         console.error('Error ending pool:', error);
-        this.endPoolMessage = error?.error?.message || 'حدث خطأ أثناء إنهاء التجمع.';
+        this.endPoolMessage = error?.error?.message || 'حدث خطأ أثناء الإغلاق.';
         this.isEndingPool = false;
+      }
+    });
+  }
+
+  isAwardingDeal = false;
+  awardDealMessage = '';
+
+  awardDeal(): void {
+    if (!this.poolId) return;
+
+    this.isAwardingDeal = true;
+    this.awardDealMessage = '';
+
+    this.buyingPoolService.selectOffer(this.poolId).subscribe({
+      next: (response) => {
+        console.log('Deal Awarded:', response);
+        this.awardDealMessage = 'تم ترسية العطاء وإنشاء الصفقة بنجاح!';
+        this.isAwardingDeal = false;
+        this.loadPool();
+      },
+      error: (error) => {
+        console.error('Error awarding deal:', error);
+        this.awardDealMessage = error?.error?.message || 'حدث خطأ أثناء ترسية العطاء.';
+        this.isAwardingDeal = false;
       }
     });
   }

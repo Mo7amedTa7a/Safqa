@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { OrderService } from '../services/order.service';
 import { Order } from '../models/order.model';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-order-list',
@@ -21,7 +23,8 @@ export class OrderListComponent implements OnInit {
   errorMessage = '';
 
   constructor(
-    private orderService: OrderService
+    private orderService: OrderService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -55,14 +58,24 @@ export class OrderListComponent implements OnInit {
   }
 
   getSupplierName(order: Order): string {
-
-  if (typeof order.supplier === 'string') {
-    return 'المورد';
+    if (typeof order.supplier === 'string') {
+      return 'المورد';
+    }
+    return order.supplier?.name ?? 'مورد غير معروف';
   }
 
-  return order.supplier?.name ?? 'مورد غير معروف';
-
-}
+  getProduct(order: any): any {
+    if (order.buyingRequest?.product) {
+      return order.buyingRequest.product;
+    }
+    if (order.deal?.buyingRequest?.product) {
+      return order.deal.buyingRequest.product;
+    }
+    if (order.deal?.pool?.product) {
+      return order.deal.pool.product;
+    }
+    return null;
+  }
 
   confirmOrder(orderId: string): void {
     if (!confirm('هل تريد تأكيد الطلب وإرساله للتوريد والشحن؟')) return;
@@ -89,4 +102,9 @@ export class OrderListComponent implements OnInit {
       }
     });
   }
+
+  isBuyer(): boolean {
+    return this.authService.hasRole([UserRole.BUYER]);
+  }
 }
+

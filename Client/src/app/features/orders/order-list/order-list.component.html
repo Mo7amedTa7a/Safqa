@@ -120,25 +120,29 @@
         </div>
 
 
-        <!-- Supplier -->
-        <div class="supplier-section">
+        <!-- Supplier and Product -->
+        <div class="supplier-section border-bottom pb-3 mb-3 d-flex flex-column gap-3">
 
-          <div class="supplier-avatar">
-
-            {{ getSupplierName(order).charAt(0) }}
-
+          <div class="d-flex align-items-center gap-3">
+            <div class="supplier-avatar">
+              {{ getSupplierName(order).charAt(0) }}
+            </div>
+            <div>
+              <span class="info-label">المورد</span>
+              <strong>{{ getSupplierName(order) }}</strong>
+            </div>
           </div>
 
-          <div>
-
-            <span class="info-label">
-              المورد
-            </span>
-
-            <strong>
-              {{ getSupplierName(order) }}
-            </strong>
-
+          <!-- Product Details -->
+          <div *ngIf="getProduct(order) as product" class="d-flex align-items-center gap-3 mt-2 bg-light p-2 rounded">
+            <div style="width: 40px; height: 40px; background: #fff; border: 1px solid #dee2e6; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+              <img *ngIf="product.images?.length" [src]="product.images[0]" alt="Product" style="width: 100%; height: 100%; object-fit: cover;">
+              <i *ngIf="!product.images?.length" class="bi bi-box fs-5 text-muted"></i>
+            </div>
+            <div>
+              <span class="info-label mb-0" style="font-size: 0.75rem;">المنتج المطلوب</span>
+              <strong class="d-block text-dark">{{ product.name || 'منتج غير معروف' }}</strong>
+            </div>
           </div>
 
         </div>
@@ -228,7 +232,7 @@
         </div>
 
         <!-- PENDING Confirmation Banner -->
-        <div *ngIf="order.status === 'PENDING'" class="alert alert-warning border-0 bg-warning-subtle text-dark p-3 rounded-3 mt-3 mb-0">
+        <div *ngIf="order.status === 'PENDING' && isBuyer()" class="alert alert-warning border-0 bg-warning-subtle text-dark p-3 rounded-3 mt-3 mb-0">
           <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div>
               <strong class="d-block text-warning-emphasis">

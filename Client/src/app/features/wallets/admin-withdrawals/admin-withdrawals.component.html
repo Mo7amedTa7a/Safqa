@@ -1,0 +1,113 @@
+<div class="container py-4" dir="rtl">
+  <div class="mb-4">
+    <h2>إدارة طلبات السحب (للموردين)</h2>
+    <p class="text-muted">يمكنك مراجعة طلبات سحب الأرصدة وتأكيد التحويل البنكي للموردين.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div class="table-responsive" *ngIf="!isLoading">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>رقم الطلب</th>
+          <th>المورد</th>
+          <th>المبلغ المطلوب</th>
+          <th>تاريخ الطلب</th>
+          <th>الحالة</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let req of requests">
+          <td><small class="text-muted">{{ req._id }}</small></td>
+          <td>
+            <strong>{{ req.user?.name }}</strong><br>
+            <small class="text-muted">{{ req.user?.email }}</small>
+          </td>
+          <td class="fw-bold">{{ req.amount }} ج.م</td>
+          <td>{{ req.createdAt | date:'short' }}</td>
+          <td>
+            <span [class]="getStatusBadgeClass(req.status)">{{ getStatusLabel(req.status) }}</span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary" (click)="openProcessModal(req)" *ngIf="req.status === 'PENDING'">
+              مراجعة ومعالجة
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" (click)="openProcessModal(req)" *ngIf="req.status !== 'PENDING'">
+              التفاصيل
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="requests.length === 0">
+          <td colspan="6" class="text-center py-4 text-muted">لا توجد طلبات سحب</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Process Modal -->
+<div class="modal fade show d-block" *ngIf="selectedRequest" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content" dir="rtl">
+      <div class="modal-header">
+        <h5 class="modal-title">تفاصيل طلب السحب</h5>
+        <button type="button" class="btn-close" (click)="closeProcessModal()"></button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="card mb-3">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">المورد</h6>
+            <p class="card-text fw-bold">{{ selectedRequest.user?.name }} ({{ selectedRequest.user?.email }})</p>
+            
+            <h6 class="card-subtitle mb-2 mt-3 text-muted">المبلغ المطلوب سحبه</h6>
+            <p class="card-text fs-4 text-primary fw-bold">{{ selectedRequest.amount }} ج.م</p>
+          </div>
+        </div>
+        
+        <div class="card mb-3">
+          <div class="card-header">البيانات البنكية للمورد</div>
+          <div class="card-body">
+            <p><strong>اسم البنك:</strong> {{ selectedRequest.bankDetails.bankName || 'غير متوفر' }}</p>
+            <p><strong>رقم الحساب:</strong> {{ selectedRequest.bankDetails.accountNumber || 'غير متوفر' }}</p>
+            <p><strong>اسم الحساب:</strong> {{ selectedRequest.bankDetails.accountName || 'غير متوفر' }}</p>
+          </div>
+        </div>
+
+        <div class="mb-3" *ngIf="selectedRequest.status === 'PENDING'">
+          <label class="form-label text-danger">ملاحظات الإدارة (إلزامية في حالة الرفض)</label>
+          <textarea class="form-control" rows="2" [(ngModel)]="adminNotes" placeholder="أدخل أي ملاحظات حول التحويل أو سبب الرفض..."></textarea>
+        </div>
+
+        <div class="mb-3" *ngIf="selectedRequest.status !== 'PENDING'">
+          <label class="form-label text-muted">ملاحظات الإدارة</label>
+          <p class="form-control-plaintext">{{ selectedRequest.adminNotes || 'لا توجد ملاحظات' }}</p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeProcessModal()" [disabled]="isProcessing">إغلاق</button>
+        
+        <ng-container *ngIf="selectedRequest.status === 'PENDING'">
+          <button type="button" class="btn btn-danger" (click)="processRequest('REJECT')" [disabled]="isProcessing || !adminNotes">
+            رفض الطلب
+          </button>
+          <button type="button" class="btn btn-success" (click)="processRequest('APPROVE')" [disabled]="isProcessing">
+            <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+            تأكيد التحويل والموافقة
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

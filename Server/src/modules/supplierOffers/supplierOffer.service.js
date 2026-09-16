@@ -41,8 +41,8 @@ const createOffer = async (targetId, supplierid, data) => {
     throw new Error("Target pool or buying request not found");
   }
 
-  if (pool && pool.status !== "OPEN") {
-    throw new Error("The pool is not open");
+  if (pool && pool.status !== "OPEN_OFFERS") {
+    throw new Error("The pool is not accepting offers at this time. Offers can only be submitted during the OPEN_OFFERS phase.");
   }
 
   if (buyingRequest && buyingRequest.status !== "OPEN") {
@@ -133,8 +133,8 @@ const updateOffer = async (offerId, supplierId, data) => {
     throw new Error("Pool not found");
   }
 
-  if (pool.status !== "OPEN") {
-    throw new Error("The pool is not open");
+  if (pool.status !== "OPEN_OFFERS") {
+    throw new Error("The pool is not accepting offers at this time");
   }
 
   const updatedOffer = await SupplierOffer.findByIdAndUpdate(
@@ -172,8 +172,8 @@ const withdrawOffer = async (offerId, supplierId) => {
     throw new Error("Pool not found");
   }
 
-  if (pool.status !== "OPEN") {
-    throw new Error("The pool is not open");
+  if (pool.status !== "OPEN_OFFERS") {
+    throw new Error("The pool is not accepting offers at this time");
   }
 
   if (offer.status === "WITHDRAWN") {

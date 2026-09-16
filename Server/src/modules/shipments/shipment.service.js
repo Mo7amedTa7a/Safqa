@@ -3,6 +3,8 @@
 
 import Shipment from "./shipment.model.js";
 import Order from "../orders/order.model.js";
+import Transaction from "../wallets/transaction.model.js";
+import { getWallet } from "../wallets/wallet.service.js";
 import crypto from "crypto";
 
 const generateTrackingNumber = () => {
@@ -119,8 +121,7 @@ const updateShipmentStatus = async (shipmentId, status, user) => {
     shipment.shippingPartner = user._id || user.id;
   }
 
-  shipment.status = status;
-  await shipment.save();
+  const oldStatus = shipment.status;
 
   // Sync order status based on shipment status
   const order = await Order.findById(shipment.order);
@@ -133,8 +134,46 @@ const updateShipmentStatus = async (shipmentId, status, user) => {
     } else if (status === 'DELIVERED') {
       order.status = 'DELIVERED';
       await order.save();
+
+      // Ensure we only process payments once if status was already DELIVERED
+      if (oldStatus !== 'DELIVERED') {
+        try {
+          // Shipping Partner gets COD collected
+          const spWallet = await getWallet(shipment.shippingPartner);
+          spWallet.balance += shipment.codAmount;
+          await spWallet.save();
+          
+          await Transaction.create({
+            wallet: spWallet._id,
+            amount: shipment.codAmount,
+            type: "CREDIT",
+            description: "COD Collected",
+            referenceOrder: order._id
+          });
+
+          // Supplier gets product price - commission (3%)
+          const commission = order.totalAmount * 0.03;
+          const supplierShare = order.totalAmount - commission;
+          const supplierWallet = await getWallet(order.supplier);
+          supplierWallet.balance += supplierShare;
+          await supplierWallet.save();
+
+          await Transaction.create({
+            wallet: supplierWallet._id,
+            amount: supplierShare,
+            type: "CREDIT",
+            description: "Order Revenue",
+            referenceOrder: order._id
+          });
+        } catch (error) {
+          console.error("Wallet update failed:", error);
+        }
+      }
     }
   }
+
+  shipment.status = status;
+  await shipment.save();
 
   return shipment;
 };

@@ -95,6 +95,10 @@ export class OrderDetailsComponent implements OnInit {
     return this.authService.hasRole([UserRole.SUPPLIER]);
   }
 
+  isShippingPartner(): boolean {
+    return this.authService.hasRole([UserRole.SHIPPING_PARTNER]);
+  }
+
   // =========================
   // Order Actions
   // =========================
@@ -119,11 +123,7 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   canShip(): boolean {
-    return this.isSupplier() && this.order?.status === 'READY_FOR_PICKUP';
-  }
-
-  canDeliver(): boolean {
-    return this.isSupplier() && this.order?.status === 'SHIPPED';
+    return this.isShippingPartner() && this.order?.status === 'READY_FOR_PICKUP';
   }
 
   // =========================
@@ -183,14 +183,6 @@ export class OrderDetailsComponent implements OnInit {
         this.actionMessage = err?.error?.message || 'حدث خطأ أثناء إنشاء بوليصة الشحن';
       }
     });
-  }
-
-  deliverOrder(): void {
-    if (!this.order || !this.canDeliver()) {
-      return;
-    }
-
-    this.updateStatus('DELIVERED');
   }
 
   updateStatus(status: string): void {
@@ -303,17 +295,39 @@ export class OrderDetailsComponent implements OnInit {
 
     return labels[status] ?? status;
   }
+  // Order Actions
+  // =========================
 
   // =========================
   // Display Helpers
   // =========================
 
   getSupplierName(): string {
-    return this.order?.supplier?.name ?? 'مورد غير معروف';
+    if (!this.order?.supplier) return 'غير محدد';
+    if (typeof this.order.supplier === 'string') return 'المورد';
+    return this.order.supplier.name || 'مورد غير معروف';
+  }
+
+  getProduct(): any {
+    const ord: any = this.order;
+    if (!ord) return null;
+    
+    if (ord.buyingRequest?.product) {
+      return ord.buyingRequest.product;
+    }
+    
+    if (ord.deal?.buyingRequest?.product) {
+      return ord.deal.buyingRequest.product;
+    }
+    
+    if (ord.deal?.pool?.product) {
+      return ord.deal.pool.product;
+    }
+    
+    return null;
   }
 
   getBuyerName(): string {
     return this.order?.buyer?.name ?? 'عميل غير معروف';
   }
-
 }

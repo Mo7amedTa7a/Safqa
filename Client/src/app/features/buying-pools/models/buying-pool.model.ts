@@ -12,7 +12,7 @@ export interface BuyingPool {
   memberCount: number;
   startAt: string;
   closeAt: string;
-  status: 'OPEN' | 'CLOSED';
+  status: 'OPEN' | 'OPEN_OFFERS' | 'CLOSED';
   selectedOffer?: string;
   members?: any[];
   offers?: any[];

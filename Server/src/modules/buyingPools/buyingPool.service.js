@@ -33,7 +33,7 @@ const createBuyingPool = async (buyingRequestId, buyerId) => {
 
     if (!pool) {
         const startAt = new Date();
-        const closeAt = new Date(startAt.getTime() + 3 * 24 * 60 * 60 * 1000);
+        const joinCloseAt = new Date(startAt.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days
 
         pool = await BuyingPool.create({
             product: request.product,
@@ -42,7 +42,8 @@ const createBuyingPool = async (buyingRequestId, buyerId) => {
             totalQuantity: 0,
             memberCount: 0,
             startAt: startAt,
-            closeAt: closeAt,
+            joinCloseAt: joinCloseAt,
+            closeAt: joinCloseAt, // To be deprecated later, but kept for compatibility
             status: "OPEN"
         });
     }
@@ -114,14 +115,18 @@ const closePool = async (poolId) => {
         throw new Error("The pool does not exist");
     }
 
-    if (pool.status !== "OPEN") {
-        throw new Error("The pool is not open");
+    if (pool.status === "OPEN") {
+        pool.status = "OPEN_OFFERS";
+        pool.offerCloseAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+        await pool.save();
+        return pool;
+    } else if (pool.status === "OPEN_OFFERS") {
+        pool.status = "CLOSED";
+        await pool.save();
+        return pool;
+    } else {
+        throw new Error("The pool cannot be closed from its current state");
     }
-
-    pool.status = "CLOSED";
-    await pool.save();
-
-    return pool;
 };
 
 export {

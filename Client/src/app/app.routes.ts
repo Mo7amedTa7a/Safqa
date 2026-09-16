@@ -91,6 +91,10 @@ import { DealDetailsComponent } from './features/deals/deal-details/deal-details
 import { OrderListComponent } from './features/orders/order-list/order-list.component';
 import { OrderDetailsComponent } from './features/orders/order-details/order-details.component';
 
+// Wallets
+import { WalletDashboardComponent } from './features/wallets/wallet-dashboard/wallet-dashboard.component';
+import { AdminWithdrawalsComponent } from './features/wallets/admin-withdrawals/admin-withdrawals.component';
+
 export const routes: Routes = [
   // Public Landing / Home Page
   {
@@ -246,6 +250,12 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN] }
       },
+      {
+        path: 'admin/withdrawals',
+        component: AdminWithdrawalsComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN] }
+      },
 
       // Shipments Routes (SHIPPING_PARTNER, SUPPLIER, ADMIN)
       {
@@ -277,6 +287,14 @@ export const routes: Routes = [
         component: SettlementDetailsComponent,
         canActivate: [roleGuard],
         data: { roles: [UserRole.SHIPPING_PARTNER, UserRole.SUPPLIER, UserRole.ADMIN] }
+      },
+
+      // Wallet Routes (SHIPPING_PARTNER, SUPPLIER)
+      {
+        path: 'wallet',
+        component: WalletDashboardComponent,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.SHIPPING_PARTNER, UserRole.SUPPLIER] }
       },
 
       // Disputes Routes (BUYER, ADMIN)

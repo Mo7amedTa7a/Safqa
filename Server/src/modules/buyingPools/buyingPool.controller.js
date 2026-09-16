@@ -3,7 +3,7 @@
 // - GET  /          → list all OPEN pools (public or ADMIN)
 // - GET  /:id       → getPoolById
 // - POST /:id/close → closePool (ADMIN)
-import { createBuyingPool, getpool, getPoolById } from './buyingPool.service.js';
+import { createBuyingPool, getpool, getPoolById, closePool } from './buyingPool.service.js';
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -63,4 +63,19 @@ const getPoolsById = async (req, res, next) => {
   }
 };
 
-export { createPool, getpools, getPoolsById };
+const closePoolController = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const pool = await closePool(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Pool status updated successfully",
+      data: pool
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createPool, getpools, getPoolsById, closePoolController };
