@@ -14,6 +14,7 @@ import {
   createShipmentController,
   getShipmentsController,
   getShipmentByIdController,
+  getShipmentByOrderIdController,
   assignShippingPartnerController,
   updateShipmentStatusController,
   addPickupProofController,
@@ -24,7 +25,7 @@ const router = express.Router();
 router.post(
   "/orders/:orderId",
   protect,
-  authorize("ADMIN"),
+  authorize("SUPPLIER", "ADMIN"),
   validate(createShipmentValidation),
   createShipmentController
 );
@@ -40,6 +41,12 @@ router.get(
   "/:id",
   protect,
   getShipmentByIdController
+);
+
+router.get(
+  "/order/:orderId",
+  protect,
+  getShipmentByOrderIdController
 );
 
 router.patch(

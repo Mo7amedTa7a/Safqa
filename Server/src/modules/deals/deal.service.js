@@ -538,12 +538,21 @@ async function getDealById(
   }
 
 
+  // Fetch order counts
+  const totalOrders = await Order.countDocuments({ deal: dealId });
+  const confirmedOrders = await Order.countDocuments({ deal: dealId, status: { $in: ['CONFIRMED', 'READY_FOR_PICKUP', 'SHIPPED', 'DELIVERED'] } });
+
+  // Add counts to deal document
+  const dealDoc = deal.toObject();
+  dealDoc.totalOrdersCount = totalOrders;
+  dealDoc.confirmedOrdersCount = confirmedOrders;
+
   // ========================================
   // ADMIN
   // ========================================
 
   if (user.role === 'ADMIN') {
-    return deal;
+    return dealDoc;
   }
 
 
@@ -563,7 +572,7 @@ async function getDealById(
       );
     }
 
-    return deal;
+    return dealDoc;
   }
 
 
@@ -586,7 +595,7 @@ async function getDealById(
       );
     }
 
-    return deal;
+    return dealDoc;
   }
 
 

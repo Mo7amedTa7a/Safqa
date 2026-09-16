@@ -1,4 +1,4 @@
-﻿export interface PricingTier {
+export interface PricingTier {
   minQty: number;
   unitPrice: number;
 }
@@ -41,4 +41,7 @@ export interface Deal {
   createdAt: string;
 
   updatedAt: string;
+
+  totalOrdersCount?: number;
+  confirmedOrdersCount?: number;
 }

@@ -283,70 +283,92 @@
       </div>
     </div>
 
-    <!-- Buyer Actions (Update Qty / Leave Pool) -->
-    @if (currentUser?.role === 'BUYER') {
-      <div class="row g-4">
-        <div class="col-md-6">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-body p-4">
-              <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-pencil-square me-2"></i>تعديل كميتك المشارك بها</h5>
-              <div class="mb-3">
-                <label for="quantity" class="form-label text-muted fs-7">اختر الكمية الجديدة:</label>
-                <input
-                  id="quantity"
-                  type="number"
-                  class="form-control"
-                  min="1"
-                  [(ngModel)]="quantity"
-                />
+    <!-- Buyer Actions (Update Qty / Leave Pool / Join) -->
+    @if (currentUser?.role === 'BUYER' && pool.status === 'OPEN') {
+      @if (isMember()) {
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body p-4">
+                <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-pencil-square me-2"></i>تعديل كميتك المشارك بها</h5>
+                <div class="mb-3">
+                  <label for="quantity" class="form-label text-muted fs-7">اختر الكمية الجديدة:</label>
+                  <input
+                    id="quantity"
+                    type="number"
+                    class="form-control"
+                    min="1"
+                    [(ngModel)]="quantity"
+                  />
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-safqa-primary w-100 py-2"
+                  (click)="updateQuantity()"
+                  [disabled]="isUpdatingQuantity"
+                >
+                  @if (isUpdatingQuantity) {
+                    جاري التحديث...
+                  } @else {
+                    تحديث الكمية في التجمع
+                  }
+                </button>
+                @if (updateMessage) {
+                  <div class="alert alert-info mt-3 mb-0 fs-7">
+                    {{ updateMessage }}
+                  </div>
+                }
               </div>
-              <button
-                type="button"
-                class="btn btn-safqa-primary w-100 py-2"
-                (click)="updateQuantity()"
-                [disabled]="isUpdatingQuantity"
-              >
-                @if (isUpdatingQuantity) {
-                  جاري التحديث...
-                } @else {
-                  تحديث الكمية في التجمع
-                }
-              </button>
-              @if (updateMessage) {
-                <div class="alert alert-info mt-3 mb-0 fs-7">
-                  {{ updateMessage }}
-                </div>
-              }
             </div>
           </div>
-        </div>
 
-        <div class="col-md-6">
-          <div class="card border-0 shadow-sm h-100 border-danger-subtle">
-            <div class="card-body p-4">
-              <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-box-arrow-right me-2"></i>مغادرة التجمع</h5>
-              <p class="text-muted fs-7 mb-3">يمكنك مغادرة هذا التجمع الشرائي في أي وقت قبل إغلاق التجمع واعتماد الصفقة.</p>
-              <button
-                type="button"
-                class="btn btn-outline-danger w-100 py-2"
-                (click)="leavePool()"
-                [disabled]="isLeavingPool"
-              >
-                @if (isLeavingPool) {
-                  جاري المغادرة...
-                } @else {
-                  مغادرة التجمع الحالي
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100 border-danger-subtle">
+              <div class="card-body p-4">
+                <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-box-arrow-right me-2"></i>مغادرة التجمع</h5>
+                <p class="text-muted fs-7 mb-3">يمكنك مغادرة هذا التجمع الشرائي في أي وقت قبل إغلاق التجمع واعتماد الصفقة.</p>
+                <button
+                  type="button"
+                  class="btn btn-outline-danger w-100 py-2"
+                  (click)="leavePool()"
+                  [disabled]="isLeavingPool"
+                >
+                  @if (isLeavingPool) {
+                    جاري المغادرة...
+                  } @else {
+                    مغادرة التجمع الحالي
+                  }
+                </button>
+                @if (leaveMessage) {
+                  <div class="alert alert-info mt-3 mb-0 fs-7">
+                    {{ leaveMessage }}
+                  </div>
                 }
-              </button>
-              @if (leaveMessage) {
-                <div class="alert alert-info mt-3 mb-0 fs-7">
-                  {{ leaveMessage }}
-                </div>
-              }
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      } @else {
+        <!-- Join Pool Action -->
+        <div class="card border-0 shadow-sm bg-primary-subtle mb-4">
+          <div class="card-body p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <h5 class="fw-bold text-dark mb-1">
+                <i class="bi bi-plus-circle-fill text-primary me-2"></i> انضمام للتجمع
+              </h5>
+              <p class="text-muted mb-0">
+                يمكنك الانضمام إلى هذا التجمع للحصول على خصومات كبيرة من الموردين!
+              </p>
+            </div>
+            <a
+              [routerLink]="['/buying-pools', pool._id, 'join']"
+              class="btn btn-primary py-2 px-4 shadow-sm"
+            >
+              <i class="bi bi-arrow-down-right-circle me-1"></i> انضمام الآن
+            </a>
+          </div>
+        </div>
+      }
     }
   }
 </div>

@@ -1,4 +1,4 @@
-﻿<div class="deal-details-page">
+<div class="deal-details-page">
 
   <!-- Back -->
   <a routerLink="/deals" class="back-link">
@@ -76,6 +76,23 @@
       </div>
 
     </div>
+
+    <!-- Order Stats -->
+    <section class="details-section" *ngIf="deal.totalOrdersCount !== undefined">
+      <div class="section-title">
+        <h2>إحصائيات الطلبات</h2>
+      </div>
+      <div class="dates-grid">
+        <div class="detail-item">
+          <span>إجمالي المشترين</span>
+          <strong>{{ deal.totalOrdersCount }}</strong>
+        </div>
+        <div class="detail-item">
+          <span>المشترين الذين أكدوا الطلب</span>
+          <strong>{{ deal.confirmedOrdersCount }}</strong>
+        </div>
+      </div>
+    </section>
 
     <!-- Selected Offer -->
     <section class="details-section">

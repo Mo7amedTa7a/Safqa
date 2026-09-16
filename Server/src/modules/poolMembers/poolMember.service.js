@@ -36,12 +36,23 @@ const joinPool = async (poolId, buyerId, quantity) => {
         throw new Error("You are already a member of this pool");
     }
 
+    // Get location from an existing member's BuyingRequest in this pool
+    const existingPoolMember = await PoolMember.findOne({ pool: poolId, status: "ACTIVE" }).populate('buyingRequest');
+    let location = "غير محدد";
+    if (existingPoolMember && existingPoolMember.buyingRequest) {
+        const existingRequest = await BuyingRequest.findById(existingPoolMember.buyingRequest);
+        if (existingRequest && existingRequest.location) {
+            location = existingRequest.location;
+        }
+    }
+
     // Auto-create a Buying Request for this buyer
     const request = await BuyingRequest.create({
         buyer: buyerId,
         product: pool.product,
         variant: pool.variant,
         quantity: quantity,
+        location: location,
         purchaseType: "GROUP",
         status: "OPEN"
     });

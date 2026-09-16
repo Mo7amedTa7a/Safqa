@@ -39,4 +39,12 @@ export class ShipmentService {
   addPickupProof(id: string, proof: FormData): Observable<{ message: string, data: Shipment }> {
     return this.http.post<{ message: string, data: Shipment }>(`${this.apiUrl}/${id}/pickup-proof`, proof);
   }
+
+  createShipmentForOrder(orderId: string, data: any = {}): Observable<{ success: boolean, data: Shipment }> {
+    return this.http.post<{ success: boolean, data: Shipment }>(`${this.apiUrl}/orders/${orderId}`, data);
+  }
+
+  getShipmentByOrderId(orderId: string): Observable<{ success: boolean, data: Shipment }> {
+    return this.http.get<{ success: boolean, data: Shipment }>(`${this.apiUrl}/order/${orderId}`);
+  }
 }

@@ -61,6 +61,15 @@ export class PoolDetailsComponent implements OnInit {
     };
   }
 
+  isMember(): boolean {
+    if (!this.pool?.members || !this.currentUser) return false;
+    const userId = this.currentUser._id;
+    return this.pool.members.some((m: any) => {
+      const buyerId = typeof m.buyer === 'object' ? m.buyer._id : m.buyer;
+      return buyerId === userId;
+    });
+  }
+
   isLoading = false;
   errorMessage = '';
 

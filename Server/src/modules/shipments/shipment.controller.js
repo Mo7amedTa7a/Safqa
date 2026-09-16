@@ -5,6 +5,7 @@ import {
   createShipment,
   getShipments,
   getShipmentById,
+  getShipmentByOrderId,
   assignShippingPartner,
   updateShipmentStatus,
   addPickupProof,
@@ -14,7 +15,7 @@ const createShipmentController = async (req, res, next) => {
   try {
     const { orderId } = req.params;
     const data = req.body;
-    const shipment = await createShipment(orderId, data);
+    const shipment = await createShipment(orderId, data, req.user);
     res.status(201).json({
       success: true,
       data: shipment,
@@ -67,7 +68,7 @@ const updateShipmentStatusController = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
-    const shipment = await updateShipmentStatus(id, status);
+    const shipment = await updateShipmentStatus(id, status, req.user);
     res.status(200).json({
       success: true,
       data: shipment,
@@ -91,10 +92,24 @@ const addPickupProofController = async (req, res, next) => {
   }
 };
 
+const getShipmentByOrderIdController = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+    const shipment = await getShipmentByOrderId(orderId);
+    res.status(200).json({
+      success: true,
+      data: shipment,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export {
   createShipmentController,
   getShipmentsController,
   getShipmentByIdController,
+  getShipmentByOrderIdController,
   assignShippingPartnerController,
   updateShipmentStatusController,
   addPickupProofController,

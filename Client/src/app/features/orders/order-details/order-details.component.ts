@@ -1,9 +1,11 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { OrderService } from '../services/order.service';
 import { Order } from '../models/order.model';
+import { ShipmentService } from '../../shipments/services/shipment.service';
+import { Shipment } from '../../shipments/models/shipment.model';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole } from '../../../core/models/user.model';
@@ -25,10 +27,14 @@ export class OrderDetailsComponent implements OnInit {
   errorMessage = '';
   actionMessage = '';
 
+  shipment: Shipment | null = null;
+  isLoadingShipment = false;
+
   constructor(
     private route: ActivatedRoute,
     private orderService: OrderService,
-    private authService: AuthService
+    private authService: AuthService,
+    private shipmentService: ShipmentService
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +56,9 @@ export class OrderDetailsComponent implements OnInit {
       next: (response) => {
         this.order = response.data;
         this.isLoading = false;
+        
+        // Fetch shipment if any
+        this.loadShipment(this.order._id);
       },
 
       error: () => {
@@ -57,6 +66,20 @@ export class OrderDetailsComponent implements OnInit {
         this.isLoading = false;
       }
 
+    });
+  }
+
+  loadShipment(orderId: string): void {
+    this.isLoadingShipment = true;
+    this.shipmentService.getShipmentByOrderId(orderId).subscribe({
+      next: (res) => {
+        this.shipment = res.data;
+        this.isLoadingShipment = false;
+      },
+      error: () => {
+        this.shipment = null;
+        this.isLoadingShipment = false;
+      }
     });
   }
 
@@ -145,7 +168,21 @@ export class OrderDetailsComponent implements OnInit {
       return;
     }
 
-    this.updateStatus('SHIPPED');
+    this.isUpdating = true;
+    this.actionMessage = '';
+    
+    // Create shipment
+    this.shipmentService.createShipmentForOrder(this.order._id).subscribe({
+      next: (res) => {
+        this.shipment = res.data;
+        this.actionMessage = 'تم إنشاء بوليصة الشحن بنجاح';
+        this.loadOrder(); // Reload order to get new status
+      },
+      error: (err) => {
+        this.isUpdating = false;
+        this.actionMessage = err?.error?.message || 'حدث خطأ أثناء إنشاء بوليصة الشحن';
+      }
+    });
   }
 
   deliverOrder(): void {

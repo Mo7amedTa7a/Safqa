@@ -1,4 +1,4 @@
-﻿<div class="order-details-page">
+<div class="order-details-page">
 
   <!-- Back -->
   <a routerLink="/orders" class="back-link">
@@ -130,14 +130,14 @@
             </button>
           }
 
-          @if (canShip()) {
+          @if (canShip() && !shipment) {
             <button
               type="button"
               class="action-btn ship-btn"
               (click)="shipOrder()"
               [disabled]="isUpdating"
             >
-              {{ isUpdating ? 'جاري التحديث...' : 'شحن الطلب' }}
+              {{ isUpdating ? 'جاري الإنشاء...' : 'إنشاء بوليصة شحن' }}
             </button>
           }
 
@@ -301,6 +301,32 @@
       </div>
 
     </section>
+
+    <!-- Shipment Details -->
+    @if (shipment) {
+      <section class="details-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="mb-0">بيانات التتبع والشحن</h2>
+          <a [routerLink]="['/shipments', shipment._id]" class="btn btn-sm btn-outline-primary">
+            تتبع الشحنة
+          </a>
+        </div>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>رقم التتبع</span>
+            <strong>{{ shipment.trackingNumber }}</strong>
+          </div>
+          <div class="detail-item">
+            <span>حالة الشحنة</span>
+            <strong>{{ shipment.status }}</strong>
+          </div>
+          <div class="detail-item">
+            <span>شركة الشحن</span>
+            <strong>{{ shipment.shippingPartner?.name || 'لم يتم التعيين بعد' }}</strong>
+          </div>
+        </div>
+      </section>
+    }
 
     <!-- Related Deal -->
     @if (order.deal) {
