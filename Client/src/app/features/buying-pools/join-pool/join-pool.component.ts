@@ -1,15 +1,16 @@
-﻿// Member 3 - Join Pool
+// Member 3 - Join Pool
 // POST /api/buying-pools/:poolId/members
 // BUYER يختار buyingRequestId + quantity
 // بيعرض تفاصيل الـ pool قبل التأكيد
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BuyingPoolService } from '../services/buying-pool.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-join',
   standalone: true,
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './join-pool.component.html',
   styleUrl: './join-pool.component.css'
 })
@@ -20,6 +21,7 @@ export class JoinComponent {
   private buyingPoolService = inject(BuyingPoolService);
 
   poolId = '';
+  quantity = 1;
 
   loading = false;
   successMessage = '';
@@ -35,12 +37,17 @@ export class JoinComponent {
       this.errorMessage = 'معرف التجمع غير موجود';
       return;
     }
+    
+    if (this.quantity <= 0) {
+      this.errorMessage = 'الرجاء إدخال كمية صحيحة';
+      return;
+    }
 
     this.loading = true;
     this.successMessage = '';
     this.errorMessage = '';
 
-    this.buyingPoolService.joinPool(this.poolId).subscribe({
+    this.buyingPoolService.joinPool(this.poolId, this.quantity).subscribe({
 
       next: (response) => {
 

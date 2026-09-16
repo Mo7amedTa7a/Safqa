@@ -11,7 +11,7 @@ import BuyingRequest from "../buyingRequests/buyingRequest.model.js";
 
 
 
-const joinPool = async (poolId, buyerId) => {
+const joinPool = async (poolId, buyerId, quantity) => {
 
     const pool = await BuyingPool.findById(poolId);
 
@@ -23,22 +23,8 @@ const joinPool = async (poolId, buyerId) => {
         throw new Error("Buying pool is not open");
     }
 
-
-    const request = await BuyingRequest.findOne({
-        buyer: buyerId,
-        purchaseType: "GROUP",
-        status: "OPEN"
-    });
-    if (!request) {
-        throw new Error("No valid buying request found");
-    }
-
-if (request.product.toString() !== pool.product.toString()) {
-        throw new Error("Product does not match the pool");
-    }
-
-    if (request.variant.toString() !== pool.variant.toString()) {
-        throw new Error("Variant does not match the pool");
+    if (!quantity || quantity <= 0) {
+        throw new Error("يجب تحديد كمية صحيحة للانضمام إلى التجمع");
     }
 
     const existingMember = await PoolMember.findOne({
@@ -46,38 +32,34 @@ if (request.product.toString() !== pool.product.toString()) {
          buyer: buyerId
     })
 
-
     if (existingMember) {
-    throw new Error("You are already a member of this pool");
+        throw new Error("You are already a member of this pool");
+    }
 
+    // Auto-create a Buying Request for this buyer
+    const request = await BuyingRequest.create({
+        buyer: buyerId,
+        product: pool.product,
+        variant: pool.variant,
+        quantity: quantity,
+        purchaseType: "GROUP",
+        status: "OPEN"
+    });
 
-}
+    const newMember = await PoolMember.create({
+        pool: poolId,
+        buyer: buyerId,
+        buyingRequest: request._id,
+        quantity: quantity,
+        status: "ACTIVE"
+    });
 
+    pool.totalQuantity += quantity;
+    pool.memberCount += 1;
 
-const newMember = await PoolMember.create({
-    pool: poolId,
-    buyer: buyerId,
-    buyingRequest: request._id,
-    quantity: request.quantity,
-    status: "ACTIVE"
-});
+    await pool.save();
 
-
-
-pool.totalQuantity += request.quantity;
-pool.memberCount += 1;
-
-await pool.save();
-
-
-
-
-return {member: newMember, pool: pool};
-
-
-
-
-    
+    return {member: newMember, pool: pool};
 };
 
 

@@ -9,6 +9,7 @@ import {
   updateOrderStatus,
   markOrderReadyForPickup,
   cancelOrder,
+  confirmOrder,
 } from './order.service.js';
 
 const createOrderController = asyncHandler(async (req, res) => {

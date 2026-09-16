@@ -54,10 +54,10 @@ export class BuyingPoolService {
   }
 
   // POST /api/pool-members/:id/join
-  joinPool(poolId: string): Observable<JoinPoolResponse> {
+  joinPool(poolId: string, quantity: number): Observable<JoinPoolResponse> {
     return this.http.post<JoinPoolResponse>(
       `${environment.apiUrl}/pool-members/${poolId}/join`,
-      null
+      { quantity }
     );
   }
 

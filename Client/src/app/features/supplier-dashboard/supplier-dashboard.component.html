@@ -229,7 +229,7 @@
                       <td>
                         <a [routerLink]="['/orders', order._id]" class="d-block fw-bold text-primary text-decoration-none text-truncate" style="max-width: 120px;" dir="ltr">#{{ order._id.slice(-6).toUpperCase() }}</a>
                       </td>
-                      <td class="small fw-bold text-success">{{ order.totalAmount?.toLocaleString('en-US') }} ج.م</td>
+                      <td class="fw-semibold text-success">{{ order.totalAmount.toLocaleString('en-US') }} ج.م</td>
                       <td>
                         <span class="badge bg-light text-dark border">
                           {{ order.status }}

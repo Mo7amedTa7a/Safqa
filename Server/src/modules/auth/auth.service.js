@@ -106,8 +106,8 @@ const forgotPassword = async (email) => {
     await user.save({ validateBeforeSave: false });
 
     // 3) Send it to user's email
-    const frontendURL = process.env.FRONTEND_URL || 'http://localhost:3000';
-    const resetLink = `${frontendURL}/reset-password/${resetToken}`;
+    const frontendURL = process.env.FRONTEND_URL || 'http://localhost:4200';
+    const resetLink = `${frontendURL}/auth/reset-password/${resetToken}`;
 
     const message = `Forgot your password? Click the link to reset your password: \n${resetLink}\nIf you didn't forget your password, please ignore this email!`;
 

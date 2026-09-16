@@ -11,18 +11,19 @@ import { joinPool, updateQuantity, leavePool, getPoolMembersbyid } from "./poolM
 
 const joinPoolcontrol = async (req, res, next) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
+    const buyerId = req.user.id;
+    const { quantity } = req.body;
     
-    const buyerId = req.user.id
-    const result = await joinPool(id, buyerId)
+    const result = await joinPool(id, buyerId, quantity);
 
     res.status(200).json({
       success: true,
       data: result
-    })
+    });
 
   } catch (err) {
-    next(err)
+    next(err);
   }
 }
 
